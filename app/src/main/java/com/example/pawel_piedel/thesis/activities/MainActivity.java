@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements
         RestaurantsFragment.OnFragmentInteractionListener,
         CoffiesFragment.OnFragmentInteractionListener,
@@ -20,16 +23,16 @@ public class MainActivity extends AppCompatActivity implements
     public static final String CLIENT_ID = "VokcbDNJly63jzOhJqJ0JA";
     public static final String CLIENT_SECRET = "gaFo3VLh1cNWS5L7nHJ6nRxVq97iRJCqvBAWnvmoiAWCf2xriOKhp6h5U0LNuj8F";
 
-    private Toolbar mToolbar;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
        /* new Thread(new Runnable() {
             public void run() {
                 try {
@@ -41,15 +44,12 @@ public class MainActivity extends AppCompatActivity implements
             }
         }).start();*/
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
 
