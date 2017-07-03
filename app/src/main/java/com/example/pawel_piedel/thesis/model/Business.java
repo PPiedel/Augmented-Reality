@@ -2,77 +2,60 @@
 package com.example.pawel_piedel.thesis.model;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Business {
 
-    @SerializedName("rating")
-    @Expose
-    private Integer rating;
-    @SerializedName("price")
-    @Expose
-    private String price;
-    @SerializedName("phone")
-    @Expose
-    private String phone;
     @SerializedName("id")
     @Expose
     private String id;
-    @SerializedName("is_closed")
-    @Expose
-    private Boolean isClosed;
-    @SerializedName("categories")
-    @Expose
-    private List<Category> categories = null;
-    @SerializedName("review_count")
-    @Expose
-    private Integer reviewCount;
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("url")
-    @Expose
-    private String url;
-    @SerializedName("coordinates")
-    @Expose
-    private Coordinates coordinates;
     @SerializedName("image_url")
     @Expose
     private String imageUrl;
+    @SerializedName("is_claimed")
+    @Expose
+    private boolean isClaimed;
+    @SerializedName("is_closed")
+    @Expose
+    private boolean isClosed;
+    @SerializedName("url")
+    @Expose
+    private String url;
+    @SerializedName("price")
+    @Expose
+    private String price;
+    @SerializedName("rating")
+    @Expose
+    private double rating;
+    @SerializedName("review_count")
+    @Expose
+    private int reviewCount;
+    @SerializedName("phone")
+    @Expose
+    private String phone;
+    @SerializedName("photos")
+    @Expose
+    private List<String> photos = null;
+    @SerializedName("hours")
+    @Expose
+    private List<Hour> hours = null;
+    @SerializedName("categories")
+    @Expose
+    private List<Category> categories = null;
+    @SerializedName("coordinates")
+    @Expose
+    private Coordinates coordinates;
     @SerializedName("location")
     @Expose
     private Location location;
-    @SerializedName("distance")
-    @Expose
-    private Double distance;
     @SerializedName("transactions")
     @Expose
     private List<String> transactions = null;
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
     public String getId() {
         return id;
@@ -80,30 +63,6 @@ public class Business {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Boolean getIsClosed() {
-        return isClosed;
-    }
-
-    public void setIsClosed(Boolean isClosed) {
-        this.isClosed = isClosed;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public Integer getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(Integer reviewCount) {
-        this.reviewCount = reviewCount;
     }
 
     public String getName() {
@@ -114,12 +73,92 @@ public class Business {
         this.name = name;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public boolean isIsClaimed() {
+        return isClaimed;
+    }
+
+    public void setIsClaimed(boolean isClaimed) {
+        this.isClaimed = isClaimed;
+    }
+
+    public boolean isIsClosed() {
+        return isClosed;
+    }
+
+    public void setIsClosed(boolean isClosed) {
+        this.isClosed = isClosed;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public List<String> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<String> photos) {
+        this.photos = photos;
+    }
+
+    public List<Hour> getHours() {
+        return hours;
+    }
+
+    public void setHours(List<Hour> hours) {
+        this.hours = hours;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public Coordinates getCoordinates() {
@@ -130,28 +169,12 @@ public class Business {
         this.coordinates = coordinates;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public Location getLocation() {
         return location;
     }
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
     }
 
     public List<String> getTransactions() {

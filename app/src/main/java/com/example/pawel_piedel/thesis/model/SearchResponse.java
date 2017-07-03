@@ -2,6 +2,7 @@
 package com.example.pawel_piedel.thesis.model;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +10,7 @@ public class SearchResponse {
 
     @SerializedName("total")
     @Expose
-    private Integer total;
+    private int total;
     @SerializedName("businesses")
     @Expose
     private List<Business> businesses = null;
@@ -17,11 +18,11 @@ public class SearchResponse {
     @Expose
     private Region region;
 
-    public Integer getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
