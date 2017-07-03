@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.activities;
+package com.example.pawel_piedel.thesis.tabs.coffes;
 
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -9,7 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.pawel_piedel.thesis.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.tabs.restaurants.RestaurantsFragment;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 
 import butterknife.BindView;
@@ -31,28 +33,20 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setUpLayout();
+
+
+    }
+
+    private void setUpLayout() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-       /* new Thread(new Runnable() {
-            public void run() {
-                try {
-                    YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
-                    YelpFusionApi yelpFusionApi = apiFactory.createAPI(CLIENT_ID, CLIENT_SECRET);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();*/
-
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setupViewPager(viewPager);
-
         tabLayout.setupWithViewPager(viewPager);
-
-
     }
 
     public void setupViewPager(ViewPager viewPager) {
