@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.tabs.coffes;
+package com.example.pawel_piedel.thesis.activities;
 
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -9,6 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.pawel_piedel.thesis.api.ApiService;
+import com.example.pawel_piedel.thesis.api.ServiceGenerator;
+import com.example.pawel_piedel.thesis.tabs.coffes.CoffiesFragment;
 import com.example.pawel_piedel.thesis.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.tabs.restaurants.RestaurantsFragment;
@@ -34,6 +37,22 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setUpLayout();
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+                    ApiService yelpService = ServiceGenerator.createService(ApiService.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+
 
 
     }
