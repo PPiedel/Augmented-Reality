@@ -188,4 +188,25 @@ public class Business {
         this.transactions = transactions;
     }
 
+    @Override
+    public String toString() {
+        return "Business{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", isClaimed=" + isClaimed +
+                ", isClosed=" + isClosed +
+                ", url='" + url + '\'' +
+                ", price='" + price + '\'' +
+                ", rating=" + rating +
+                ", reviewCount=" + reviewCount +
+                ", phone='" + phone + '\'' +
+                ", photos=" + photos +
+                ", hours=" + hours +
+                ", categories=" + categories +
+                ", coordinates=" + coordinates +
+                ", location=" + location +
+                ", transactions=" + transactions +
+                '}';
+    }
 }

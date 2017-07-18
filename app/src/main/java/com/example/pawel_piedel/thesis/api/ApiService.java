@@ -29,9 +29,9 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/oauth2/token")
-    Call<AccessToken> getAccessToken(@Field("client_id") String clientId,
-                                     @Field("client_secret") String clientSecret,
-                                     @Field("grant_type") String grantType);
+    Call<AccessToken> provideAccessToken(@Field("client_id") String clientId,
+                                         @Field("client_secret") String clientSecret,
+                                         @Field("grant_type") String grantType);
 
 
 }

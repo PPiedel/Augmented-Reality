@@ -11,6 +11,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -35,24 +36,18 @@ public class ServiceGenerator {
     private static AccessToken accessToken;
 
     public static <S> S createService(Class<S> serviceClass) {
-        try {
-            accessToken = getAccessToken(CLIENT_ID,CLIENT_SECRET);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (accessToken==null){
+            try {
+                provideAccessToken(CLIENT_ID,CLIENT_SECRET);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        httpClient = new OkHttpClient.Builder()
-                        .addInterceptor(new AuthenticationInterceptor(accessToken));
-        OkHttpClient client = httpClient.build();
-
-        builder = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-        Retrofit retrofit = builder.client(client).build();
-        return retrofit.create(serviceClass);
+        return buildClient(serviceClass);
     }
 
-    public static AccessToken getAccessToken(String clientId, String clientSecret) throws IOException {
+    public static void provideAccessToken(String clientId, String clientSecret) throws IOException {
         authClient = new OkHttpClient.Builder()
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
@@ -62,11 +57,12 @@ public class ServiceGenerator {
                 .build();
 
         ApiService client = retrofit.create(ApiService.class);
-        Call<AccessToken> call = client.getAccessToken(CLIENT_ID,CLIENT_SECRET,"client_credentials");
+        Call<AccessToken> call = client.provideAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE);
         call.enqueue(new Callback<AccessToken>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                Log.v(LOG_TAG,response.body().getAccessToken());
+                accessToken = response.body();
+                Log.v(LOG_TAG,"Api key : "+response.body().getAccessToken());
             }
 
             @Override
@@ -74,7 +70,22 @@ public class ServiceGenerator {
                 Log.v(LOG_TAG,"Failure");
             }
         });
-        return accessToken;
+
+
+
+    }
+
+    public static  <S> S buildClient(Class<S> serviceClass){
+        httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new AuthenticationInterceptor(accessToken));
+        OkHttpClient client = httpClient.build();
+
+        builder = new Retrofit.Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create());
+        Retrofit retrofit = builder.client(client).build();
+        return retrofit.create(serviceClass);
     }
 
 
