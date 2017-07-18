@@ -15,6 +15,6 @@ public interface MainContract  {
 
 
     public interface Presenter extends BasePresenter {
-        void loadAccessToken();
+        //void loadAccessToken();
     }
 }

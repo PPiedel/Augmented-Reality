@@ -21,17 +21,23 @@ import rx.Observable;
 public interface ApiService {
     public final String BUSINESS_ID_PARAM = "id";
 
-    @GET("businesses/search")
-    Observable<SearchResponse> getBusinessesList();
+    @GET("/v3/businesses/search")
+    Observable<SearchResponse> getBusinessesList(@Query("latitude") double latitiude, @Query("longitude") double longtitiude);
 
-    @GET("businesses/{id}")
+    @GET("/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);
+
+    /*@FormUrlEncoded
+    @POST("/oauth2/token")
+    Call<AccessToken> getAccessToken(@Field("client_id") String clientId,
+                                           @Field("client_secret") String clientSecret,
+                                           @Field("grant_type") String grantType);*/
 
     @FormUrlEncoded
     @POST("/oauth2/token")
-    Call<AccessToken> provideAccessToken(@Field("client_id") String clientId,
-                                         @Field("client_secret") String clientSecret,
-                                         @Field("grant_type") String grantType);
+    Observable<AccessToken> getAccessToken(@Field("client_id") String clientId,
+                                           @Field("client_secret") String clientSecret,
+                                           @Field("grant_type") String grantType);
 
 
 }

@@ -15,15 +15,12 @@ import java.util.List;
 public interface CafesContract {
     interface View extends BaseView<Presenter>{
         void showCafes(List<Business> cafes);
-        void setLoadingIndicator(boolean active);
 
     }
 
 
     interface Presenter extends BasePresenter{
         void loadCafes();
-        void loadMoreCafes();
-        void openCafeDetail(@NonNull Business cafe);
     }
 
 }

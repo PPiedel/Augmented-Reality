@@ -1,21 +1,20 @@
 package com.example.pawel_piedel.thesis.main;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.example.pawel_piedel.thesis.api.ApiService;
-import com.example.pawel_piedel.thesis.api.ServiceGenerator;
+import com.example.pawel_piedel.thesis.api.NetworkService;
+import com.example.pawel_piedel.thesis.model.AccessToken;
 
-import static com.example.pawel_piedel.thesis.api.ServiceGenerator.CLIENT_ID;
-import static com.example.pawel_piedel.thesis.api.ServiceGenerator.CLIENT_SECRET;
-import static com.example.pawel_piedel.thesis.api.ServiceGenerator.GRANT_TYPE;
+import java.io.IOException;
 
 /**
  * Created by Pawel_Piedel on 18.07.2017.
  */
 
 public class MainPresenter implements MainContract.Presenter {
+    private static final String LOG_TAG = MainPresenter.class.getName();
     private MainContract.View mainView;
-    private ApiService apiService;
 
     public MainPresenter(@NonNull MainContract.View mainView) {
         this.mainView = mainView;
@@ -24,12 +23,31 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void start() {
-        loadAccessToken();
+    //    loadAccessToken();
     }
 
-    @Override
+   /* @Override
     public void loadAccessToken() {
-        apiService = ServiceGenerator.createService(ApiService.class);
-        apiService.provideAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE);
-    }
+        try {
+            NetworkService.loadAccessToken(new GetAccessTokenCallback() {
+                @Override
+                public void onSuccess(AccessToken accessToken) {
+                    Log.v(LOG_TAG,accessToken.toString());
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.e(LOG_TAG,t.toString());
+                }
+
+                @Override
+                public void onNetworkFaiulre() {
+                    Log.e(LOG_TAG,"Network failure");
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
+
 }

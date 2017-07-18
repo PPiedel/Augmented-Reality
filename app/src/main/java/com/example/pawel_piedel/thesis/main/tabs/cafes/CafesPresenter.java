@@ -4,17 +4,26 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.api.ApiService;
-import com.example.pawel_piedel.thesis.api.ServiceGenerator;
+import com.example.pawel_piedel.thesis.api.NetworkService;
+import com.example.pawel_piedel.thesis.main.GetBusinessesCallback;
+import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Retrofit;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.internal.schedulers.NewThreadScheduler;
 import rx.schedulers.Schedulers;
 
+import static com.example.pawel_piedel.thesis.api.NetworkService.CLIENT_ID;
+import static com.example.pawel_piedel.thesis.api.NetworkService.CLIENT_SECRET;
+import static com.example.pawel_piedel.thesis.api.NetworkService.GRANT_TYPE;
+import static com.example.pawel_piedel.thesis.api.NetworkService.builder;
+import static com.example.pawel_piedel.thesis.api.NetworkService.client;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -26,6 +35,7 @@ public class CafesPresenter implements CafesContract.Presenter {
     private final CafesContract.View cafesView;
     private ApiService apiService;
     List<Business> businesses = new ArrayList<>();
+    boolean isAccessTokenLoaded = false;
 
 
     public CafesPresenter(@NonNull CafesContract.View cafesView) {
@@ -35,14 +45,39 @@ public class CafesPresenter implements CafesContract.Presenter {
 
     @Override
     public void start() {
-        loadCafes();
+        Retrofit retrofit = builder
+                .client(client)
+                .build();
+        ApiService authClient = retrofit.create(ApiService.class);
+        authClient.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.v(LOG_TAG,"on completed");
+                        loadCafes();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+                        NetworkService.accessToken = accessToken;
+                        Log.v(LOG_TAG,"Cafes presenter" +accessToken.toString());
+                    }
+                });
+
     }
 
     @Override
     public void loadCafes() {
-        apiService =  ServiceGenerator.createService(ApiService.class);
-        apiService.getBusinessesList()
-                .subscribeOn(Schedulers.newThread())
+        ApiService client = NetworkService.createService(ApiService.class);
+        client.getBusinessesList(50.03,22.01)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
                     @Override
@@ -52,26 +87,16 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(LOG_TAG,e.toString());
+                        Log.v(LOG_TAG,e.toString());
                     }
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        businesses.addAll(searchResponse.getBusinesses());
-                        Log.v(LOG_TAG,businesses.toString());
+                        cafesView.showCafes(searchResponse.getBusinesses());
+                        Log.v(LOG_TAG,searchResponse.toString());
                     }
                 });
 
-
     }
 
-    @Override
-    public void loadMoreCafes() {
-
-    }
-
-    @Override
-    public void openCafeDetail(@NonNull Business cafe) {
-
-    }
 }
