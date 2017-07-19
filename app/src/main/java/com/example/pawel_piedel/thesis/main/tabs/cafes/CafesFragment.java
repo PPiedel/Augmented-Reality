@@ -1,8 +1,5 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,16 +14,14 @@ import com.example.pawel_piedel.thesis.model.Business;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import static dagger.internal.Preconditions.checkNotNull;
 
 public class CafesFragment extends Fragment implements CafesContract.View {
     private static String LOG_TAG = CafesFragment.class.getName();
-
     private CafesContract.Presenter cafesPresenter;
 
     public CafesFragment() {
+        // Required empty public constructor
     }
 
     public static CafesFragment newInstance() {
@@ -37,7 +32,7 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(LOG_TAG,"onCreateView");
-        return inflater.inflate(R.layout.fragment_coffies, container, false);
+        return inflater.inflate(R.layout.fragment_cafes, container, false);
 
     }
 
@@ -47,9 +42,8 @@ public class CafesFragment extends Fragment implements CafesContract.View {
         cafesPresenter.start();
     }
 
-    @Override
-    public void setPresenter(@NonNull CafesContract.Presenter presenter) {
-        cafesPresenter = checkNotNull(presenter);
+    public void setPresenter(@NonNull CafesContract.Presenter deliveriesPresenter) {
+        cafesPresenter = checkNotNull(deliveriesPresenter);
     }
 
 

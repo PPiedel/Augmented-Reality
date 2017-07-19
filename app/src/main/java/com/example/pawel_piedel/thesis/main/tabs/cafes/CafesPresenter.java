@@ -9,7 +9,6 @@ import com.example.pawel_piedel.thesis.api.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +40,12 @@ public class CafesPresenter implements CafesContract.Presenter {
         this.cafes = new ArrayList<>();
         this.cafesView = checkNotNull(cafesView);
         this.sharedPreferences = sharedPreferences;
-        cafesView.setPresenter(this);
+        this.cafesView.setPresenter(this);
     }
 
     @Override
     public void start() {
         load();
-
     }
 
     public void load() {

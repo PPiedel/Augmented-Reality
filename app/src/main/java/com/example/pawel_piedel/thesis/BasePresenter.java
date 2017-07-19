@@ -1,5 +1,8 @@
 package com.example.pawel_piedel.thesis;
 
+import android.view.View;
+
+import com.example.pawel_piedel.thesis.main.MainContract;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 
 /**
@@ -9,7 +12,5 @@ import com.example.pawel_piedel.thesis.model.AccessToken;
 public interface BasePresenter {
 
     void start();
-    void saveAccessTokenInSharedPref();
-    AccessToken retrieveAccessTokenFromSharedPref();
 
 }

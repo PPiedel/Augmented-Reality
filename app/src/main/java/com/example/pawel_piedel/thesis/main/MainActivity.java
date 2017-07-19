@@ -11,8 +11,10 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
+import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesContract;
 import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesPresenter;
+import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesContract;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.restaurants.RestaurantsFragment;
@@ -65,12 +67,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         adapter.addFragment(RestaurantsFragment.newInstance(), "Restaurants");
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
-        cafesFragment.setPresenter(new CafesPresenter(cafesFragment,sharedPreferences));
+        CafesPresenter presenter = new CafesPresenter(cafesFragment,sharedPreferences);
         adapter.addFragment(cafesFragment, "Cafes");
 
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
-        deliveriesFragment.setPresenter(new DeliveriesPresenter(deliveriesFragment,sharedPreferences));
-        adapter.addFragment(DeliveriesFragment.newInstance(), "Delivery");
+        DeliveriesPresenter presenter1 = new  DeliveriesPresenter(deliveriesFragment,sharedPreferences);
+        adapter.addFragment(deliveriesFragment, "Delivery");
+
         viewPager.setAdapter(adapter);
     }
 
@@ -78,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    @Override
-    public void setPresenter(@NonNull  MainContract.Presenter presenter) {
-        mPresenter = checkNotNull(presenter);
+    public void setPresenter(@NonNull  MainContract.Presenter deliveriesPresenter) {
+        mPresenter = checkNotNull(deliveriesPresenter);
     }
 }

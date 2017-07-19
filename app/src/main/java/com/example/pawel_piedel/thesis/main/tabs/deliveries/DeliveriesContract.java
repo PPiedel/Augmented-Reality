@@ -13,14 +13,13 @@ import java.util.List;
 
 public interface DeliveriesContract {
 
-    interface View extends BaseView<DeliveriesContract.Presenter> {
+    interface View extends BaseView<Presenter> {
         void showDeliveries(List<Business> deliveries);
 
     }
 
     interface Presenter extends BasePresenter {
         void load();
-
         void loadDeliveries();
     }
 }

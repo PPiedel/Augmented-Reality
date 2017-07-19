@@ -39,7 +39,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
         this.deliveries = new ArrayList<>();
         this.deliveriesView = checkNotNull(deliveriesView);
         this.sharedPreferences = sharedPreferences;
-        deliveriesView.setPresenter(this);
+        this.deliveriesView.setPresenter(this);
     }
 
 
@@ -72,7 +72,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                         @Override
                         public void onNext(AccessToken accessToken) {
                             ServiceFactory.accessToken = accessToken;
-                            Log.v(LOG_TAG, "Cafes presenter" + accessToken.toString());
+                            Log.v(LOG_TAG, "DeliveriesPresenter " + accessToken.toString());
                         }
                     });
         } else {
@@ -105,7 +105,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                 });
     }
 
-    @Override
+
     public void saveAccessTokenInSharedPref() {
         sharedPreferences
                 .edit()
@@ -113,7 +113,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                 .apply();
     }
 
-    @Override
+
     public AccessToken retrieveAccessTokenFromSharedPref() {
         String json = sharedPreferences
                 .getString("access_token", "");

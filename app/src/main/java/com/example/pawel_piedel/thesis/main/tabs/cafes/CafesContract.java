@@ -15,7 +15,6 @@ import java.util.List;
 public interface CafesContract {
     interface View extends BaseView<Presenter>{
         void showCafes(List<Business> cafes);
-
     }
 
 
