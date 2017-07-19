@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,14 +45,15 @@ public class CafesFragment extends Fragment implements CafesContract.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cafes, container, false);
         ButterKnife.bind(this, view);
-        setUp(view);
+        setUpRecyclerView(view);
         return view;
     }
 
-    protected void setUp(View view) {
+    protected void setUpRecyclerView(View view) {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
 
         cafesPresenter.onViewPreapred();

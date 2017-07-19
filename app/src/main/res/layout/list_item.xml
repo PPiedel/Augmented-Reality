@@ -2,15 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp" >
+    android:padding="16dp">
 
     <!-- Thumbnail Image -->
     <ImageView
         android:id="@+id/thubnail"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="8dp" />
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_restaurant_black_24dp"
+        android:contentDescription="@string/thubnail" />
 
     <!-- Movie Title -->
     <TextView
@@ -18,37 +20,56 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thubnail"
-        android:layout_toRightOf="@+id/thubnail"
+        android:layout_toEndOf="@+id/thubnail"
+        android:maxLines="1"
         android:textSize="@dimen/title"
         android:textStyle="bold" />
 
-    <!-- Rating -->
+    <!-- Address1 -->
     <TextView
-        android:id="@+id/rating"
-        android:layout_width="fill_parent"
+        android:id="@+id/address"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thubnail"
-        android:textSize="@dimen/rating" />
-
-    <!-- Genre -->
-    <TextView
-        android:id="@+id/genre"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rating"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/thubnail"
+        android:layout_toEndOf="@+id/thubnail"
         android:textSize="@dimen/genre" />
 
-    <!-- Release Year -->
+    <!-- Address 2 -->
     <TextView
-        android:id="@+id/releaseYear"
+        android:id="@+id/address2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/address"
+        android:layout_toEndOf="@+id/thubnail"
+        android:textSize="@dimen/genre" />
+
+
+    <!-- Favourite star -->
+    <ImageButton
+        android:id="@+id/favouriteStarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@null"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/year" />
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/star"
+        android:src="@drawable/ic_star_border_black_24dp" />
+
+    <TextView
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:textSize="@dimen/rating"/>
+
+    <TextView
+        android:id="@+id/isClosed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/thubnail"
+        android:layout_alignParentBottom="true"
+        android:textSize="@dimen/genre"/>
 
 </RelativeLayout>
