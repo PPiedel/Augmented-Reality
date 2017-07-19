@@ -14,6 +14,7 @@ import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesFragment;
+import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.restaurants.RestaurantsFragment;
 
 import butterknife.BindView;
@@ -60,12 +61,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
         adapter.addFragment(RestaurantsFragment.newInstance(), "Restaurants");
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
         cafesFragment.setPresenter(new CafesPresenter(cafesFragment,sharedPreferences));
         adapter.addFragment(cafesFragment, "Cafes");
 
+        DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
+        deliveriesFragment.setPresenter(new DeliveriesPresenter(deliveriesFragment,sharedPreferences));
         adapter.addFragment(DeliveriesFragment.newInstance(), "Delivery");
         viewPager.setAdapter(adapter);
     }

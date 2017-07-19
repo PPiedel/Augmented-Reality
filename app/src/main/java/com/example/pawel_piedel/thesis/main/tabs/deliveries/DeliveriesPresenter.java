@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.main.tabs.cafes;
+package com.example.pawel_piedel.thesis.main.tabs.deliveries;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -9,7 +9,6 @@ import com.example.pawel_piedel.thesis.api.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,30 +25,30 @@ import static com.example.pawel_piedel.thesis.util.Util.gson;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
- * Created by Pawel_Piedel on 18.07.2017.
+ * Created by Pawel_Piedel on 19.07.2017.
  */
 
-public class CafesPresenter implements CafesContract.Presenter {
-    private final static String LOG_TAG = CafesPresenter.class.getName();
-    private CafesContract.View cafesView;
+public class DeliveriesPresenter implements DeliveriesContract.Presenter {
+    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
+    private DeliveriesContract.View deliveriesView;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
-    private List<Business> cafes;
+    private List<Business> deliveries;
 
-
-    public CafesPresenter(@NonNull CafesContract.View cafesView, SharedPreferences sharedPreferences) {
-        this.cafes = new ArrayList<>();
-        this.cafesView = checkNotNull(cafesView);
+    public DeliveriesPresenter(@NonNull DeliveriesContract.View deliveriesView, SharedPreferences sharedPreferences) {
+        this.deliveries = new ArrayList<>();
+        this.deliveriesView = checkNotNull(deliveriesView);
         this.sharedPreferences = sharedPreferences;
-        cafesView.setPresenter(this);
+        deliveriesView.setPresenter(this);
     }
+
 
     @Override
     public void start() {
         load();
-
     }
 
+    @Override
     public void load() {
         ServiceFactory.accessToken = retrieveAccessTokenFromSharedPref();
         if (accessToken == null) {
@@ -62,7 +61,7 @@ public class CafesPresenter implements CafesContract.Presenter {
                         public void onCompleted() {
                             saveAccessTokenInSharedPref();
 
-                            loadCafes();
+                            loadDeliveries();
                         }
 
                         @Override
@@ -77,27 +76,12 @@ public class CafesPresenter implements CafesContract.Presenter {
                         }
                     });
         } else {
-            loadCafes();
+            loadDeliveries();
         }
-
-    }
-
-    public void saveAccessTokenInSharedPref() {
-        sharedPreferences
-                .edit()
-                .putString("access_token", gson.toJson(accessToken))
-                .apply();
-    }
-
-    public AccessToken retrieveAccessTokenFromSharedPref() {
-        String json = sharedPreferences
-                .getString("access_token", "");
-        Log.v(LOG_TAG, "Retrieved access token : " + json);
-        return gson.fromJson(json, AccessToken.class);
     }
 
     @Override
-    public void loadCafes() {
+    public void loadDeliveries() {
         apiService = ServiceFactory.createService(ApiService.class);
         apiService.getBusinessesList(50.03, 22.01)
                 .subscribeOn(Schedulers.io())
@@ -115,11 +99,25 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        cafes.addAll(searchResponse.getBusinesses());
+                        deliveries.addAll(searchResponse.getBusinesses());
                         Log.v(LOG_TAG, searchResponse.toString());
                     }
                 });
-
     }
 
+    @Override
+    public void saveAccessTokenInSharedPref() {
+        sharedPreferences
+                .edit()
+                .putString("access_token", gson.toJson(accessToken))
+                .apply();
+    }
+
+    @Override
+    public AccessToken retrieveAccessTokenFromSharedPref() {
+        String json = sharedPreferences
+                .getString("access_token", "");
+        Log.v(LOG_TAG, "Retrieved access token : " + json);
+        return gson.fromJson(json, AccessToken.class);
+    }
 }

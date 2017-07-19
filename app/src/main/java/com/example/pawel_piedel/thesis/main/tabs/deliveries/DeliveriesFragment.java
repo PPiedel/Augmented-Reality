@@ -2,25 +2,33 @@ package com.example.pawel_piedel.thesis.main.tabs.deliveries;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesContract;
+import com.example.pawel_piedel.thesis.model.Business;
 
-public class DeliveriesFragment extends Fragment {
+import java.util.List;
+
+import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+
+public class DeliveriesFragment extends Fragment implements DeliveriesContract.View {
+    private final String LOG_TAG = DeliveriesFragment.class.getName();
     private OnFragmentInteractionListener mListener;
+    private DeliveriesContract.Presenter presenter;
 
     public DeliveriesFragment() {
         // Required empty public constructor
     }
 
     public static DeliveriesFragment newInstance() {
-        DeliveriesFragment fragment = new DeliveriesFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new DeliveriesFragment();
     }
 
     @Override
@@ -36,12 +44,30 @@ public class DeliveriesFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        presenter.start();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+
+    @Override
+    public void showDeliveries(List<Business> deliveries) {
+        for (Business b : deliveries){
+            Log.v(LOG_TAG,b.toString());
+        }
+    }
+
+    @Override
+    public void setPresenter(@NonNull DeliveriesContract.Presenter presenter) {
+        presenter = checkNotNull(presenter);
+    }
+
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 }

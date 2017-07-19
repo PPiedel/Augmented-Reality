@@ -21,12 +21,11 @@ import rx.schedulers.Schedulers;
 
 
 public class ServiceFactory {
-    public static final String LOG_TAG = ServiceFactory.class.getCanonicalName();
+
     public static final String API_BASE_URL = "https://api.yelp.com";
     public static final String CLIENT_ID = "VokcbDNJly63jzOhJqJ0JA";
     public static final String CLIENT_SECRET = "gaFo3VLh1cNWS5L7nHJ6nRxVq97iRJCqvBAWnvmoiAWCf2xriOKhp6h5U0LNuj8F";
     public static final String GRANT_TYPE = "client_credentials";
-
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     public static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -34,6 +33,7 @@ public class ServiceFactory {
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create());
     public static AccessToken accessToken;
+    private final String LOG_TAG = ServiceFactory.class.getCanonicalName();
 
 
     public static <S> S createService(Class<S> serviceClass) {
