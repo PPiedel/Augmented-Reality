@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.model.Business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,12 +20,26 @@ import butterknife.ButterKnife;
  * Created by Pawel_Piedel on 19.07.2017.
  */
 
-public class BussinessAdapter extends RecyclerView.Adapter<BussinessAdapter.ViewHolder> {
+public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHolder> {
 
-    private List<Business> businessList;
+    private List<Business> businessList = new ArrayList<>();
 
-    BussinessAdapter(List<Business> businesses) {
-        this.businessList = businesses;
+    public BusinessAdapter() {
+    }
+
+    public void addBusinessList(List<Business> businessList){
+        this.businessList.addAll(businessList);
+        notifyDataSetChanged();
+    }
+
+    public void addBusiness(Business business){
+        this.businessList.add(business);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        this.businessList.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -42,12 +57,17 @@ public class BussinessAdapter extends RecyclerView.Adapter<BussinessAdapter.View
     }
 
     @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
     public int getItemCount() {
         return businessList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.image) ImageView image;
+        @BindView(R.id.icon) ImageView image;
         @BindView(R.id.firstLine) TextView firstLine;
         @BindView(R.id.secondLine) TextView secondLine;
 

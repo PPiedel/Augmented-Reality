@@ -19,6 +19,7 @@ public interface CafesContract {
 
 
     interface Presenter extends BasePresenter{
+        void onViewPreapred();
         void load();
         void loadCafes();
     }

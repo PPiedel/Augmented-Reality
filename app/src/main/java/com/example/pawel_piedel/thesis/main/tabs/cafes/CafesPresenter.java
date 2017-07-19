@@ -33,11 +33,9 @@ public class CafesPresenter implements CafesContract.Presenter {
     private CafesContract.View cafesView;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
-    private List<Business> cafes;
 
 
     public CafesPresenter(@NonNull CafesContract.View cafesView, SharedPreferences sharedPreferences) {
-        this.cafes = new ArrayList<>();
         this.cafesView = checkNotNull(cafesView);
         this.sharedPreferences = sharedPreferences;
         this.cafesView.setPresenter(this);
@@ -45,6 +43,10 @@ public class CafesPresenter implements CafesContract.Presenter {
 
     @Override
     public void start() {
+    }
+
+    @Override
+    public void onViewPreapred() {
         load();
     }
 
@@ -113,8 +115,7 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        cafes.addAll(searchResponse.getBusinesses());
-                        Log.v(LOG_TAG, searchResponse.toString());
+                        cafesView.showCafes(searchResponse.getBusinesses());
                     }
                 });
 
