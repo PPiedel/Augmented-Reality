@@ -1,11 +1,11 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.api.ApiService;
-import com.example.pawel_piedel.thesis.api.NetworkService;
-import com.example.pawel_piedel.thesis.main.GetBusinessesCallback;
+import com.example.pawel_piedel.thesis.api.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
@@ -16,14 +16,14 @@ import java.util.List;
 import retrofit2.Retrofit;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.internal.schedulers.NewThreadScheduler;
 import rx.schedulers.Schedulers;
 
-import static com.example.pawel_piedel.thesis.api.NetworkService.CLIENT_ID;
-import static com.example.pawel_piedel.thesis.api.NetworkService.CLIENT_SECRET;
-import static com.example.pawel_piedel.thesis.api.NetworkService.GRANT_TYPE;
-import static com.example.pawel_piedel.thesis.api.NetworkService.builder;
-import static com.example.pawel_piedel.thesis.api.NetworkService.client;
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_ID;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_SECRET;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.GRANT_TYPE;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.builder;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.client;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -34,22 +34,26 @@ public class CafesPresenter implements CafesContract.Presenter {
     private final static String LOG_TAG = CafesPresenter.class.getName();
     private final CafesContract.View cafesView;
     private ApiService apiService;
-    List<Business> businesses = new ArrayList<>();
-    boolean isAccessTokenLoaded = false;
+    private SharedPreferences sharedPreferences;
+
+    List<Business> cafes = new ArrayList<>();
 
 
-    public CafesPresenter(@NonNull CafesContract.View cafesView) {
+    public CafesPresenter(@NonNull CafesContract.View cafesView, SharedPreferences sharedPreferences) {
         this.cafesView = checkNotNull(cafesView,"cafesView cannot be null");
+        this.sharedPreferences = sharedPreferences;
         cafesView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        Retrofit retrofit = builder
-                .client(client)
-                .build();
-        ApiService authClient = retrofit.create(ApiService.class);
-        authClient.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
+        getAccessToken();
+
+    }
+
+    public void getAccessToken() {
+        apiService = ServiceFactory.createService(ApiService.class);
+        apiService.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -66,17 +70,16 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onNext(AccessToken accessToken) {
-                        NetworkService.accessToken = accessToken;
+                        ServiceFactory.accessToken = accessToken;
                         Log.v(LOG_TAG,"Cafes presenter" +accessToken.toString());
                     }
                 });
-
     }
 
     @Override
     public void loadCafes() {
-        ApiService client = NetworkService.createService(ApiService.class);
-        client.getBusinessesList(50.03,22.01)
+        apiService = ServiceFactory.createService(ApiService.class);
+        apiService.getBusinessesList(50.03,22.01)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -92,7 +95,7 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        cafesView.showCafes(searchResponse.getBusinesses());
+                        cafes.addAll(searchResponse.getBusinesses());
                         Log.v(LOG_TAG,searchResponse.toString());
                     }
                 });

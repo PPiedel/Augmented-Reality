@@ -1,5 +1,8 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,37 +34,24 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.v(LOG_TAG,"onCreateView");
+        return inflater.inflate(R.layout.fragment_coffies, container, false);
+
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setPresenter(new CafesPresenter(this));
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_coffies, container, false);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(LOG_TAG,"Cafes presenter start");
         cafesPresenter.start();
-
     }
-
 
     @Override
     public void setPresenter(@NonNull CafesContract.Presenter presenter) {
         cafesPresenter = checkNotNull(presenter);
     }
+
 
     @Override
     public void showCafes(List<Business> cafes) {

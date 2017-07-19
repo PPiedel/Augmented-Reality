@@ -1,12 +1,6 @@
 package com.example.pawel_piedel.thesis.main;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.example.pawel_piedel.thesis.api.NetworkService;
-import com.example.pawel_piedel.thesis.model.AccessToken;
-
-import java.io.IOException;
 
 /**
  * Created by Pawel_Piedel on 18.07.2017.
@@ -29,7 +23,7 @@ public class MainPresenter implements MainContract.Presenter {
    /* @Override
     public void loadAccessToken() {
         try {
-            NetworkService.loadAccessToken(new GetAccessTokenCallback() {
+            ServiceFactory.loadAccessToken(new GetAccessTokenCallback() {
                 @Override
                 public void onSuccess(AccessToken accessToken) {
                     Log.v(LOG_TAG,accessToken.toString());

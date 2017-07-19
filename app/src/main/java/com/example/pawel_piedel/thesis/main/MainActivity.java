@@ -1,5 +1,7 @@
 package com.example.pawel_piedel.thesis.main;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesFragment;
+import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.main.tabs.restaurants.RestaurantsFragment;
 
@@ -23,12 +26,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @BindView(R.id.viewpager) ViewPager viewPager;
     @BindView(R.id.tabs) TabLayout tabLayout;
 
-    MainContract.Presenter mPresenter;
+    private MainContract.Presenter mPresenter;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 
         setPresenter(new MainPresenter(this));
         //mPresenter.start();
@@ -55,7 +61,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(RestaurantsFragment.newInstance(), "Restaurants");
-        adapter.addFragment(CafesFragment.newInstance(), "Cafes");
+
+        CafesFragment cafesFragment = CafesFragment.newInstance();
+        cafesFragment.setPresenter(new CafesPresenter(cafesFragment,sharedPreferences));
+        adapter.addFragment(cafesFragment, "Cafes");
+
         adapter.addFragment(DeliveriesFragment.newInstance(), "Delivery");
         viewPager.setAdapter(adapter);
     }

@@ -20,6 +20,7 @@ public interface CafesContract {
 
 
     interface Presenter extends BasePresenter{
+        void getAccessToken();
         void loadCafes();
     }
 

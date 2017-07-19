@@ -9,6 +9,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Pawel_Piedel on 04.07.2017.
@@ -17,8 +20,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 
-public class NetworkService {
-    public static final String LOG_TAG = NetworkService.class.getCanonicalName();
+public class ServiceFactory {
+    public static final String LOG_TAG = ServiceFactory.class.getCanonicalName();
     public static final String API_BASE_URL = "https://api.yelp.com";
     public static final String CLIENT_ID = "VokcbDNJly63jzOhJqJ0JA";
     public static final String CLIENT_SECRET = "gaFo3VLh1cNWS5L7nHJ6nRxVq97iRJCqvBAWnvmoiAWCf2xriOKhp6h5U0LNuj8F";
@@ -36,18 +39,18 @@ public class NetworkService {
 
     public static <S> S createService(Class<S> serviceClass) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         if (accessToken != null) {
-            Log.v(LOG_TAG, "Access token NIE jest NULLEM");
             httpClient = new OkHttpClient.Builder()
-                    .addInterceptor(new AuthenticationInterceptor(accessToken))
-                    .addInterceptor(logging);
+                    .addInterceptor(new AuthenticationInterceptor(accessToken));
+
         }
+        httpClient.addInterceptor(logging);
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);
     }
+
 
 
 }
