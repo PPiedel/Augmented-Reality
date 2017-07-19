@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.api.ApiService;
@@ -48,12 +47,12 @@ public class CafesPresenter implements CafesContract.Presenter {
 
     @Override
     public void start() {
-        getAccessToken();
+        load();
 
     }
 
-    public void getAccessToken() {
-        AccessToken accessToken = retrieveAccessTokenFromSharedPref();
+    public void load() {
+        ServiceFactory.accessToken = retrieveAccessTokenFromSharedPref();
         if (accessToken==null){
             apiService = ServiceFactory.createService(ApiService.class);
             apiService.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
@@ -79,6 +78,10 @@ public class CafesPresenter implements CafesContract.Presenter {
                         }
                     });
         }
+        else {
+            loadCafes();
+        }
+
 
     }
 
