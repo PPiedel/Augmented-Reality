@@ -7,14 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.main.MainContract;
-import com.example.pawel_piedel.thesis.main.tabs.BusinessAdapter;
+import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.model.Business;
 
 import java.util.List;
