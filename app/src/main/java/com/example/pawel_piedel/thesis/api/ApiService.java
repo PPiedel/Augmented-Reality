@@ -27,12 +27,6 @@ public interface ApiService {
     @GET("/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);
 
-    /*@FormUrlEncoded
-    @POST("/oauth2/token")
-    Call<AccessToken> getAccessToken(@Field("client_id") String clientId,
-                                           @Field("client_secret") String clientSecret,
-                                           @Field("grant_type") String grantType);*/
-
     @FormUrlEncoded
     @POST("/oauth2/token")
     Observable<AccessToken> getAccessToken(@Field("client_id") String clientId,

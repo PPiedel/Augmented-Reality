@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.api.ApiService;
@@ -9,21 +10,19 @@ import com.example.pawel_piedel.thesis.api.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Retrofit;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_SECRET;
 import static com.example.pawel_piedel.thesis.api.ServiceFactory.GRANT_TYPE;
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.builder;
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.client;
+import static com.example.pawel_piedel.thesis.api.ServiceFactory.accessToken;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -32,9 +31,11 @@ import static dagger.internal.Preconditions.checkNotNull;
 
 public class CafesPresenter implements CafesContract.Presenter {
     private final static String LOG_TAG = CafesPresenter.class.getName();
-    private final CafesContract.View cafesView;
+    private static Gson gson = new Gson();
+    private CafesContract.View cafesView;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
+
 
     List<Business> cafes = new ArrayList<>();
 
@@ -52,28 +53,47 @@ public class CafesPresenter implements CafesContract.Presenter {
     }
 
     public void getAccessToken() {
-        apiService = ServiceFactory.createService(ApiService.class);
-        apiService.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<AccessToken>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.v(LOG_TAG,"on completed");
-                        loadCafes();
-                    }
+        AccessToken accessToken = retrieveAccessTokenFromSharedPref();
+        if (accessToken==null){
+            apiService = ServiceFactory.createService(ApiService.class);
+            apiService.getAccessToken(CLIENT_ID,CLIENT_SECRET,GRANT_TYPE)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<AccessToken>() {
+                        @Override
+                        public void onCompleted() {
+                            saveAccessTokenInSharedPref();
 
-                    @Override
-                    public void onError(Throwable e) {
+                            loadCafes();
+                        }
 
-                    }
+                        @Override
+                        public void onError(Throwable e) {
 
-                    @Override
-                    public void onNext(AccessToken accessToken) {
-                        ServiceFactory.accessToken = accessToken;
-                        Log.v(LOG_TAG,"Cafes presenter" +accessToken.toString());
-                    }
-                });
+                        }
+
+                        @Override
+                        public void onNext(AccessToken accessToken) {
+                            ServiceFactory.accessToken = accessToken;
+                            Log.v(LOG_TAG,"Cafes presenter" +accessToken.toString());
+                        }
+                    });
+        }
+
+    }
+
+    private void saveAccessTokenInSharedPref() {
+        sharedPreferences
+                .edit()
+                .putString("access_token", gson.toJson(accessToken))
+                .apply();
+    }
+
+    private AccessToken retrieveAccessTokenFromSharedPref(){
+        String json = sharedPreferences
+                .getString("access_token","");
+        Log.v(LOG_TAG,"Retrieved access token : "+json);
+        return gson.fromJson(json, AccessToken.class);
     }
 
     @Override

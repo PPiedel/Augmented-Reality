@@ -28,7 +28,6 @@ public class ServiceFactory {
     public static final String GRANT_TYPE = "client_credentials";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    public static OkHttpClient client = new OkHttpClient.Builder().build();
     public static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
@@ -50,7 +49,6 @@ public class ServiceFactory {
         Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);
     }
-
 
 
 }
