@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.api.ApiService;
-import com.example.pawel_piedel.thesis.api.LocationService;
-import com.example.pawel_piedel.thesis.api.ServiceFactory;
+import com.example.pawel_piedel.thesis.data.ApiService;
+import com.example.pawel_piedel.thesis.data.LocationService;
+import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
 
@@ -20,10 +20,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_ID;
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_SECRET;
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.GRANT_TYPE;
-import static com.example.pawel_piedel.thesis.api.ServiceFactory.accessToken;
+import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_ID;
+import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_SECRET;
+import static com.example.pawel_piedel.thesis.data.ServiceFactory.GRANT_TYPE;
+import static com.example.pawel_piedel.thesis.data.ServiceFactory.accessToken;
 import static com.example.pawel_piedel.thesis.util.Util.gson;
 import static dagger.internal.Preconditions.checkNotNull;
 
@@ -32,7 +32,7 @@ import static dagger.internal.Preconditions.checkNotNull;
  */
 
 public class CafesPresenter implements CafesContract.Presenter {
-    private final static String LOG_TAG = CafesPresenter.class.getName();
+    private final String LOG_TAG = CafesPresenter.class.getName();
     private CafesContract.View cafesView;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
@@ -50,7 +50,7 @@ public class CafesPresenter implements CafesContract.Presenter {
     }
 
     @Override
-    public void onViewPreapred() {
+    public void onViewPrepared() {
         load();
     }
 
@@ -105,15 +105,8 @@ public class CafesPresenter implements CafesContract.Presenter {
         if (LocationService.mLastLocation != null) {
             loadCafes();
         } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(cafesView.getContext());
-            if (ActivityCompat.checkSelfPermission(cafesView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(cafesView.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(cafesView.provideContext());
+            if (ActivityCompat.checkSelfPermission(cafesView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(cafesView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()
@@ -132,7 +125,12 @@ public class CafesPresenter implements CafesContract.Presenter {
 
     private void loadCafes() {
         apiService = ServiceFactory.createService(ApiService.class);
-        apiService.getBusinessesList(LocationService.mLastLocation.getLatitude(),LocationService.mLastLocation.getLongitude(),20000)
+        apiService.getBusinessesList(
+                "coffee",
+                LocationService.mLastLocation.getLatitude(),
+                LocationService.mLastLocation.getLongitude(),
+                null,
+                null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {

@@ -16,12 +16,12 @@ import java.util.List;
 public interface CafesContract {
     interface View extends BaseView<Presenter>{
         void showCafes(List<Business> cafes);
-        Context getContext();
+        Context provideContext();
     }
 
 
     interface Presenter extends BasePresenter{
-        void onViewPreapred();
+        void onViewPrepared();
         void load();
         void manageToLoadCafes();
     }

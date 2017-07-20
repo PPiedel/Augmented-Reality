@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.main.tabs.deliveries;
+package com.example.pawel_piedel.thesis.main.tabs.restaurants;
 
 import android.Manifest;
 import android.content.SharedPreferences;
@@ -12,11 +12,7 @@ import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
-import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscriber;
@@ -32,32 +28,29 @@ import static com.example.pawel_piedel.thesis.util.Util.gson;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
- * Created by Pawel_Piedel on 19.07.2017.
+ * Created by Pawel_Piedel on 20.07.2017.
  */
 
-public class DeliveriesPresenter implements DeliveriesContract.Presenter {
-    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
-    private DeliveriesContract.View deliveriesView;
+public class RestaurantsPresenter implements RestaurantsContract.Presenter {
+    private final String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
+    private RestaurantsContract.View restaurantsView;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
-    private List<Business> deliveries;
 
-    public DeliveriesPresenter(@NonNull DeliveriesContract.View deliveriesView, SharedPreferences sharedPreferences) {
-        this.deliveries = new ArrayList<>();
-        this.deliveriesView = checkNotNull(deliveriesView);
+    public RestaurantsPresenter(@NonNull RestaurantsContract.View restaurantsView, SharedPreferences sharedPreferences) {
+        this.restaurantsView = checkNotNull(restaurantsView);
         this.sharedPreferences = sharedPreferences;
-        this.deliveriesView.setPresenter(this);
+        this.restaurantsView.setPresenter(this);
     }
-
 
     @Override
     public void start() {
-        load();
+
     }
 
     @Override
     public void onViewPrepared() {
-
+        load();
     }
 
     @Override
@@ -73,7 +66,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                         public void onCompleted() {
                             saveAccessTokenInSharedPref();
 
-                            manageToLoadDeliveries();
+                           manageToLoadRestaurants();
                         }
 
                         @Override
@@ -88,15 +81,8 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                         }
                     });
         } else {
-            manageToLoadDeliveries();
+            manageToLoadRestaurants();
         }
-    }
-
-    public AccessToken retrieveAccessTokenFromSharedPref() {
-        String json = sharedPreferences
-                .getString("access_token", "");
-        Log.v(LOG_TAG, "Retrieved access token : " + json);
-        return gson.fromJson(json, AccessToken.class);
     }
 
     public void saveAccessTokenInSharedPref() {
@@ -106,14 +92,21 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                 .apply();
     }
 
+    public AccessToken retrieveAccessTokenFromSharedPref() {
+        String json = sharedPreferences
+                .getString("access_token", "");
+        Log.v(LOG_TAG, "Retrieved access token : " + json);
+        return gson.fromJson(json, AccessToken.class);
+    }
+
     @Override
-    public void manageToLoadDeliveries() {
+    public void manageToLoadRestaurants() {
         if (LocationService.mLastLocation != null) {
-            loadDeliveries();
+            loadCafes();
         } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(deliveriesView.provideContext());
-            if (ActivityCompat.checkSelfPermission(deliveriesView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(deliveriesView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(restaurantsView.provideContext());
+            if (ActivityCompat.checkSelfPermission(restaurantsView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(restaurantsView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()
@@ -121,20 +114,20 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
                         @Override
                         public void call(Location location) {
                             LocationService.mLastLocation = location;
-                            Log.i(LOG_TAG, "Location obtained : " + location.toString());
-                            loadDeliveries();
+                            Log.i(LOG_TAG,"Location obtained : "+ location.toString());
+                            loadCafes();
                         }
                     });
         }
     }
 
-    private void loadDeliveries() {
+    private void loadCafes() {
         apiService = ServiceFactory.createService(ApiService.class);
         apiService.getBusinessesList(
-                "delivery",
+                "restaurants",
                 LocationService.mLastLocation.getLatitude(),
                 LocationService.mLastLocation.getLongitude(),
-                40000,
+                null,
                 null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -151,9 +144,8 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        deliveriesView.showDeliveries(searchResponse.getBusinesses());
+                        restaurantsView.showRestaurants(searchResponse.getBusinesses());
                     }
                 });
     }
-
 }

@@ -40,6 +40,7 @@ import com.example.pawel_piedel.thesis.main.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.main.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.main.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.main.tabs.restaurants.RestaurantsPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,15 +90,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(RestaurantsFragment.newInstance(), "Restaurants");
+        RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
+        RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment,sharedPreferences);
+        adapter.addFragment(restaurantsFragment, getString(R.string.restaurants));
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
         CafesPresenter presenter = new CafesPresenter(cafesFragment,sharedPreferences);
-        adapter.addFragment(cafesFragment, "Cafes");
+        adapter.addFragment(cafesFragment, getString(R.string.cafes));
 
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
         DeliveriesPresenter presenter1 = new  DeliveriesPresenter(deliveriesFragment,sharedPreferences);
-        adapter.addFragment(deliveriesFragment, "Delivery");
+        adapter.addFragment(deliveriesFragment, getString(R.string.delivery));
 
         viewPager.setAdapter(adapter);
     }

@@ -1,11 +1,10 @@
-package com.example.pawel_piedel.thesis.api;
+package com.example.pawel_piedel.thesis.data;
 
 import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
 import com.example.pawel_piedel.thesis.model.AccessToken;
 
 
-import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -22,9 +21,12 @@ public interface ApiService {
     public final String BUSINESS_ID_PARAM = "id";
 
     @GET("/v3/businesses/search")
-    Observable<SearchResponse> getBusinessesList(@Query("latitude") double latitiude,
-                                                 @Query("longitude") double longtitiude,
-                                                 @Query("radius") Integer radius);
+    Observable<SearchResponse> getBusinessesList(
+            @Query("term") String term,
+            @Query("latitude") double latitiude,
+            @Query("longitude") double longtitiude,
+            @Query("radius") Integer radius,
+            @Query("categories") String categories);
 
     @GET("/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);

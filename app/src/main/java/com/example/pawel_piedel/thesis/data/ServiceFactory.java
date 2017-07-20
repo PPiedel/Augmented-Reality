@@ -1,6 +1,4 @@
-package com.example.pawel_piedel.thesis.api;
-
-import android.util.Log;
+package com.example.pawel_piedel.thesis.data;
 
 import com.example.pawel_piedel.thesis.model.AccessToken;
 
@@ -9,9 +7,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Pawel_Piedel on 04.07.2017.

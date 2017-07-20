@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.api;
+package com.example.pawel_piedel.thesis.data;
 
 import com.example.pawel_piedel.thesis.model.AccessToken;
 

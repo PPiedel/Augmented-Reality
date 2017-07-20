@@ -13,4 +13,7 @@
     <string name="permission_rationale">Ustalenie lokalizacji jest niezbędne do poprawnego działania aplikacji.</string>
     <string name="permission_denied_explanation">Lokalizacja urządzenia jest niezbędna do poprawnego działania aplikacji.</string>
     <string name="settings">Ustawienia</string>
+    <string name="restaurants">Restauracje</string>
+    <string name="cafes">Kawiarnie</string>
+    <string name="delivery">Dostawa</string>
 </resources>

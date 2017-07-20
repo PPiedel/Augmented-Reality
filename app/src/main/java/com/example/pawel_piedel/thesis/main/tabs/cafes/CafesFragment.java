@@ -28,10 +28,9 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     private static String LOG_TAG = CafesFragment.class.getName();
     private CafesContract.Presenter cafesPresenter;
     private BusinessAdapter businessAdapter = new BusinessAdapter();
-    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+    LinearLayoutManager mLayoutManager = new LinearLayoutManager(provideContext());
 
-    @BindView(R.id.cafes_recycler_view)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.cafes_recycler_view) RecyclerView mRecyclerView;
 
     public CafesFragment() {
         // Required empty public constructor
@@ -46,18 +45,17 @@ public class CafesFragment extends Fragment implements CafesContract.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cafes, container, false);
         ButterKnife.bind(this, view);
-        setUpRecyclerView(view);
+        setUpRecyclerView();
         return view;
     }
 
-    protected void setUpRecyclerView(View view) {
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+    protected void setUpRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
 
-        cafesPresenter.onViewPreapred();
+        cafesPresenter.onViewPrepared();
     }
 
     @Override
@@ -77,7 +75,7 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     }
 
     @Override
-    public Context getContext(){
+    public Context provideContext(){
         return getActivity();
     }
 

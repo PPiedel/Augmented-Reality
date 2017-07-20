@@ -3,7 +3,6 @@ package com.example.pawel_piedel.thesis.main;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -13,10 +12,6 @@ import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.api.LocationService;
-
-import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
-import rx.functions.Action1;
 
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
@@ -70,6 +65,12 @@ public class MainPresenter implements MainContract.Presenter {
                             @Override
                             public void onClick(View view) {
                                 // Build intent that displays the App settings screen.
+                                Intent intent = createSettingsIntent();
+                                mainView.getViewActivity().startActivity(intent);
+                            }
+
+                            @NonNull
+                            private Intent createSettingsIntent() {
                                 Intent intent = new Intent();
                                 intent.setAction(
                                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -77,7 +78,7 @@ public class MainPresenter implements MainContract.Presenter {
                                         BuildConfig.APPLICATION_ID, null);
                                 intent.setData(uri);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mainView.getViewActivity().startActivity(intent);
+                                return intent;
                             }
                         });
             }
