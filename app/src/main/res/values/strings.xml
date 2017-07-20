@@ -10,4 +10,7 @@
     <string name="thubnail">thubnail</string>
     <string name="isClosed">Zamknięte</string>
     <string name="open">Otwarte teraz</string>
+    <string name="permission_rationale">Ustalenie lokalizacji jest niezbędne do poprawnego działania aplikacji.</string>
+    <string name="permission_denied_explanation">Lokalizacja urządzenia jest niezbędna do poprawnego działania aplikacji.</string>
+    <string name="settings">Ustawienia</string>
 </resources>

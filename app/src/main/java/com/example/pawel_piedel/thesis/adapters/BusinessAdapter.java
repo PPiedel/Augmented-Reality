@@ -68,7 +68,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.image);
         }
-       
+
         holder.title.setText(business.getName());
         holder.address1.setText((String.valueOf(business.getLocation().getAddress1())));
         holder.address2.setText(""+business.getLocation().getZipCode()+" "+business.getLocation().getCity());
