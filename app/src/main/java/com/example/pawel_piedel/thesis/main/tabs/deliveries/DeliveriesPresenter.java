@@ -83,7 +83,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
     @Override
     public void loadDeliveries() {
         apiService = ServiceFactory.createService(ApiService.class);
-        apiService.getBusinessesList(50.03, 22.01)
+        apiService.getBusinessesList(50.03, 22.01,null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {

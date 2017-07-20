@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.pawel_piedel.thesis.BaseView;
@@ -15,13 +16,14 @@ import java.util.List;
 public interface CafesContract {
     interface View extends BaseView<Presenter>{
         void showCafes(List<Business> cafes);
+        Context getContext();
     }
 
 
     interface Presenter extends BasePresenter{
         void onViewPreapred();
         void load();
-        void loadCafes();
+        void manageToLoadCafes();
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.pawel_piedel.thesis.main;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -12,6 +13,10 @@ import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.api.LocationService;
+
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
+import rx.functions.Action1;
 
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
@@ -30,12 +35,11 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void start() {
-    if (checkPermissions()){
-        getLastLocation();
-    }
-    else {
-        requestPermissions();
-    }
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            getLastLocation();
+        }
     }
 
     @Override
@@ -57,20 +61,10 @@ public class MainPresenter implements MainContract.Presenter {
             if (grantResults.length <= 0) {
                 Log.i(LOG_TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted.
+
 
             } else {
                 // Permission denied.
-
-                // Notify the user via a SnackBar that they have rejected a core permission for the
-                // app, which makes the Activity useless. In a real app, core permissions would
-                // typically be best requested during a welcome-screen flow.
-
-                // Additionally, it is important to remember that a permission might have been
-                // rejected without asking the user for permission (device policy or "Never ask
-                // again" prompts). Therefore, a user interface affordance is typically implemented
-                // when permissions are denied. Otherwise, your app could appear unresponsive to
-                // touches or interactions which have required permissions.
                 mainView.showSnackbar(R.string.permission_denied_explanation, R.string.settings,
                         new View.OnClickListener() {
                             @Override
@@ -91,7 +85,6 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     public void getLastLocation(){
-
     }
 
 

@@ -1,20 +1,23 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.api.ApiService;
+import com.example.pawel_piedel.thesis.api.LocationService;
 import com.example.pawel_piedel.thesis.api.ServiceFactory;
 import com.example.pawel_piedel.thesis.model.AccessToken;
-import com.example.pawel_piedel.thesis.model.Business;
 import com.example.pawel_piedel.thesis.model.SearchResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.api.ServiceFactory.CLIENT_ID;
@@ -43,6 +46,7 @@ public class CafesPresenter implements CafesContract.Presenter {
 
     @Override
     public void start() {
+
     }
 
     @Override
@@ -62,7 +66,7 @@ public class CafesPresenter implements CafesContract.Presenter {
                         public void onCompleted() {
                             saveAccessTokenInSharedPref();
 
-                            loadCafes();
+                            manageToLoadCafes();
                         }
 
                         @Override
@@ -77,7 +81,7 @@ public class CafesPresenter implements CafesContract.Presenter {
                         }
                     });
         } else {
-            loadCafes();
+            manageToLoadCafes();
         }
 
     }
@@ -97,9 +101,38 @@ public class CafesPresenter implements CafesContract.Presenter {
     }
 
     @Override
-    public void loadCafes() {
+    public void manageToLoadCafes() {
+        if (LocationService.mLastLocation != null) {
+            loadCafes();
+        } else {
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(cafesView.getContext());
+            if (ActivityCompat.checkSelfPermission(cafesView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(cafesView.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locationProvider.getLastKnownLocation()
+                    .subscribe(new Action1<Location>() {
+                        @Override
+                        public void call(Location location) {
+                            LocationService.mLastLocation = location;
+                            Log.i(LOG_TAG,"Location obtained : "+ location.toString());
+                            loadCafes();
+                        }
+                    });
+        }
+
+
+    }
+
+    private void loadCafes() {
         apiService = ServiceFactory.createService(ApiService.class);
-        apiService.getBusinessesList(50.03, 22.01)
+        apiService.getBusinessesList(LocationService.mLastLocation.getLatitude(),LocationService.mLastLocation.getLongitude(),20000)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -118,7 +151,6 @@ public class CafesPresenter implements CafesContract.Presenter {
                         cafesView.showCafes(searchResponse.getBusinesses());
                     }
                 });
-
     }
 
 }

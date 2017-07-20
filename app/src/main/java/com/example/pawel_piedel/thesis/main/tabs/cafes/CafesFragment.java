@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.main.tabs.cafes;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,6 +74,11 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     @Override
     public void showCafes(List<Business> cafes) {
         businessAdapter.addBusinessList(cafes);
+    }
+
+    @Override
+    public Context getContext(){
+        return getActivity();
     }
 
 

@@ -22,7 +22,9 @@ public interface ApiService {
     public final String BUSINESS_ID_PARAM = "id";
 
     @GET("/v3/businesses/search")
-    Observable<SearchResponse> getBusinessesList(@Query("latitude") double latitiude, @Query("longitude") double longtitiude);
+    Observable<SearchResponse> getBusinessesList(@Query("latitude") double latitiude,
+                                                 @Query("longitude") double longtitiude,
+                                                 @Query("radius") Integer radius);
 
     @GET("/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);

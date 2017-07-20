@@ -56,6 +56,9 @@ dependencies {
     //play services
     compile 'com.google.android.gms:play-services:11.0.2'
 
+    //rxlocation
+    compile 'pl.charmas.android:android-reactive-location:0.10@aar'
+
 
 
 
