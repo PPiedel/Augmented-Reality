@@ -1,16 +1,35 @@
 package com.example.pawel_piedel.thesis;
 
-import android.view.View;
-
-import com.example.pawel_piedel.thesis.main.MainContract;
-import com.example.pawel_piedel.thesis.model.AccessToken;
+import javax.inject.Inject;
 
 /**
- * Created by Pawel_Piedel on 18.07.2017.
+ * Created by Pawel_Piedel on 21.07.2017.
  */
 
-public interface BasePresenter {
+public class BasePresenter<V extends BaseView> implements Presenter<V> {
+    private V view;
 
-    void start();
+    @Inject
+    public BasePresenter() {
 
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void attachView(V view) {
+        this.view = view;
+    }
+
+    @Override
+    public void detachView() {
+        view = null;
+    }
+
+    public V getView() {
+        return view;
+    }
 }

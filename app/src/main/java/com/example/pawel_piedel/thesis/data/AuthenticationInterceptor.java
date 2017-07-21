@@ -1,6 +1,6 @@
 package com.example.pawel_piedel.thesis.data;
 
-import com.example.pawel_piedel.thesis.model.AccessToken;
+import com.example.pawel_piedel.thesis.data.model.AccessToken;
 
 import java.io.IOException;
 

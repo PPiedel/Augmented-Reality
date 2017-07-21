@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Business;
 
 import java.util.ArrayList;
 import java.util.List;

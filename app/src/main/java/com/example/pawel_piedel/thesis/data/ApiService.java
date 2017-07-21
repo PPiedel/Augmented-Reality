@@ -1,8 +1,8 @@
 package com.example.pawel_piedel.thesis.data;
 
-import com.example.pawel_piedel.thesis.model.Business;
-import com.example.pawel_piedel.thesis.model.SearchResponse;
-import com.example.pawel_piedel.thesis.model.AccessToken;
+import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.example.pawel_piedel.thesis.data.model.AccessToken;
 
 
 import retrofit2.http.Field;
