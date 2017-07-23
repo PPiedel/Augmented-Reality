@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.BaseView;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.ServiceFactory;

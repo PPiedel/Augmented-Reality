@@ -2,7 +2,7 @@ package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.content.Context;
 
-import com.example.pawel_piedel.thesis.BaseView;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.model.Business;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface RestaurantsContract {
     }
 
 
-    interface Presenter extends com.example.pawel_piedel.thesis.Presenter {
+    interface Presenter extends com.example.pawel_piedel.thesis.ui.base.Presenter {
         void onViewPrepared();
         void load();
         void manageToLoadRestaurants();

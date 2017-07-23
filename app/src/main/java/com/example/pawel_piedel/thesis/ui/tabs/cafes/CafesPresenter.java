@@ -8,12 +8,18 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.BaseView;
+import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+
+import javax.inject.Inject;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscriber;
@@ -31,18 +37,18 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by Pawel_Piedel on 18.07.2017.
  */
-
-public class CafesPresenter implements CafesContract.Presenter {
+@ConfigPersistent
+public class CafesPresenter <V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
     private final String LOG_TAG = CafesPresenter.class.getName();
-    private CafesContract.View cafesView;
+    //private CafesContract.View cafesView;
     private ApiService apiService;
-    private SharedPreferences sharedPreferences;
+
+    @Inject
+    SharedPreferences sharedPreferences;
 
 
-    public CafesPresenter(@NonNull CafesContract.View cafesView, SharedPreferences sharedPreferences) {
-        this.cafesView = checkNotNull(cafesView);
-        this.sharedPreferences = sharedPreferences;
-        this.cafesView.setPresenter(this);
+    @Inject
+    public CafesPresenter() {
     }
 
     @Override
@@ -51,13 +57,13 @@ public class CafesPresenter implements CafesContract.Presenter {
     }
 
     @Override
-    public void attachView(BaseView view) {
-
+    public void attachView(V view) {
+        super.attachView(view);
     }
 
     @Override
     public void detachView() {
-
+        super.detachView();
     }
 
     @Override
@@ -116,8 +122,8 @@ public class CafesPresenter implements CafesContract.Presenter {
         if (LocationService.mLastLocation != null) {
             loadCafes();
         } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(cafesView.provideContext());
-            if (ActivityCompat.checkSelfPermission(cafesView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(cafesView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getView().provideContext());
+            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()
@@ -157,7 +163,7 @@ public class CafesPresenter implements CafesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        cafesView.showCafes(searchResponse.getBusinesses());
+                        getView().showCafes(searchResponse.getBusinesses());
                     }
                 });
     }

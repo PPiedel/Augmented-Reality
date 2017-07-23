@@ -2,7 +2,7 @@ package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.content.Context;
 
-import com.example.pawel_piedel.thesis.BaseView;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.model.Business;
 
 import java.util.List;
@@ -12,15 +12,20 @@ import java.util.List;
  */
 
 public interface CafesContract {
-    interface View extends BaseView<Presenter>{
+    interface View extends BaseView {
+
         void showCafes(List<Business> cafes);
+
         Context provideContext();
     }
 
 
-    interface Presenter extends com.example.pawel_piedel.thesis.Presenter {
+    interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+
         void onViewPrepared();
+
         void load();
+
         void manageToLoadCafes();
     }
 

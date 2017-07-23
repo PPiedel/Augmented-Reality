@@ -2,8 +2,10 @@ package com.example.pawel_piedel.thesis.injection.modules;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.pawel_piedel.thesis.data.ApiService;
+import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 
 import javax.inject.Singleton;
@@ -26,6 +28,7 @@ public class ApplicationModule {
     }
 
     @Provides
+    @Singleton
     Application provideApplication() {
         return mApplication;
     }
@@ -40,5 +43,11 @@ public class ApplicationModule {
     @Singleton
     ApiService provideApiService() {
         return createService(ApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences() {
+        return mApplication.getSharedPreferences("thesis_preferences", Context.MODE_PRIVATE);
     }
 }

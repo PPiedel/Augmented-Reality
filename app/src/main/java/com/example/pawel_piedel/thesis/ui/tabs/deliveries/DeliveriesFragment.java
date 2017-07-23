@@ -71,6 +71,16 @@ public class DeliveriesFragment extends Fragment implements DeliveriesContract.V
         deliveriesPresenter = checkNotNull(presenter);
     }
 
+    @Override
+    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return false;
+    }
+
 
     @Override
     public void showDeliveries(List<Business> deliveries) {

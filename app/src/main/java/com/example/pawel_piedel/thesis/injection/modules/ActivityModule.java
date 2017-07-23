@@ -6,8 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
+import com.example.pawel_piedel.thesis.ui.MainActivity;
 import com.example.pawel_piedel.thesis.ui.MainContract;
 import com.example.pawel_piedel.thesis.ui.MainPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesContract;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -38,7 +41,14 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    MainContract.Presenter<MainContract.View> provideMainPresenter(MainPresenter<MainContract.View> presenter){
+    MainContract.Presenter<MainContract.View> provideMainPresenter(MainPresenter<MainContract.View> presenter) {
         return presenter;
     }
+
+    @Provides
+    @PerActivity
+    CafesContract.Presenter<CafesContract.View> provideCafesPresenter(CafesPresenter<CafesContract.View> presenter){
+        return presenter;
+    }
+
 }

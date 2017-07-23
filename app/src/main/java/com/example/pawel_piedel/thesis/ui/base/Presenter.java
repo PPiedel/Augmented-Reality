@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis;
+package com.example.pawel_piedel.thesis.ui.base;
 
 /**
  * Created by Pawel_Piedel on 18.07.2017.

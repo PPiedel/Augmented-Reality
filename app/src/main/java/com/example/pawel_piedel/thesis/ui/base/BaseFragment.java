@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis;
+package com.example.pawel_piedel.thesis.ui.base;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -13,7 +13,7 @@ import butterknife.Unbinder;
  * Created by Pawel_Piedel on 21.07.2017.
  */
 
-public class BaseFragment extends Fragment implements BaseView {
+public class BaseFragment extends android.support.v4.app.Fragment implements BaseView {
 
     private BaseActivity baseActivity;
     private Unbinder mUnBinder;
@@ -34,8 +34,9 @@ public class BaseFragment extends Fragment implements BaseView {
     }
 
     @Override
-    public void setPresenter(Presenter deliveriesPresenter) {
-
+    public void onDetach() {
+        baseActivity = null;
+        super.onDetach();
     }
 
     @Override
@@ -46,11 +47,9 @@ public class BaseFragment extends Fragment implements BaseView {
         super.onDestroy();
     }
 
-
     public void setUnBinder(Unbinder unBinder) {
         mUnBinder = unBinder;
     }
-
 
     public BaseActivity getBaseActivity() {
         return baseActivity;
@@ -61,6 +60,21 @@ public class BaseFragment extends Fragment implements BaseView {
             return baseActivity.getActivityComponent();
         }
         return null;
+    }
+
+    @Override
+    public void setPresenter(Presenter deliveriesPresenter) {
+
+    }
+
+    @Override
+    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return false;
     }
 
     public interface Callback {

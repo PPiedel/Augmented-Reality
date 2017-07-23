@@ -21,11 +21,13 @@ public class SharedPreferencesHelper {
     private SharedPreferences sharedPreferences;
 
     @Inject
-    public SharedPreferencesHelper(@ApplicationContext Context context){
-        sharedPreferences = context.getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
+    public SharedPreferencesHelper(SharedPreferences sharedPreferences){
+        this.sharedPreferences = sharedPreferences;
     }
 
     public void clear() {
         sharedPreferences.edit().clear().apply();
     }
+
+
 }

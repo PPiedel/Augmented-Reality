@@ -60,7 +60,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Business business = businessList.get(position);
         if (!Objects.equals(business.getImageUrl(), "")){
-            Log.v(LOG_TAG,""+business.getName()+" "+business.getImageUrl());
+           // Log.v(LOG_TAG,""+business.getName()+" "+business.getImageUrl());
             Glide.with(context)
                     .load(business.getImageUrl())
                     .centerCrop()

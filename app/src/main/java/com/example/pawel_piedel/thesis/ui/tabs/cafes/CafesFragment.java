@@ -16,21 +16,30 @@ import android.view.ViewGroup;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
+import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.example.pawel_piedel.thesis.ui.base.Presenter;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
-public class CafesFragment extends Fragment implements CafesContract.View {
+public class CafesFragment extends BaseFragment implements CafesContract.View {
     private static String LOG_TAG = CafesFragment.class.getName();
-    private CafesContract.Presenter cafesPresenter;
+    @Inject
+    CafesContract.Presenter<CafesContract.View> cafesPresenter;
+
     private BusinessAdapter businessAdapter = new BusinessAdapter();
     LinearLayoutManager mLayoutManager = new LinearLayoutManager(provideContext());
 
-    @BindView(R.id.cafes_recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.cafes_recycler_view)
+    RecyclerView mRecyclerView;
 
     public CafesFragment() {
         // Required empty public constructor
@@ -44,7 +53,14 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cafes, container, false);
-        ButterKnife.bind(this, view);
+        ActivityComponent component = getActivityComponent();
+        if (component != null) {
+            component.inject(this);
+            setUnBinder(ButterKnife.bind(this, view));
+            cafesPresenter.attachView(this);
+            //mBlogAdapter.setCallback(this);
+        }
+
         setUpRecyclerView();
         return view;
     }
@@ -65,8 +81,23 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     }
 
     @Override
-    public void setPresenter(@NonNull CafesContract.Presenter deliveriesPresenter) {
-        cafesPresenter = checkNotNull(deliveriesPresenter);
+    public void onDestroyView() {
+        cafesPresenter.detachView();
+        super.onDestroyView();
+    }
+
+    public void setPresenter(CafesContract.Presenter deliveriesPresenter) {
+        this.cafesPresenter = checkNotNull(deliveriesPresenter);
+    }
+
+    @Override
+    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return false;
     }
 
     @Override
@@ -75,10 +106,9 @@ public class CafesFragment extends Fragment implements CafesContract.View {
     }
 
     @Override
-    public Context provideContext(){
+    public Context provideContext() {
         return getActivity();
     }
-
 
 
 }

@@ -18,23 +18,18 @@
 
 package com.example.pawel_piedel.thesis.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 
-import com.example.pawel_piedel.thesis.BaseActivity;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
+import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
@@ -47,20 +42,21 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
-import static dagger.internal.Preconditions.checkNotNull;
-
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Inject
-    MainContract.Presenter<MainContract.View> mPresenter;
+    MainPresenter<MainContract.View> mPresenter;
 
-    private SharedPreferences sharedPreferences;
+    @Inject
+    SharedPreferences sharedPreferences;
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.viewpager) ViewPager viewPager;
-    @BindView(R.id.tabs) TabLayout tabLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,13 +72,13 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpLayout();
 
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        //sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 
         setupViewPager(viewPager);
 
         setUpTabLayout();
 
-       // mPresenter.start();
+        mPresenter.start();
     }
 
     @Override
@@ -100,15 +96,15 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
-        RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment,sharedPreferences);
+        RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
         adapter.addFragment(restaurantsFragment, getString(R.string.restaurants));
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
-        CafesPresenter presenter = new CafesPresenter(cafesFragment,sharedPreferences);
+        //CafesPresenter presenter = new CafesPresenter(cafesFragment, sharedPreferences);
         adapter.addFragment(cafesFragment, getString(R.string.cafes));
 
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
-        DeliveriesPresenter presenter1 = new  DeliveriesPresenter(deliveriesFragment,sharedPreferences);
+        DeliveriesPresenter presenter1 = new DeliveriesPresenter(deliveriesFragment, sharedPreferences);
         adapter.addFragment(deliveriesFragment, getString(R.string.delivery));
 
         viewPager.setAdapter(adapter);
@@ -118,54 +114,11 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    /*public void setPresenter(@NonNull  MainContract.Presenter deliveriesPresenter) {
-        mPresenter = checkNotNull(deliveriesPresenter);
-    }*/
-
-
-    @Override
-    public void requestLocationPermissions() {
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void showPermissionsRequest() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
-
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
-            Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
-
-            showSnackbar(R.string.permission_rationale, android.R.string.ok,
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            requestLocationPermissions();
-                        }
-                    });
-
-        } else {
-            Log.i(LOG_TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
-            requestLocationPermissions();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                    @NonNull int[] grantResults){
-        mPresenter.onPermissionResult(requestCode,permissions,grantResults);
+                                           @NonNull int[] grantResults) {
+        mPresenter.onPermissionResult(requestCode, permissions, grantResults);
 
     }
 
@@ -174,10 +127,5 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         return this;
     }
 
-    public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
-        Snackbar.make(findViewById(android.R.id.content),
-                getString(mainTextStringId),
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(actionStringId), listener).show();
-    }
+
 }

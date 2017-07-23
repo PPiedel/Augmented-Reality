@@ -10,8 +10,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.BasePresenter;
-import com.example.pawel_piedel.thesis.BaseView;
+import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -25,14 +26,17 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
  */
 
 @ConfigPersistent
-public class MainPresenter<V extends BaseView> extends BasePresenter<V> implements MainContract.Presenter<V> {
+public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
     private static final String LOG_TAG = MainPresenter.class.getName();
-    private MainContract.View mainView;
+    //MainContract.View mainView;
 
-   @Inject
-   public MainPresenter(){
-       super();
-   }
+    @Inject
+    DataManager dataManager;
+
+    @Inject
+    public MainPresenter() {
+
+    }
 
     @Override
     public void start() {
@@ -41,6 +45,7 @@ public class MainPresenter<V extends BaseView> extends BasePresenter<V> implemen
         } else {
             getLastLocation();
         }
+        dataManager.test();
     }
 
     @Override
@@ -53,19 +58,17 @@ public class MainPresenter<V extends BaseView> extends BasePresenter<V> implemen
         super.detachView();
     }
 
-    @Override
+
     public boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(mainView.getViewActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
-    @Override
+
     public void requestPermissions() {
-        mainView.showPermissionsRequest();
+        getView().showPermissionsRequest();
     }
 
-    @Override
+
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.i(LOG_TAG, "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
@@ -76,13 +79,13 @@ public class MainPresenter<V extends BaseView> extends BasePresenter<V> implemen
 
             } else {
                 // Permission denied.
-                mainView.showSnackbar(R.string.permission_denied_explanation, R.string.settings,
+                getView().showSnackbar(R.string.permission_denied_explanation, R.string.settings,
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 // Build intent that displays the App settings screen.
                                 Intent intent = createSettingsIntent();
-                                mainView.getViewActivity().startActivity(intent);
+                                getView().getViewActivity().startActivity(intent);
                             }
 
                             @NonNull
@@ -101,7 +104,7 @@ public class MainPresenter<V extends BaseView> extends BasePresenter<V> implemen
         }
     }
 
-    public void getLastLocation(){
+    public void getLastLocation() {
     }
 
 

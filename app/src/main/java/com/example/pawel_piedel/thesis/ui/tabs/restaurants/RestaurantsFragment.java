@@ -65,8 +65,18 @@ public class RestaurantsFragment extends Fragment implements RestaurantsContract
     }
 
     @Override
-    public void setPresenter(RestaurantsContract.Presenter deliveriesPresenter) {
-        restaurantsPresenter = checkNotNull(deliveriesPresenter);
+    public void setPresenter(RestaurantsContract.Presenter restaurantsPresenter) {
+        this.restaurantsPresenter = checkNotNull(restaurantsPresenter);
+    }
+
+    @Override
+    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return false;
     }
 
     @Override

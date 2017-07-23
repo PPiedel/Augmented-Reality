@@ -1,4 +1,8 @@
-package com.example.pawel_piedel.thesis;
+package com.example.pawel_piedel.thesis.ui.base;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 
 import javax.inject.Inject;
 
@@ -32,4 +36,6 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
     public V getView() {
         return view;
     }
+
+
 }
