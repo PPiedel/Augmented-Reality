@@ -2,9 +2,7 @@ package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,8 +16,6 @@ import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
-import com.example.pawel_piedel.thesis.ui.base.Presenter;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
 
 import java.util.List;
 
@@ -27,8 +23,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static dagger.internal.Preconditions.checkNotNull;
 
 public class CafesFragment extends BaseFragment implements CafesContract.View {
     private String LOG_TAG = CafesFragment.class.getName();

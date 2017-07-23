@@ -3,11 +3,14 @@ package com.example.pawel_piedel.thesis.data;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -78,9 +81,12 @@ public class DataManager {
 
     }
 
-
     public void saveAccessToken(AccessToken accessToken){
         ServiceFactory.accessToken = accessToken;
         preferencesHelper.saveAccessToken(accessToken);
+    }
+
+    public void saveLocation(Location location){
+        LocationService.mLastLocation = location;
     }
 }

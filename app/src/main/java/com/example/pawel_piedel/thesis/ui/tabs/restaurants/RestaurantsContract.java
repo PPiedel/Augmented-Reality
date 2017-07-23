@@ -25,7 +25,5 @@ public interface RestaurantsContract {
         void onViewPrepared();
 
         void load();
-
-        void manageToLoadRestaurants();
     }
 }

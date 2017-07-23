@@ -1,24 +1,20 @@
 package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.location.Location;
-import android.util.Log;
+import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
-import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
-import com.example.pawel_piedel.thesis.data.ApiService;
-import com.example.pawel_piedel.thesis.data.LocationService;
-import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static dagger.internal.Preconditions.checkNotNull;
 
 /**
  * Created by Pawel_Piedel on 20.07.2017.
@@ -26,8 +22,6 @@ import static dagger.internal.Preconditions.checkNotNull;
 @ConfigPersistent
 public class RestaurantsPresenter<V extends RestaurantsContract.View> extends BasePresenter<V> implements RestaurantsContract.Presenter<V> {
     private final String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
-    private ApiService apiService;
-
 
     @Inject
     public RestaurantsPresenter(DataManager dataManager) {
@@ -50,35 +44,15 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
         load();
     }
 
-    @Override
     public void load() {
-        getDataManager().getAccessToken()
+        Observable
+                .zip(
+                        getDataManager().getAccessToken(),
+                        getDataManager().getLastKnownLocation(),
+                        Pair::create)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<AccessToken>() {
-                    @Override
-                    public void onCompleted() {
-                        manageToLoadRestaurants();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(AccessToken accessToken) {
-                        getDataManager().saveAccessToken(accessToken);
-                    }
-                });
-    }
-
-    @Override
-    public void manageToLoadRestaurants() {
-        getDataManager().getLastKnownLocation()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Location>() {
+                .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                     @Override
                     public void onCompleted() {
                         loadRestaurants();
@@ -90,14 +64,17 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                     }
 
                     @Override
-                    public void onNext(Location location) {
-                        LocationService.mLastLocation = location;
+                    public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                        getDataManager().saveAccessToken(accessTokenLocationPair.first);
+                        getDataManager().saveLocation(accessTokenLocationPair.second);
                     }
                 });
+
+
     }
 
-    private void loadRestaurants() {
-        getDataManager().loadBusinesses("restaurants")
+    public void loadRestaurants(){
+        getDataManager().loadBusinesses("restaurant")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -118,3 +95,4 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                 });
     }
 }
+

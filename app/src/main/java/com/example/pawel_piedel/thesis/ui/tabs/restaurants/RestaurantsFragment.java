@@ -67,13 +67,15 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
-
         restaurantsPresenter.onViewPrepared();
+
+
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
     }
 
 
