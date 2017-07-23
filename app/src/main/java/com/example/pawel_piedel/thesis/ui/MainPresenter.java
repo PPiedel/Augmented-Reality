@@ -42,12 +42,9 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     }
 
-    @Override
-    public void start() {
+    public void managePermissions() {
         if (!checkPermissions()) {
             requestPermissions();
-        } else {
-            getLastLocation();
         }
     }
 
@@ -63,7 +60,8 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
 
     public boolean checkPermissions() {
-        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                getView().hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
 
@@ -87,8 +85,8 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                             @Override
                             public void onClick(View view) {
                                 // Build intent that displays the App settings screen.
-                                Intent intent = createSettingsIntent();
-                                getView().getViewActivity().startActivity(intent);
+                                Intent settingsIntent = createSettingsIntent();
+                                getView().getViewActivity().startActivity(settingsIntent);
                             }
 
                             @NonNull
@@ -105,9 +103,6 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                         });
             }
         }
-    }
-
-    public void getLastLocation() {
     }
 
 

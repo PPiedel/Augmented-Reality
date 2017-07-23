@@ -19,7 +19,6 @@
 package com.example.pawel_piedel.thesis.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,11 +30,8 @@ import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
 
 import javax.inject.Inject;
 
@@ -78,7 +74,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpTabLayout();
 
-        mPresenter.start();
+        mPresenter.managePermissions();
     }
 
     @Override

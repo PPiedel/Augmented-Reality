@@ -6,8 +6,6 @@ package com.example.pawel_piedel.thesis.ui.base;
 
 public interface Presenter<V extends BaseView> {
 
-    void start();
-
     void attachView(V view);
 
     void detachView();

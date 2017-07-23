@@ -52,12 +52,6 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     public DeliveriesPresenter() {
     }
 
-
-    @Override
-    public void start() {
-
-    }
-
     @Override
     public void attachView(V view) {
         super.attachView(view);

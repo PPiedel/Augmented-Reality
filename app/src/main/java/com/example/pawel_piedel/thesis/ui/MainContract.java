@@ -12,16 +12,8 @@ import com.example.pawel_piedel.thesis.ui.base.BaseView;
 public interface MainContract {
     public interface View extends BaseView {
 
-        void showSnackbar(int mainTextStringId, int actionStringId, android.view.View.OnClickListener listener);
-
-        void requestLocationPermissions();
-
-        void showPermissionsRequest();
-
         Activity getViewActivity();
 
-        void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                        @NonNull int[] grantResults);
     }
 
 
@@ -30,7 +22,6 @@ public interface MainContract {
 
         void requestPermissions();
 
-        void onPermissionResult(int requestCode, @NonNull String[] permissions,
-                                @NonNull int[] grantResults);
+
     }
 }

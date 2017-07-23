@@ -18,7 +18,7 @@ public class Open {
     @SerializedName("day")
     @Expose
     private int day;
-    @SerializedName("start")
+    @SerializedName("managePermissions")
     @Expose
     private String start;
 

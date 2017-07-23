@@ -78,7 +78,7 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
 
 
     @Override
-    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+    public void requestRequiredPermissions(String[] permissions, int requestCode) {
 
     }
 

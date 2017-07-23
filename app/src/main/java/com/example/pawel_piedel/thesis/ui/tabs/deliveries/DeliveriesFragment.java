@@ -88,7 +88,7 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
 
     @Override
-    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+    public void requestRequiredPermissions(String[] permissions, int requestCode) {
 
     }
 

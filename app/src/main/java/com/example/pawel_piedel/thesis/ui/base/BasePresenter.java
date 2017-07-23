@@ -18,10 +18,6 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
 
     }
 
-    @Override
-    public void start() {
-
-    }
 
     @Override
     public void attachView(V view) {

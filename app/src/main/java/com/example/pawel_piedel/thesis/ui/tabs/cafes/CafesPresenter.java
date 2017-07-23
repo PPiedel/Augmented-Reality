@@ -24,18 +24,12 @@ import static dagger.internal.Preconditions.checkNotNull;
 @ConfigPersistent
 public class CafesPresenter <V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
     private final String LOG_TAG = CafesPresenter.class.getName();
-    private ApiService apiService;
 
     @Inject
     DataManager dataManager;
 
     @Inject
     public CafesPresenter() {
-    }
-
-    @Override
-    public void start() {
-
     }
 
     @Override

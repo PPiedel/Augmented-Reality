@@ -2,9 +2,13 @@ package com.example.pawel_piedel.thesis.ui.base;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ThesisApplication;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
@@ -55,22 +60,13 @@ public class BaseActivity extends AppCompatActivity implements BaseView,BaseFrag
 
     @Override
     protected void onDestroy() {
-
         if (unbinder != null) {
             unbinder.unbind();
         }
         super.onDestroy();
     }
 
-    public void requestLocationPermissions() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
-    }
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
     public void showPermissionsRequest() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -92,12 +88,16 @@ public class BaseActivity extends AppCompatActivity implements BaseView,BaseFrag
 
         } else {
             Log.i(LOG_TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
             requestLocationPermissions();
         }
     }
+
+    public void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+
 
     public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
         Snackbar.make(findViewById(android.R.id.content),
@@ -106,14 +106,12 @@ public class BaseActivity extends AppCompatActivity implements BaseView,BaseFrag
                 .setAction(getString(actionStringId), listener).show();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    public void requestPermissionsSafely(String[] permissions, int requestCode) {
+    public void requestRequiredPermissions(String[] permissions, int requestCode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, requestCode);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     public boolean hasPermission(String permission) {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
                 checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
