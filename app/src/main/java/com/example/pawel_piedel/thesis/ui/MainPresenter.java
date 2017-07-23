@@ -44,26 +44,6 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public void start() {
-        dataManager.getAccessToken()
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<AccessToken>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(AccessToken accessToken) {
-                        dataManager.saveAccessToken(accessToken);
-                    }
-                });
-
         if (!checkPermissions()) {
             requestPermissions();
         } else {

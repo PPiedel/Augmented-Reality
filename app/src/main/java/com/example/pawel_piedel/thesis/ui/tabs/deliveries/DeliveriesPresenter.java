@@ -76,57 +76,52 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
     @Override
     public void load() {
-       dataManager.getAccessToken()
-               .observeOn(Schedulers.io())
-               .subscribeOn(AndroidSchedulers.mainThread())
-               .subscribe(new Subscriber<AccessToken>() {
-                   @Override
-                   public void onCompleted() {
-                       manageToLoadDeliveries();
-                   }
+        dataManager.getAccessToken()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                        manageToLoadDeliveries();
+                    }
 
-                   @Override
-                   public void onError(Throwable e) {
+                    @Override
+                    public void onError(Throwable e) {
 
-                   }
+                    }
 
-                   @Override
-                   public void onNext(AccessToken accessToken) {
+                    @Override
+                    public void onNext(AccessToken accessToken) {
                         dataManager.saveAccessToken(accessToken);
-                   }
-               });
+                    }
+                });
     }
 
     @Override
     public void manageToLoadDeliveries() {
-        if (LocationService.mLastLocation != null) {
-            loadDeliveries();
-        } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getView().provideContext());
-            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationProvider.getLastKnownLocation()
-                    .subscribe(new Action1<Location>() {
-                        @Override
-                        public void call(Location location) {
-                            LocationService.mLastLocation = location;
-                            Log.i(LOG_TAG, "Location obtained : " + location.toString());
-                            loadDeliveries();
-                        }
-                    });
-        }
+        dataManager.getLastKnownLocation()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Location>() {
+                    @Override
+                    public void onCompleted() {
+                        loadDeliveries();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Location location) {
+                        LocationService.mLastLocation = location;
+                    }
+                });
     }
 
     private void loadDeliveries() {
-        apiService = ServiceFactory.createService(ApiService.class);
-        apiService.getBusinessesList(
-                "delivery",
-                LocationService.mLastLocation.getLatitude(),
-                LocationService.mLastLocation.getLongitude(),
-                40000,
-                null)
+        dataManager.loadBusinesses("delivery")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -137,7 +132,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.v(LOG_TAG, e.toString());
+
                     }
 
                     @Override
