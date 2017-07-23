@@ -12,15 +12,20 @@ import java.util.List;
  */
 
 public interface RestaurantsContract {
-    interface View extends BaseView<Presenter> {
+    interface View extends BaseView {
+
         void showRestaurants(List<Business> restaurants);
+
         Context provideContext();
     }
 
 
-    interface Presenter extends com.example.pawel_piedel.thesis.ui.base.Presenter {
+    interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+
         void onViewPrepared();
+
         void load();
+
         void manageToLoadRestaurants();
     }
 }

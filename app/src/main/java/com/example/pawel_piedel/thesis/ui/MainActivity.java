@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
-        RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
+       // RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
         adapter.addFragment(restaurantsFragment, getString(R.string.restaurants));
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         adapter.addFragment(cafesFragment, getString(R.string.cafes));
 
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
-        DeliveriesPresenter presenter1 = new DeliveriesPresenter(deliveriesFragment, sharedPreferences);
+        //DeliveriesPresenter presenter1 = new DeliveriesPresenter(deliveriesFragment, sharedPreferences);
         adapter.addFragment(deliveriesFragment, getString(R.string.delivery));
 
         viewPager.setAdapter(adapter);

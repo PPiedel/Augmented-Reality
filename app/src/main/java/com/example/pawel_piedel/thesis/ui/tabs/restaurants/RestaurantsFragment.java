@@ -15,18 +15,25 @@ import android.view.ViewGroup;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
+import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
-public class RestaurantsFragment extends Fragment implements RestaurantsContract.View {
+public class RestaurantsFragment extends BaseFragment implements RestaurantsContract.View {
     private final String LOG_TAG = RestaurantsFragment.class.getSimpleName();
-    private RestaurantsContract.Presenter restaurantsPresenter;
+
     private BusinessAdapter businessAdapter = new BusinessAdapter();
+
+    @Inject
+    RestaurantsContract.Presenter<RestaurantsContract.View> restaurantsPresenter;
 
     @BindView(R.id.restaurants_recycler_view)
     RecyclerView mRecyclerView;
@@ -44,7 +51,13 @@ public class RestaurantsFragment extends Fragment implements RestaurantsContract
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_restaurants, container, false);
-        ButterKnife.bind(this, view);
+        ActivityComponent component = getActivityComponent();
+        if (component != null) {
+            component.inject(this);
+            setUnBinder(ButterKnife.bind(this, view));
+            restaurantsPresenter.attachView(this);
+            //mBlogAdapter.setCallback(this);
+        }
         setUpRecyclerView();
         return view;
     }
@@ -61,13 +74,8 @@ public class RestaurantsFragment extends Fragment implements RestaurantsContract
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        restaurantsPresenter.start();
     }
 
-    @Override
-    public void setPresenter(RestaurantsContract.Presenter restaurantsPresenter) {
-        this.restaurantsPresenter = checkNotNull(restaurantsPresenter);
-    }
 
     @Override
     public void requestPermissionsSafely(String[] permissions, int requestCode) {

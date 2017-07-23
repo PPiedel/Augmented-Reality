@@ -18,7 +18,6 @@ import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.injection.components.ConfigPersistentComponent;
 import com.example.pawel_piedel.thesis.injection.components.DaggerConfigPersistentComponent;
 import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
-import com.example.pawel_piedel.thesis.ui.MainActivity;
 
 import butterknife.Unbinder;
 
@@ -120,11 +119,6 @@ public class BaseActivity extends AppCompatActivity implements BaseView,BaseFrag
                 checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-
-    @Override
-    public void setPresenter(Presenter deliveriesPresenter) {
-
-    }
 
     @Override
     public void onFragmentAttached() {

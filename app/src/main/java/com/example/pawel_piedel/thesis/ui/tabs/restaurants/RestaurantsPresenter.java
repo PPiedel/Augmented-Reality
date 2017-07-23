@@ -8,12 +8,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+
+import javax.inject.Inject;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscriber;
@@ -31,17 +35,16 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by Pawel_Piedel on 20.07.2017.
  */
-
-public class RestaurantsPresenter implements RestaurantsContract.Presenter {
+@ConfigPersistent
+public class RestaurantsPresenter<V extends RestaurantsContract.View> extends BasePresenter<V> implements RestaurantsContract.Presenter<V> {
     private final String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
-    private RestaurantsContract.View restaurantsView;
     private ApiService apiService;
-    private SharedPreferences sharedPreferences;
 
-    public RestaurantsPresenter(@NonNull RestaurantsContract.View restaurantsView, SharedPreferences sharedPreferences) {
-        this.restaurantsView = checkNotNull(restaurantsView);
-        this.sharedPreferences = sharedPreferences;
-        this.restaurantsView.setPresenter(this);
+    @Inject
+    SharedPreferences sharedPreferences;
+
+    @Inject
+    public RestaurantsPresenter() {
     }
 
     @Override
@@ -50,13 +53,13 @@ public class RestaurantsPresenter implements RestaurantsContract.Presenter {
     }
 
     @Override
-    public void attachView(BaseView view) {
-
+    public void attachView(V view) {
+        super.attachView(view);
     }
 
     @Override
     public void detachView() {
-
+        super.detachView();
     }
 
 
@@ -116,9 +119,9 @@ public class RestaurantsPresenter implements RestaurantsContract.Presenter {
         if (LocationService.mLastLocation != null) {
             loadCafes();
         } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(restaurantsView.provideContext());
-            if (ActivityCompat.checkSelfPermission(restaurantsView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(restaurantsView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getView().provideContext());
+            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()
@@ -156,7 +159,7 @@ public class RestaurantsPresenter implements RestaurantsContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        restaurantsView.showRestaurants(searchResponse.getBusinesses());
+                        getView().showRestaurants(searchResponse.getBusinesses());
                     }
                 });
     }

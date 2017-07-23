@@ -16,18 +16,25 @@ import android.view.ViewGroup;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
+import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
-public class DeliveriesFragment extends Fragment implements DeliveriesContract.View {
+public class DeliveriesFragment extends BaseFragment implements DeliveriesContract.View {
     private final String LOG_TAG = DeliveriesFragment.class.getName();
-    private DeliveriesContract.Presenter deliveriesPresenter;
+
     private BusinessAdapter businessAdapter = new BusinessAdapter();
+
+    @Inject
+    DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter;
 
     @BindView(R.id.deliveries_recycler_view)
     RecyclerView mRecyclerView;
@@ -46,7 +53,14 @@ public class DeliveriesFragment extends Fragment implements DeliveriesContract.V
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_deliveries, container, false);
-        ButterKnife.bind(this, view);
+        ActivityComponent component = getActivityComponent();
+        if (component != null) {
+            component.inject(this);
+            setUnBinder(ButterKnife.bind(this, view));
+            deliveriesPresenter.attachView(this);
+            //mBlogAdapter.setCallback(this);
+        }
+
         setUpRecyclerView();
         return view;
     }
@@ -64,17 +78,21 @@ public class DeliveriesFragment extends Fragment implements DeliveriesContract.V
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        deliveriesPresenter.start();
     }
 
-    public void setPresenter(@NonNull DeliveriesContract.Presenter presenter) {
-        deliveriesPresenter = checkNotNull(presenter);
+    @Override
+    public void onDestroyView() {
+        deliveriesPresenter.detachView();
+        super.onDestroyView();
     }
+
 
     @Override
     public void requestPermissionsSafely(String[] permissions, int requestCode) {
 
     }
+
+
 
     @Override
     public boolean hasPermission(String permission) {

@@ -31,12 +31,12 @@ import butterknife.ButterKnife;
 import static dagger.internal.Preconditions.checkNotNull;
 
 public class CafesFragment extends BaseFragment implements CafesContract.View {
-    private static String LOG_TAG = CafesFragment.class.getName();
-    @Inject
-    CafesContract.Presenter<CafesContract.View> cafesPresenter;
+    private String LOG_TAG = CafesFragment.class.getName();
 
     private BusinessAdapter businessAdapter = new BusinessAdapter();
-    LinearLayoutManager mLayoutManager = new LinearLayoutManager(provideContext());
+
+    @Inject
+    CafesContract.Presenter<CafesContract.View> cafesPresenter;
 
     @BindView(R.id.cafes_recycler_view)
     RecyclerView mRecyclerView;
@@ -84,10 +84,6 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     public void onDestroyView() {
         cafesPresenter.detachView();
         super.onDestroyView();
-    }
-
-    public void setPresenter(CafesContract.Presenter deliveriesPresenter) {
-        this.cafesPresenter = checkNotNull(deliveriesPresenter);
     }
 
     @Override

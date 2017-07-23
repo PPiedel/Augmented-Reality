@@ -11,6 +11,10 @@ import com.example.pawel_piedel.thesis.ui.MainContract;
 import com.example.pawel_piedel.thesis.ui.MainPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesContract;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesContract;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -48,6 +52,18 @@ public class ActivityModule {
     @Provides
     @PerActivity
     CafesContract.Presenter<CafesContract.View> provideCafesPresenter(CafesPresenter<CafesContract.View> presenter){
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    DeliveriesContract.Presenter<DeliveriesContract.View> provideDeliveriesPresenter(DeliveriesPresenter<DeliveriesContract.View> presenter){
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    RestaurantsContract.Presenter<RestaurantsContract.View> provideRestaurantsPresenter(RestaurantsPresenter<RestaurantsContract.View> presenter){
         return presenter;
     }
 

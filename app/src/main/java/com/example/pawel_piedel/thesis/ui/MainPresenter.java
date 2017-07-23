@@ -28,7 +28,6 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 @ConfigPersistent
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
     private static final String LOG_TAG = MainPresenter.class.getName();
-    //MainContract.View mainView;
 
     @Inject
     DataManager dataManager;

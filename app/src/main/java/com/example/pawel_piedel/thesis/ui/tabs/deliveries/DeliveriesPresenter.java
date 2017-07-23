@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
@@ -18,6 +20,8 @@ import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscriber;
@@ -35,41 +39,38 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by Pawel_Piedel on 19.07.2017.
  */
-
-public class DeliveriesPresenter implements DeliveriesContract.Presenter {
+@ConfigPersistent
+public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
     private final static String LOG_TAG = DeliveriesPresenter.class.getName();
-    private DeliveriesContract.View deliveriesView;
     private ApiService apiService;
-    private SharedPreferences sharedPreferences;
-    private List<Business> deliveries;
 
-    public DeliveriesPresenter(@NonNull DeliveriesContract.View deliveriesView, SharedPreferences sharedPreferences) {
-        this.deliveries = new ArrayList<>();
-        this.deliveriesView = checkNotNull(deliveriesView);
-        this.sharedPreferences = sharedPreferences;
-        this.deliveriesView.setPresenter(this);
+    @Inject
+    SharedPreferences sharedPreferences;
+
+    @Inject
+    public DeliveriesPresenter() {
     }
 
 
     @Override
     public void start() {
-        load();
+
     }
 
     @Override
-    public void attachView(BaseView view) {
-
+    public void attachView(V view) {
+        super.attachView(view);
     }
 
     @Override
     public void detachView() {
-
+        super.detachView();
     }
 
 
     @Override
     public void onViewPrepared() {
-
+        load();
     }
 
     @Override
@@ -123,9 +124,9 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
         if (LocationService.mLastLocation != null) {
             loadDeliveries();
         } else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(deliveriesView.provideContext());
-            if (ActivityCompat.checkSelfPermission(deliveriesView.provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(deliveriesView.provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getView().provideContext());
+            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()
@@ -163,7 +164,7 @@ public class DeliveriesPresenter implements DeliveriesContract.Presenter {
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        deliveriesView.showDeliveries(searchResponse.getBusinesses());
+                        getView().showDeliveries(searchResponse.getBusinesses());
                     }
                 });
     }

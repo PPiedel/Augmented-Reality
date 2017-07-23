@@ -63,11 +63,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
     }
 
     @Override
-    public void setPresenter(Presenter deliveriesPresenter) {
-
-    }
-
-    @Override
     public void requestPermissionsSafely(String[] permissions, int requestCode) {
 
     }
