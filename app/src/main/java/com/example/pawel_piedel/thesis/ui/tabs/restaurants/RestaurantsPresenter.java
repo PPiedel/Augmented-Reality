@@ -28,11 +28,10 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     private final String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
     private ApiService apiService;
 
-    @Inject
-    DataManager dataManager;
 
     @Inject
-    public RestaurantsPresenter() {
+    public RestaurantsPresenter(DataManager dataManager) {
+        super(dataManager);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
     @Override
     public void load() {
-        dataManager.getAccessToken()
+        getDataManager().getAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -69,14 +68,14 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onNext(AccessToken accessToken) {
-                        dataManager.saveAccessToken(accessToken);
+                        getDataManager().saveAccessToken(accessToken);
                     }
                 });
     }
 
     @Override
     public void manageToLoadRestaurants() {
-        dataManager.getLastKnownLocation()
+        getDataManager().getLastKnownLocation()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
@@ -98,7 +97,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     private void loadRestaurants() {
-        dataManager.loadBusinesses("restaurants")
+        getDataManager().loadBusinesses("restaurants")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {

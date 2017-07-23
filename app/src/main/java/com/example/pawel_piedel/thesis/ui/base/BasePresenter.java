@@ -1,8 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+import com.example.pawel_piedel.thesis.data.DataManager;
 
 import javax.inject.Inject;
 
@@ -11,11 +9,12 @@ import javax.inject.Inject;
  */
 
 public class BasePresenter<V extends BaseView> implements Presenter<V> {
+    private final DataManager dataManager;
     private V view;
 
     @Inject
-    public BasePresenter() {
-
+    public BasePresenter(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
 
@@ -33,5 +32,7 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
         return view;
     }
 
-
+    public DataManager getDataManager() {
+        return dataManager;
+    }
 }

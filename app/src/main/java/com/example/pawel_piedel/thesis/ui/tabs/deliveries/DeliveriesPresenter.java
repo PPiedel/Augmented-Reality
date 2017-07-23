@@ -45,11 +45,10 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     private final static String LOG_TAG = DeliveriesPresenter.class.getName();
     private ApiService apiService;
 
-    @Inject
-    DataManager dataManager;
 
     @Inject
-    public DeliveriesPresenter() {
+    public DeliveriesPresenter(DataManager dataManager) {
+        super(dataManager);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
     @Override
     public void load() {
-        dataManager.getAccessToken()
+        getDataManager().getAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -86,14 +85,14 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
                     @Override
                     public void onNext(AccessToken accessToken) {
-                        dataManager.saveAccessToken(accessToken);
+                        getDataManager().saveAccessToken(accessToken);
                     }
                 });
     }
 
     @Override
     public void manageToLoadDeliveries() {
-        dataManager.getLastKnownLocation()
+        getDataManager().getLastKnownLocation()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
@@ -115,7 +114,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     private void loadDeliveries() {
-        dataManager.loadBusinesses("delivery")
+        getDataManager().loadBusinesses("delivery")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {

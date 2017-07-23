@@ -3,20 +3,17 @@ package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 import android.location.Location;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
-import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
-import com.example.pawel_piedel.thesis.data.ApiService;
 import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static dagger.internal.Preconditions.checkNotNull;
 
 /**
  * Created by Pawel_Piedel on 18.07.2017.
@@ -26,10 +23,8 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
     private final String LOG_TAG = CafesPresenter.class.getName();
 
     @Inject
-    DataManager dataManager;
-
-    @Inject
-    public CafesPresenter() {
+    public CafesPresenter(DataManager dataManager) {
+        super(dataManager);
     }
 
     @Override
@@ -48,7 +43,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
     }
 
     public void load() {
-        dataManager.getAccessToken()
+        getDataManager().getAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -64,7 +59,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
 
                     @Override
                     public void onNext(AccessToken accessToken) {
-                        dataManager.saveAccessToken(accessToken);
+                        getDataManager().saveAccessToken(accessToken);
                     }
                 });
     }
@@ -72,7 +67,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
 
     @Override
     public void manageToLoadCafes() {
-      dataManager.getLastKnownLocation()
+      getDataManager().getLastKnownLocation()
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Subscriber<Location>() {
@@ -95,7 +90,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
     }
 
     private void loadCafes() {
-        dataManager.loadBusinesses("coffee")
+        getDataManager().loadBusinesses("coffee")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {

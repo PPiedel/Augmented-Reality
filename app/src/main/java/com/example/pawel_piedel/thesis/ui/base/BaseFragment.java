@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 
@@ -29,7 +30,7 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         if (context instanceof BaseActivity) {
             BaseActivity activity = (BaseActivity) context;
             this.baseActivity = activity;
-            activity.onFragmentAttached();
+           // activity.onFragmentAttached();
         }
     }
 
@@ -63,19 +64,31 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
     }
 
     @Override
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
+    public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
 
     }
 
     @Override
+    public void showPermissionsRequest() {
+        if (baseActivity !=null){
+            baseActivity.showPermissionsRequest();
+        }
+    }
+
+    @Override
+    public void requestRequiredPermissions(String[] permissions, int requestCode) {
+        if (baseActivity !=null){
+            baseActivity.requestRequiredPermissions(permissions,requestCode);
+        }
+    }
+
+    @Override
     public boolean hasPermission(String permission) {
-        return false;
+        boolean has = false;
+        if (baseActivity !=null){
+            has = baseActivity.hasPermission(permission);
+        }
+        return has;
     }
 
-    public interface Callback {
-
-        void onFragmentAttached();
-
-        void onFragmentDetached(String tag);
-    }
 }

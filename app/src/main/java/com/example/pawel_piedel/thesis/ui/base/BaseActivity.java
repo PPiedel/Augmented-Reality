@@ -35,7 +35,7 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
  * and https://github.com/googlesamples/android-architecture/tree/todo-mvp-dagger/
  */
 
-public class BaseActivity extends AppCompatActivity implements BaseView,BaseFragment.Callback {
+public class BaseActivity extends AppCompatActivity implements BaseView {
     private final String LOG_TAG = BaseActivity.class.getSimpleName();
     private ActivityComponent activityComponent;
     private Unbinder unbinder;
@@ -117,21 +117,4 @@ public class BaseActivity extends AppCompatActivity implements BaseView,BaseFrag
                 checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-
-    @Override
-    public void onFragmentAttached() {
-
-    }
-
-    @Override
-    public void onFragmentDetached(String tag) {
-
-    }
-
-    public interface Callback {
-
-        void onFragmentAttached();
-
-        void onFragmentDetached(String tag);
-    }
 }
