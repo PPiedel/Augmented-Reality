@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
@@ -41,7 +42,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     private ApiService apiService;
 
     @Inject
-    SharedPreferences sharedPreferences;
+    DataManager dataManager;
 
     @Inject
     public RestaurantsPresenter() {
@@ -70,48 +71,25 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
     @Override
     public void load() {
-        ServiceFactory.accessToken = retrieveAccessTokenFromSharedPref();
-        if (accessToken == null) {
-            apiService = ServiceFactory.createService(ApiService.class);
-            apiService.getAccessToken(CLIENT_ID, CLIENT_SECRET, GRANT_TYPE)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<AccessToken>() {
-                        @Override
-                        public void onCompleted() {
-                            saveAccessTokenInSharedPref();
+       dataManager.getAccessToken()
+               .observeOn(Schedulers.io())
+               .subscribeOn(AndroidSchedulers.mainThread())
+               .subscribe(new Subscriber<AccessToken>() {
+                   @Override
+                   public void onCompleted() {
+                       manageToLoadRestaurants();
+                   }
 
-                           manageToLoadRestaurants();
-                        }
+                   @Override
+                   public void onError(Throwable e) {
 
-                        @Override
-                        public void onError(Throwable e) {
+                   }
 
-                        }
-
-                        @Override
-                        public void onNext(AccessToken accessToken) {
-                            ServiceFactory.accessToken = accessToken;
-                            Log.v(LOG_TAG, "Cafes presenter" + accessToken.toString());
-                        }
-                    });
-        } else {
-            manageToLoadRestaurants();
-        }
-    }
-
-    public void saveAccessTokenInSharedPref() {
-        sharedPreferences
-                .edit()
-                .putString("access_token", gson.toJson(accessToken))
-                .apply();
-    }
-
-    public AccessToken retrieveAccessTokenFromSharedPref() {
-        String json = sharedPreferences
-                .getString("access_token", "");
-        Log.v(LOG_TAG, "Retrieved access token : " + json);
-        return gson.fromJson(json, AccessToken.class);
+                   @Override
+                   public void onNext(AccessToken accessToken) {
+                        dataManager.saveAccessToken(accessToken);
+                   }
+               });
     }
 
     @Override
@@ -129,7 +107,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                         @Override
                         public void call(Location location) {
                             LocationService.mLastLocation = location;
-                            Log.i(LOG_TAG,"Location obtained : "+ location.toString());
+                            Log.i(LOG_TAG, "Location obtained : " + location.toString());
                             loadCafes();
                         }
                     });

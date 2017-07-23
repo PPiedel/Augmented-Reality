@@ -43,7 +43,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
     private ApiService apiService;
 
     @Inject
-    SharedPreferences sharedPreferences;
+    DataManager dataManager;
 
     @Inject
     public CafesPresenter() {
@@ -70,50 +70,27 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
     }
 
     public void load() {
-        ServiceFactory.accessToken = retrieveAccessTokenFromSharedPref();
-        if (accessToken == null) {
-            apiService = ServiceFactory.createService(ApiService.class);
-            apiService.getAccessToken(CLIENT_ID, CLIENT_SECRET, GRANT_TYPE)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<AccessToken>() {
-                        @Override
-                        public void onCompleted() {
-                            saveAccessTokenInSharedPref();
+        dataManager.getAccessToken()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                        manageToLoadCafes();
+                    }
 
-                            manageToLoadCafes();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
 
-                        @Override
-                        public void onError(Throwable e) {
+                    }
 
-                        }
-
-                        @Override
-                        public void onNext(AccessToken accessToken) {
-                            ServiceFactory.accessToken = accessToken;
-                            Log.v(LOG_TAG, "Cafes presenter" + accessToken.toString());
-                        }
-                    });
-        } else {
-            manageToLoadCafes();
-        }
-
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+                        dataManager.saveAccessToken(accessToken);
+                    }
+                });
     }
 
-    public void saveAccessTokenInSharedPref() {
-        sharedPreferences
-                .edit()
-                .putString("access_token", gson.toJson(accessToken))
-                .apply();
-    }
-
-    public AccessToken retrieveAccessTokenFromSharedPref() {
-        String json = sharedPreferences
-                .getString("access_token", "");
-        Log.v(LOG_TAG, "Retrieved access token : " + json);
-        return gson.fromJson(json, AccessToken.class);
-    }
 
     @Override
     public void manageToLoadCafes() {
@@ -121,7 +98,8 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
             loadCafes();
         } else {
             ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getView().provideContext());
-            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getView().provideContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationProvider.getLastKnownLocation()

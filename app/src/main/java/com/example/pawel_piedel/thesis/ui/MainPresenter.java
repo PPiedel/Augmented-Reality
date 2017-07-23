@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.BuildConfig;
@@ -18,6 +19,10 @@ import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 
 import javax.inject.Inject;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
@@ -39,12 +44,31 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public void start() {
+        dataManager.getAccessToken()
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+                        dataManager.saveAccessToken(accessToken);
+                    }
+                });
+
         if (!checkPermissions()) {
             requestPermissions();
         } else {
             getLastLocation();
         }
-        dataManager.test();
     }
 
     @Override
