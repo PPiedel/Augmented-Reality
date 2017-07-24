@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui;
+package com.example.pawel_piedel.thesis.ui.main;
 
 import android.Manifest;
 import android.content.Intent;
@@ -6,23 +6,18 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.model.AccessToken;
-import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
-import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.ThesisApplication;
+import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
+import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
-
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
@@ -33,8 +28,6 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 @ConfigPersistent
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
     private static final String LOG_TAG = MainPresenter.class.getName();
-
-
 
     @Inject
     public MainPresenter(DataManager dataManager) {
@@ -66,6 +59,13 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     public void requestPermissions() {
         getView().showPermissionsRequest();
+    }
+
+    @Override
+    public void openArActivity() {
+        Intent arIntent = new Intent(getView().getViewActivity().getApplication(), ARActivity.class);
+        getView().getViewActivity().startActivity(arIntent);
+
     }
 
 

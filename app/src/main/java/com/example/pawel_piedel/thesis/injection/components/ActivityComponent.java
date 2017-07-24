@@ -2,12 +2,12 @@ package com.example.pawel_piedel.thesis.injection.components;
 
 import com.example.pawel_piedel.thesis.injection.PerActivity;
 import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
-import com.example.pawel_piedel.thesis.ui.MainActivity;
-import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
+import com.example.pawel_piedel.thesis.ui.main.MainActivity;
+import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
+import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
+import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsFragment;
 
-import dagger.Component;
 import dagger.Subcomponent;
 
 /**
@@ -18,6 +18,7 @@ import dagger.Subcomponent;
 @Subcomponent(modules = ActivityModule.class)
 public interface ActivityComponent {
     void inject(MainActivity mainActivity);
+    void inject(ARActivity arActivity);
     void inject(CafesFragment cafesFragment);
     void inject(DeliveriesFragment deliveriesFragment);
     void inject(RestaurantsFragment restaurantsFragment);

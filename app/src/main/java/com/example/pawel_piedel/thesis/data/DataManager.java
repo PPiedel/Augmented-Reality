@@ -2,24 +2,18 @@ package com.example.pawel_piedel.thesis.data;
 
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
-import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_SECRET;

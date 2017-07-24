@@ -69,8 +69,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.6'
     provided 'javax.annotation:jsr250-api:1.0'
 
-
-
     //play services
     compile 'com.google.android.gms:play-services:11.0.2'
 
@@ -80,4 +78,5 @@ dependencies {
 
 
 
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }

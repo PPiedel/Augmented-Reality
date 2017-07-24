@@ -2,19 +2,17 @@ package com.example.pawel_piedel.thesis.injection.modules;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 
 import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
-import com.example.pawel_piedel.thesis.ui.MainActivity;
-import com.example.pawel_piedel.thesis.ui.MainContract;
-import com.example.pawel_piedel.thesis.ui.MainPresenter;
-import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesContract;
-import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
-import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesContract;
-import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
+import com.example.pawel_piedel.thesis.ui.main.MainContract;
+import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
+import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesContract;
+import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesPresenter;
+import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesContract;
+import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesPresenter;
+import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsContract;
+import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsPresenter;
 
 import dagger.Module;
 import dagger.Provides;

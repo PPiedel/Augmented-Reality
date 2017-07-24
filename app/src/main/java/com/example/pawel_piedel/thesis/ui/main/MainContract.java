@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui;
+package com.example.pawel_piedel.thesis.ui.main;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -16,11 +16,12 @@ public interface MainContract {
 
     }
 
-
     public interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
         boolean checkPermissions();
 
         void requestPermissions();
+
+        void openArActivity();
 
 
     }

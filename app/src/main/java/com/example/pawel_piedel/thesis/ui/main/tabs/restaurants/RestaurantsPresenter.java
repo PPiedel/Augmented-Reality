@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
+package com.example.pawel_piedel.thesis.ui.main.tabs.restaurants;
 
 import android.location.Location;
 import android.util.Pair;
@@ -15,6 +15,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
 
 /**
  * Created by Pawel_Piedel on 20.07.2017.
@@ -41,10 +42,10 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
     @Override
     public void onViewPrepared() {
-        load();
+        loadRestaurannts();
     }
 
-    public void load() {
+    public void loadRestaurannts() {
         Observable
                 .zip(
                         getDataManager().getAccessToken(),
@@ -55,7 +56,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                 .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                     @Override
                     public void onCompleted() {
-                        loadRestaurants();
+                        loadFromApi();
                     }
 
                     @Override
@@ -70,10 +71,9 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                     }
                 });
 
-
     }
 
-    public void loadRestaurants(){
+    public void loadFromApi() {
         getDataManager().loadBusinesses("restaurant")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

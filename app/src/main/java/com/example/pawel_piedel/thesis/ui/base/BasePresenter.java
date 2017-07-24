@@ -35,4 +35,5 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
     public DataManager getDataManager() {
         return dataManager;
     }
+
 }

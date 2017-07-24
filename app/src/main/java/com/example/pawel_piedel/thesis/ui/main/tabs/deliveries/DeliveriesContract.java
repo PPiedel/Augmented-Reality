@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.tabs.cafes;
+package com.example.pawel_piedel.thesis.ui.main.tabs.deliveries;
 
 import android.content.Context;
 
@@ -8,13 +8,14 @@ import com.example.pawel_piedel.thesis.data.model.Business;
 import java.util.List;
 
 /**
- * Created by Pawel_Piedel on 18.07.2017.
+ * Created by Pawel_Piedel on 19.07.2017.
  */
 
-public interface CafesContract {
+public interface DeliveriesContract {
+
     interface View extends BaseView {
 
-        void showCafes(List<Business> cafes);
+        void showDeliveries(List<Business> deliveries);
 
         Context provideContext();
     }
@@ -24,9 +25,6 @@ public interface CafesContract {
 
         void onViewPrepared();
 
-        void load();
-
-        void manageToLoadCafes();
+        void loadDeliveries();
     }
-
 }

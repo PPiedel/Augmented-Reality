@@ -16,4 +16,8 @@
     <string name="restaurants">Restauracje</string>
     <string name="cafes">Kawiarnie</string>
     <string name="delivery">Dostawa</string>
+
+    <string name="title_activity_ar">ArActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

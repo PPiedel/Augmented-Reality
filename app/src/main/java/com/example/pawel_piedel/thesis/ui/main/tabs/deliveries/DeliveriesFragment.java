@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.tabs.cafes;
+package com.example.pawel_piedel.thesis.ui.main.tabs.deliveries;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,34 +24,36 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CafesFragment extends BaseFragment implements CafesContract.View {
-    private String LOG_TAG = CafesFragment.class.getName();
+public class DeliveriesFragment extends BaseFragment implements DeliveriesContract.View {
+    private final String LOG_TAG = DeliveriesFragment.class.getName();
 
     private BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-    CafesContract.Presenter<CafesContract.View> cafesPresenter;
+    DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter;
 
-    @BindView(R.id.cafes_recycler_view)
+    @BindView(R.id.deliveries_recycler_view)
     RecyclerView mRecyclerView;
 
-    public CafesFragment() {
+    public DeliveriesFragment() {
         // Required empty public constructor
     }
 
-    public static CafesFragment newInstance() {
-        return new CafesFragment();
+    public static DeliveriesFragment newInstance() {
+        return new DeliveriesFragment();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cafes, container, false);
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_deliveries, container, false);
         ActivityComponent component = getActivityComponent();
         if (component != null) {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
-            cafesPresenter.attachView(this);
+            deliveriesPresenter.attachView(this);
             //mBlogAdapter.setCallback(this);
         }
 
@@ -65,40 +67,43 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
 
-        cafesPresenter.onViewPrepared();
+        deliveriesPresenter.onViewPrepared();
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
     public void onDestroyView() {
-        cafesPresenter.detachView();
+        deliveriesPresenter.detachView();
         super.onDestroyView();
     }
+
 
     @Override
     public void requestRequiredPermissions(String[] permissions, int requestCode) {
 
     }
 
+
+
     @Override
     public boolean hasPermission(String permission) {
         return false;
     }
 
+
     @Override
-    public void showCafes(List<Business> cafes) {
-        businessAdapter.addBusinessList(cafes);
+    public void showDeliveries(List<Business> deliveries) {
+        businessAdapter.addBusinessList(deliveries);
     }
 
     @Override
-    public Context provideContext() {
+    public Context provideContext(){
         return getActivity();
     }
-
 
 }

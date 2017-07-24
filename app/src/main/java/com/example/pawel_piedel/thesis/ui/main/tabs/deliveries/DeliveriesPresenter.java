@@ -1,9 +1,9 @@
-package com.example.pawel_piedel.thesis.ui.tabs.cafes;
+package com.example.pawel_piedel.thesis.ui.main.tabs.deliveries;
 
 import android.location.Location;
+import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -11,19 +11,21 @@ import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Pawel_Piedel on 18.07.2017.
+ * Created by Pawel_Piedel on 19.07.2017.
  */
 @ConfigPersistent
-public class CafesPresenter <V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
-    private final String LOG_TAG = CafesPresenter.class.getName();
+public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
+    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
+
 
     @Inject
-    public CafesPresenter(DataManager dataManager) {
+    public DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -37,19 +39,24 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
         super.detachView();
     }
 
+
     @Override
     public void onViewPrepared() {
-        load();
+        loadDeliveries();
     }
 
-    public void load() {
-        getDataManager().getAccessToken()
+    public void loadDeliveries() {
+        Observable
+                .zip(
+                        getDataManager().getAccessToken(),
+                        getDataManager().getLastKnownLocation(),
+                        Pair::create)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<AccessToken>() {
+                .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                     @Override
                     public void onCompleted() {
-                        manageToLoadCafes();
+                        loadFromApi();
                     }
 
                     @Override
@@ -58,39 +65,16 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
                     }
 
                     @Override
-                    public void onNext(AccessToken accessToken) {
-                        getDataManager().saveAccessToken(accessToken);
+                    public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                        getDataManager().saveAccessToken(accessTokenLocationPair.first);
+                        getDataManager().saveLocation(accessTokenLocationPair.second);
                     }
                 });
-    }
-
-
-    @Override
-    public void manageToLoadCafes() {
-      getDataManager().getLastKnownLocation()
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Subscriber<Location>() {
-                  @Override
-                  public void onCompleted() {
-                      loadCafes();
-                  }
-
-                  @Override
-                  public void onError(Throwable e) {
-
-                  }
-
-                  @Override
-                  public void onNext(Location location) {
-                        LocationService.mLastLocation = location;
-                  }
-              });
 
     }
 
-    private void loadCafes() {
-        getDataManager().loadBusinesses("coffee")
+    public void loadFromApi() {
+        getDataManager().loadBusinesses("delivery")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -106,7 +90,7 @@ public class CafesPresenter <V extends CafesContract.View> extends BasePresenter
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        getView().showCafes(searchResponse.getBusinesses());
+                        getView().showDeliveries(searchResponse.getBusinesses());
                     }
                 });
     }

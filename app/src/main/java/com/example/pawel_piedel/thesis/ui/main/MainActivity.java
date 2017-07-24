@@ -16,12 +16,13 @@
 
 /*Permissions checking based on https://github.com/googlesamples/android-play-location*/
 
-package com.example.pawel_piedel.thesis.ui;
+package com.example.pawel_piedel.thesis.ui.main;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -29,14 +30,15 @@ import android.support.v7.widget.Toolbar;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
-import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
-import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
+import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
+import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsFragment;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -75,6 +77,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         setUpTabLayout();
 
         mPresenter.managePermissions();
+
+
     }
 
     @Override
@@ -121,6 +125,11 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     @Override
     public Activity getViewActivity() {
         return this;
+    }
+
+    @OnClick(R.id.fab)
+    public void submit() {
+        mPresenter.openArActivity();
     }
 
 
