@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothClass;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -35,12 +36,12 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            presenter.openCamera();
+            presenter.openCamera(width,height);
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            // Transform you image captured size according to the surface width and height
+            presenter.configureTransform(width,height);
         }
 
         @Override
@@ -55,7 +56,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
 
     @BindView(R.id.texture)
-    TextureView textureView;
+    AutoFitTextureView textureView;
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -80,7 +81,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         Log.e(TAG, "onResume");
         presenter.startBackgroundThread();
         if (textureView.isAvailable()) {
-            presenter.openCamera();
+            presenter.openCamera(textureView.getWidth(),textureView.getHeight());
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
@@ -153,6 +154,14 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTransform(Matrix matrix){
+        textureView.setTransform(matrix);
+    }
+
+    public void setAspectRatio(int x,int y){
+        textureView.setAspectRatio(x,y);
     }
 
 

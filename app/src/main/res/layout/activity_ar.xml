@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:activity="com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity">
-    <TextureView
+    <com.example.pawel_piedel.thesis.ui.augumented_reality.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
