@@ -1,23 +1,16 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.bluetooth.BluetoothClass;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -34,25 +27,15 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter.REQUEST_CAMERA_PERMISSION;
-
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String TAG = ARActivity.class.getSimpleName();
-    private String cameraId;
-    protected CameraDevice cameraDevice;
-    private Size imageDimension;
     protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest captureRequest;
     protected CaptureRequest.Builder captureRequestBuilder;
-    private boolean mFlashSupported;
-    private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
-
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            openCamera();
+            presenter.openCamera();
         }
 
         @Override
@@ -70,26 +53,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     };
 
-    CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice camera) {
-            //This is called when the camera is open
-            Log.e(TAG, "onOpened");
-            cameraDevice = camera;
-            createCameraPreview();
-        }
-
-        @Override
-        public void onDisconnected(CameraDevice camera) {
-            cameraDevice.close();
-        }
-
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    };
 
     @BindView(R.id.texture)
     TextureView textureView;
@@ -115,9 +78,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
-        startBackgroundThread();
+        presenter.startBackgroundThread();
         if (textureView.isAvailable()) {
-            openCamera();
+            presenter.openCamera();
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
@@ -127,13 +90,14 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     protected void onPause() {
         Log.e(TAG, "onPause");
         //closeCamera();
-        stopBackgroundThread();
+        presenter.stopBackgroundThread();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        presenter.closeCamera();
         presenter.detachView();
     }
 
@@ -149,46 +113,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     }
 
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-
-    protected void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void openCamera() {
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
-        try {
-            cameraId = manager.getCameraIdList()[0];
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            assert map != null;
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            {
-                ActivityCompat.requestPermissions(ARActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                return;
-            }
-            manager.openCamera(cameraId, stateCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "openCamera X");
-    }
-
-    protected void createCameraPreview() {
+    public void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice) {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             assert texture != null;
@@ -205,7 +130,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
                     }
                     // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
-                    updatePreview();
+                    updatePreview(mBackgroundHandler,cameraDevice);
                 }
 
                 @Override
@@ -218,7 +143,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
-    protected void updatePreview() {
+    protected void updatePreview(Handler mBackgroundHandler,CameraDevice cameraDevice) {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
@@ -230,11 +155,5 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
-    private void closeCamera() {
-        if (null != cameraDevice) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    }
 
 }

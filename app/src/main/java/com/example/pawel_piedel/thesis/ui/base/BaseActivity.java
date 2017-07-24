@@ -20,6 +20,7 @@ import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
 
 import butterknife.Unbinder;
 
+import static com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter.REQUEST_CAMERA_PERMISSION;
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
 /**
@@ -125,7 +126,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
     public void requestCamerapERMISSIONS(){
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CAMERA},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
+                REQUEST_CAMERA_PERMISSION);
     }
 
 
