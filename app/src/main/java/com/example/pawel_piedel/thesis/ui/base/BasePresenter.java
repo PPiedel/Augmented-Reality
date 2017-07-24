@@ -9,8 +9,11 @@ import javax.inject.Inject;
  */
 
 public class BasePresenter<V extends BaseView> implements Presenter<V> {
-    private final DataManager dataManager;
+    private DataManager dataManager;
     private V view;
+
+    public BasePresenter() {
+    }
 
     @Inject
     public BasePresenter(DataManager dataManager) {

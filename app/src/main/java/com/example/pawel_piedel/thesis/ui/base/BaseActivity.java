@@ -1,14 +1,9 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -16,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ThesisApplication;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
@@ -67,7 +61,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
     }
 
 
-    public void showPermissionsRequest() {
+    public void showLocationPermissionsRequest() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
@@ -92,9 +86,45 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         }
     }
 
+    @Override
+    public void showCameraPermissionRequest() {
+        showCameraPermiassionRequest();
+    }
+
+    public void showCameraPermiassionRequest(){
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.CAMERA);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
+
+            showSnackbar(R.string.permission_rationale, android.R.string.ok,
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                          requestCamerapERMISSIONS();
+                        }
+                    });
+
+        } else {
+            Log.i(LOG_TAG, "Requesting permission");
+            requestCamerapERMISSIONS();
+        }
+    }
+
     public void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+
+    public void requestCamerapERMISSIONS(){
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA},
                 REQUEST_PERMISSIONS_REQUEST_CODE);
     }
 

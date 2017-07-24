@@ -1,5 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
+import android.app.Activity;
+
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
 
@@ -8,11 +10,12 @@ import com.example.pawel_piedel.thesis.ui.base.BaseView;
  */
 
 public interface ARContract {
-    interface View extends BaseView{
-        void showBusinessOnScreen(Business business);
+    public interface View extends BaseView {
+        Activity getViewActivity();
     }
 
-    interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+    public interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+        void openCamera();
 
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARContract;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter;
 import com.example.pawel_piedel.thesis.ui.main.MainContract;
 import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
 import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesContract;
@@ -64,5 +66,12 @@ public class ActivityModule {
     RestaurantsContract.Presenter<RestaurantsContract.View> provideRestaurantsPresenter(RestaurantsPresenter<RestaurantsContract.View> presenter){
         return presenter;
     }
+
+    @Provides
+    @PerActivity
+    ARContract.Presenter<ARContract.View> provideARPresenter(ARPresenter<ARContract.View> presenter){
+        return presenter;
+    }
+
 
 }

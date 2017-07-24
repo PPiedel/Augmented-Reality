@@ -70,8 +70,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpLayout();
 
-        //sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-
         setupViewPager(viewPager);
 
         setUpTabLayout();
@@ -96,7 +94,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
-       // RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
+        // RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
         adapter.addFragment(restaurantsFragment, getString(R.string.restaurants));
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
@@ -128,7 +126,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
     @OnClick(R.id.fab)
-    public void submit() {
+    public void fabOnClick() {
         mPresenter.openArActivity();
     }
 

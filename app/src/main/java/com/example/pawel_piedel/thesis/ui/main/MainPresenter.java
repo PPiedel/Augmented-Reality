@@ -11,7 +11,6 @@ import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.ThesisApplication;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
@@ -58,7 +57,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
 
     public void requestPermissions() {
-        getView().showPermissionsRequest();
+        getView().showLocationPermissionsRequest();
     }
 
     @Override

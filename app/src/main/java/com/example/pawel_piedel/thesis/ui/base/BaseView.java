@@ -14,7 +14,9 @@ public interface BaseView<T extends Presenter> {
 
     void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener);
 
-    void showPermissionsRequest();
+    void showLocationPermissionsRequest();
+
+    void showCameraPermissionRequest();
 
     void requestRequiredPermissions(String[] permissions, int requestCode);
 

@@ -10,13 +10,13 @@ import com.example.pawel_piedel.thesis.ui.base.BaseView;
  */
 
 public interface MainContract {
-    public interface View extends BaseView {
+    interface View extends BaseView {
 
         Activity getViewActivity();
 
     }
 
-    public interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+    interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
         boolean checkPermissions();
 
         void requestPermissions();

@@ -1,6 +1,5 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -69,9 +68,16 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
     }
 
     @Override
-    public void showPermissionsRequest() {
+    public void showLocationPermissionsRequest() {
         if (baseActivity !=null){
-            baseActivity.showPermissionsRequest();
+            baseActivity.showLocationPermissionsRequest();
+        }
+    }
+
+    @Override
+    public void showCameraPermissionRequest() {
+        if (baseActivity !=null){
+            baseActivity.showCameraPermissionRequest();
         }
     }
 
