@@ -3,13 +3,11 @@ package com.example.pawel_piedel.thesis.data.local;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.ServiceFactory;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.example.pawel_piedel.thesis.data.ServiceFactory.accessToken;
 import static com.example.pawel_piedel.thesis.util.Util.gson;
 
 /**

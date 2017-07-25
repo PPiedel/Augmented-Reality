@@ -4,8 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.pawel_piedel.thesis.data.ApiService;
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
+import com.example.pawel_piedel.thesis.data.remote.ApiService;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 
 import javax.inject.Singleton;
@@ -13,7 +12,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-import static com.example.pawel_piedel.thesis.data.ServiceFactory.createService;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.createService;
 
 /**
  * Created by Pawel_Piedel on 20.07.2017.

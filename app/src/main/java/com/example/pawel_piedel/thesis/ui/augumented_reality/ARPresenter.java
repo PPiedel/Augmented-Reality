@@ -154,6 +154,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         if (reactiveSensors.hasSensor(sensorType)) {
             azimuthSubscription = azimuthManager.getReactiveSensorEvents()
                     .filter(reactiveSensorEvent -> {
+
                         boolean pointsTo = false;
                         deviceAzimuth = calculateNewDeviceAzimuth(reactiveSensorEvent);
                         for (int i = 0;i<azimuths.length;i++) {
@@ -183,7 +184,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             azimuthFrom = deviceAzimuth;
 
-
+                            getView().setAzimuthText(deviceAzimuth);
                             getView().showBusinessOnScreen(getDataManager().getBusinesses().get(i));
 
                             /*if (deviceAzimuth != azimuthFrom) {
@@ -196,7 +197,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                             }
                             */
 
-                            getView().setAzimuthText(deviceAzimuth);
+
                         }
                     });
         } else {
@@ -240,6 +241,10 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void startObservingLocation() {
+        if (Util.mLastLocation!=null){
+            getView().setLocationText(Util.mLastLocation);
+            updateBusinessAzimuths(Util.mLastLocation);
+        }
         locationSubscription = getDataManager().getLocationUpdates()
                 .subscribeOn(Schedulers.io())
                 .filter(location -> (location.getLatitude() != lastLocation.getLatitude()) && (location.getLongitude() != lastLocation.getLongitude()))

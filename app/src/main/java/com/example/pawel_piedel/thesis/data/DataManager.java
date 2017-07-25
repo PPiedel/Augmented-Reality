@@ -3,12 +3,13 @@ package com.example.pawel_piedel.thesis.data;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.example.pawel_piedel.thesis.data.remote.ApiService;
+import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.util.Util;
 import com.google.android.gms.location.LocationRequest;
@@ -24,9 +25,9 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
 
-import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_ID;
-import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_SECRET;
-import static com.example.pawel_piedel.thesis.data.ServiceFactory.GRANT_TYPE;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
 
 /**
  * Created by Pawel_Piedel on 21.07.2017.
@@ -112,10 +113,6 @@ public class DataManager {
     }
 
     public void setBusinesses(List<Business> businesses) {
-        for (Business business: businesses) {
-            Log.i(LOG_TAG,business.toString());
-
-        }
         this.businesses = new ArrayList<>(businesses);
     }
 
