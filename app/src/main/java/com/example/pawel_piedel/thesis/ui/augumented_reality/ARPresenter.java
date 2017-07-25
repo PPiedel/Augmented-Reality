@@ -38,6 +38,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -52,6 +53,9 @@ import android.view.View;
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.LocationService;
+import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
@@ -68,6 +72,8 @@ import javax.inject.Inject;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Pawel_Piedel on 24.07.2017.
@@ -113,7 +119,11 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private ReactiveSensors reactiveSensors;
     private int azimuthTo = 0;
     private int azimuthFrom = 0;
-    private Subscription subscription;
+    private Subscription azimuthSubscription;
+    private Subscription locationSubscription;
+    private List<Business> businessList = new ArrayList<>(5);
+    private double[] azimuths = new double[5];
+    private Location lastLocation;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -126,6 +136,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Inject
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
+        lastLocation = LocationService.mLastLocation;
 
     }
 
@@ -142,7 +153,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void startObservingSensor() {
         if (reactiveSensors.hasSensor(sensorType)) {
-            subscription = azimuthManager.getReactiveSensorEvents()
+            azimuthSubscription = azimuthManager.getReactiveSensorEvents()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -151,7 +162,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable throwable) {
-                            Log.i(LOG_TAG,throwable.getMessage());
+                            Log.i(LOG_TAG, throwable.getMessage());
                             throwable.printStackTrace();
                             getView().showToast("Sorry, something went wrong.");
 
@@ -175,15 +186,76 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
+    public void startObservingLocation() {
+        locationSubscription = getDataManager().getLocationUpdates()
+                .subscribeOn(Schedulers.io())
+                .filter(location -> (location.getLatitude() != lastLocation.getLatitude()) && (location.getLongitude() != lastLocation.getLongitude()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Location>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(LOG_TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(Location location) {
+                        Log.i(LOG_TAG, location.toString());
+                        getView().setLocationText(location);
+                        updateTheoreticalAzimuths(location);
+                    }
+                });
+    }
+
+    public void updateTheoreticalAzimuths(Location currentLocation) {
+        if (!businessList.isEmpty()) {
+            for (int i = 0; i < azimuths.length; i++) {
+                azimuths[i] = calculateTeoreticalAzimuth(businessList.get(i).getCoordinates(), currentLocation);
+            }
+        }
+
+    }
+
+    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
+    public double calculateTeoreticalAzimuth(Coordinates coordinates, Location currentLocation) {
+        double dX = coordinates.getLatitude() - currentLocation.getLatitude();
+        double dY = coordinates.getLongitude() - currentLocation.getLongitude();
+
+        double phiAngle;
+        double tanPhi;
+
+        tanPhi = Math.abs(dY / dX);
+        phiAngle = Math.atan(tanPhi);
+        phiAngle = Math.toDegrees(phiAngle);
+
+        if (dX > 0 && dY > 0) { // I quater
+            return phiAngle;
+        } else if (dX < 0 && dY > 0) { // II
+            return 180 - phiAngle;
+        } else if (dX < 0 && dY < 0) { // III
+            return 180 + phiAngle;
+        } else if (dX > 0 && dY < 0) { // IV
+            return 360 - phiAngle;
+        }
+
+        return phiAngle;
+    }
+
     @Override
-    public void stopObservingSensor() {
-        azimuthManager.safelyUnsubscribe(subscription);
+    public void unsubscribeAll() {
+        azimuthManager.safelyUnsubscribe(azimuthSubscription);
+        getDataManager().safelyUnsubscribe(locationSubscription);
     }
 
     @Override
     public void setReactiveSensors(Context context) {
         reactiveSensors = new ReactiveSensors(context);
-        azimuthManager = new AzimuthManager(reactiveSensors,sensorType);
+        azimuthManager = new AzimuthManager(reactiveSensors, sensorType);
     }
 
 

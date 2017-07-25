@@ -7,6 +7,7 @@ import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
+import com.google.android.gms.location.LocationRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,6 +15,7 @@ import javax.inject.Singleton;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
+import rx.Subscription;
 
 import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.data.ServiceFactory.CLIENT_SECRET;
@@ -25,7 +27,7 @@ import static com.example.pawel_piedel.thesis.data.ServiceFactory.GRANT_TYPE;
 @Singleton
 public class DataManager {
     private final String LOG_TAG = DataManager.class.getSimpleName();
-
+    private ReactiveLocationProvider locationProvider;
     private final SharedPreferencesHelper preferencesHelper;
     private ApiService apiService;
     private Context context;
@@ -37,6 +39,7 @@ public class DataManager {
         this.preferencesHelper = preferencesHelper;
         this.apiService = apiService;
         this.context = context;
+        locationProvider = new ReactiveLocationProvider(context);
     }
 
     public SharedPreferencesHelper getPreferencesHelper() {
@@ -59,8 +62,22 @@ public class DataManager {
             return Observable.just(LocationService.mLastLocation);
         }
         else {
-            ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(context);
             return locationProvider.getLastKnownLocation();
+        }
+    }
+
+    public Observable<Location> getLocationUpdates(){
+        LocationRequest request = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5 * 1000)
+                .setFastestInterval(1000);
+
+        return locationProvider.getUpdatedLocation(request);
+    }
+
+    public void safelyUnsubscribe(Subscription subscription) {
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
         }
     }
 

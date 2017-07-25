@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -61,6 +62,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.azimuth)
     TextView azimuthTextView;
 
+    @BindView(R.id.location)
+    TextView locationTextView;
+
     @Inject
     ARPresenter<ARContract.View> presenter;
 
@@ -91,14 +95,15 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
 
         presenter.startObservingSensor();
+        presenter.startObservingLocation();
     }
-    
+
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
         //closeCamera();
         presenter.stopBackgroundThread();
-        presenter.stopObservingSensor();
+        presenter.unsubscribeAll();
         super.onPause();
     }
 
@@ -175,6 +180,11 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void setAzimuthText(int  azimuth) {
         azimuthTextView.setText(String.format("%d", azimuth));
+    }
+
+    @Override
+    public void setLocationText(Location location){
+        locationTextView.setText(String.format("Lat %s Long %s", location.getLatitude(), location.getLongitude()));
     }
 
     @Override

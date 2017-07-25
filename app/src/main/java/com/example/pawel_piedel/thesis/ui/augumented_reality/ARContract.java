@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.hardware.camera2.CameraDevice;
+import android.location.Location;
 import android.os.Handler;
 import android.util.Size;
 
@@ -29,6 +30,8 @@ public interface ARContract {
 
         void setAzimuthText(int azimuth);
 
+        void setLocationText(Location location);
+
         void setAspectRatio(int x, int y);
     }
 
@@ -45,9 +48,11 @@ public interface ARContract {
 
         void startObservingSensor();
 
-        void stopObservingSensor();
+        void unsubscribeAll();
 
         void setReactiveSensors(Context context);
+
+        void startObservingLocation();
 
 
     }
