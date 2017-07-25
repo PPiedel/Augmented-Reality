@@ -89,6 +89,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
+
                         getView().showCafes(searchResponse.getBusinesses());
                     }
                 });

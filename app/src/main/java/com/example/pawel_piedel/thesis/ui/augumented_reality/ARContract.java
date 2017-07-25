@@ -20,6 +20,8 @@ import rx.Subscription;
 
 public interface ARContract {
     public interface View extends BaseView {
+        void showBusinessOnScreen(Business business);
+
         Activity getViewActivity();
 
         void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice);
@@ -46,7 +48,7 @@ public interface ARContract {
 
         void configureTransform(int viewWidth, int viewHeight);
 
-        void startObservingSensor();
+        void startObservingAzimuth();
 
         void unsubscribeAll();
 

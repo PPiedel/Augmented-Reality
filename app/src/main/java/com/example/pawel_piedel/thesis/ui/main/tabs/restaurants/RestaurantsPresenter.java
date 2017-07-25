@@ -90,6 +90,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
+                        getDataManager().setBusinesses(searchResponse.getBusinesses());
                         getView().showRestaurants(searchResponse.getBusinesses());
                     }
                 });

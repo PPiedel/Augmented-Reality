@@ -1,13 +1,21 @@
 package com.example.pawel_piedel.thesis.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
+import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.google.android.gms.location.LocationRequest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,6 +39,7 @@ public class DataManager {
     private final SharedPreferencesHelper preferencesHelper;
     private ApiService apiService;
     private Context context;
+    private List<Business> businesses = new ArrayList<>();
 
     @Inject
     public DataManager(@ApplicationContext Context context,
@@ -57,6 +66,7 @@ public class DataManager {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public Observable<Location> getLastKnownLocation(){
         if (LocationService.mLastLocation != null) {
             return Observable.just(LocationService.mLastLocation);
@@ -66,6 +76,7 @@ public class DataManager {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public Observable<Location> getLocationUpdates(){
         LocationRequest request = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -99,5 +110,17 @@ public class DataManager {
 
     public void saveLocation(Location location){
         LocationService.mLastLocation = location;
+    }
+
+    public void setBusinesses(List<Business> businesses) {
+        for (Business business: businesses) {
+            Log.i(LOG_TAG,business.toString());
+
+        }
+        this.businesses = new ArrayList<>(businesses);
+    }
+
+    public List<Business> getBusinesses() {
+        return businesses;
     }
 }

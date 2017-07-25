@@ -54,7 +54,6 @@ import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.LocationService;
-import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
@@ -72,7 +71,6 @@ import javax.inject.Inject;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -114,16 +112,17 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     };
 
+    private static final int AZIMUTH_ACCURACY = 5;
     private AzimuthManager azimuthManager;
     private int sensorType = Sensor.TYPE_ROTATION_VECTOR;
     private ReactiveSensors reactiveSensors;
-    private int azimuthTo = 0;
+    private int deviceAzimuth = 0;
     private int azimuthFrom = 0;
     private Subscription azimuthSubscription;
     private Subscription locationSubscription;
-    private List<Business> businessList = new ArrayList<>(5);
-    private double[] azimuths = new double[5];
+    private double[] azimuths;
     private Location lastLocation;
+    private int i = 0;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -137,7 +136,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
         lastLocation = LocationService.mLastLocation;
-
+        azimuths = new double[getDataManager().getBusinesses().size()];
     }
 
     @Override
@@ -151,9 +150,21 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     @Override
-    public void startObservingSensor() {
+    public void startObservingAzimuth() {
         if (reactiveSensors.hasSensor(sensorType)) {
             azimuthSubscription = azimuthManager.getReactiveSensorEvents()
+                    .filter(reactiveSensorEvent -> {
+                        boolean pointsTo = false;
+                        deviceAzimuth = calculateNewDeviceAzimuth(reactiveSensorEvent);
+                        for (int i = 0;i<azimuths.length;i++) {
+                            if (newAzimuthPointsTo(azimuths[i])) {
+                                //getView().showBusinessOnScreen(getDataManager().getBusinesses().get(i));
+                                pointsTo = true;
+                                this.i = i;
+                            }
+                        }
+                        return pointsTo;
+                    })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -170,20 +181,62 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
-                            azimuthFrom = azimuthTo;
+                            azimuthFrom = deviceAzimuth;
 
-                            SensorEvent event = reactiveSensorEvent.getSensorEvent();
-                            float[] orientation = new float[3];
-                            float[] rMat = new float[9];
-                            SensorManager.getRotationMatrixFromVector(rMat, event.values);
-                            azimuthTo = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
 
-                            getView().setAzimuthText(azimuthTo);
+                            getView().showBusinessOnScreen(getDataManager().getBusinesses().get(i));
+
+                            /*if (deviceAzimuth != azimuthFrom) {
+                                /*for (int i = 0; i < azimuths.length; i++) {
+                                    if (newAzimuthPointsTo(azimuths[i])) {
+                                        getView().showBusinessOnScreen(getDataManager().getBusinesses().get(i));
+                                    }
+                                }
+
+                            }
+                            */
+
+                            getView().setAzimuthText(deviceAzimuth);
                         }
                     });
         } else {
-            // show error message
+            Log.e(LOG_TAG, "Device does not has sensor !");
         }
+    }
+
+    private boolean newAzimuthPointsTo(double businessAzimuth) {
+        double minAngle = businessAzimuth - AZIMUTH_ACCURACY;
+        double maxAngle = businessAzimuth + AZIMUTH_ACCURACY;
+
+        if (minAngle < 0) {
+            minAngle += 360;
+        }
+
+
+        if (maxAngle >= 360) {
+            maxAngle -= 360;
+        }
+        return isBetween(minAngle, maxAngle, deviceAzimuth);
+    }
+
+    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
+    private Boolean isBetween(double minAngle, double maxAngle, double deviceAzimuth) {
+        if (minAngle > maxAngle) {
+            if (isBetween(0, maxAngle, deviceAzimuth) && isBetween(minAngle, 360, deviceAzimuth))
+                return true;
+        } else {
+            if (deviceAzimuth > minAngle && deviceAzimuth < maxAngle)
+                return true;
+        }
+        return false;
+    }
+
+    private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
+        SensorEvent event = reactiveSensorEvent.getSensorEvent();
+        float[] orientation = new float[3];
+        float[] rMat = new float[9];
+        SensorManager.getRotationMatrixFromVector(rMat, event.values);
+        return (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
     }
 
     public void startObservingLocation() {
@@ -207,15 +260,15 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     public void onNext(Location location) {
                         Log.i(LOG_TAG, location.toString());
                         getView().setLocationText(location);
-                        updateTheoreticalAzimuths(location);
+                        updateBusinessAzimuths(location);
                     }
                 });
     }
 
-    public void updateTheoreticalAzimuths(Location currentLocation) {
-        if (!businessList.isEmpty()) {
+    public void updateBusinessAzimuths(Location currentLocation) {
+        if (!getDataManager().getBusinesses().isEmpty()) {
             for (int i = 0; i < azimuths.length; i++) {
-                azimuths[i] = calculateTeoreticalAzimuth(businessList.get(i).getCoordinates(), currentLocation);
+                azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getBusinesses().get(i).getCoordinates(), currentLocation);
             }
         }
 

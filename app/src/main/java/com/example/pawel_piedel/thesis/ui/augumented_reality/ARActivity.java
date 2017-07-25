@@ -16,10 +16,12 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 
 import java.util.Arrays;
@@ -65,6 +67,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.location)
     TextView locationTextView;
 
+    @BindView(R.id.business)
+    TextView businessTextView;
+
     @Inject
     ARPresenter<ARContract.View> presenter;
 
@@ -94,7 +99,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             textureView.setSurfaceTextureListener(textureListener);
         }
 
-        presenter.startObservingSensor();
+        presenter.startObservingAzimuth();
         presenter.startObservingLocation();
     }
 
@@ -112,6 +117,11 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         super.onDestroy();
         presenter.closeCamera();
         presenter.detachView();
+    }
+
+    @Override
+    public void showBusinessOnScreen(Business business) {
+        businessTextView.setVisibility(View.VISIBLE);
     }
 
     @Override

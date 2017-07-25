@@ -5,17 +5,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:activity="com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity">
-    <com.example.pawel_piedel.thesis.ui.augumented_reality.AutoFitTextureView
-        android:id="@+id/texture"
+
+    <RelativeLayout
+        android:id="@+id/cameraLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="wrap_content">
+        <com.example.pawel_piedel.thesis.ui.augumented_reality.AutoFitTextureView
+            android:id="@+id/texture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:id="@+id/business"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Business"
+            android:visibility="gone"
+            />
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/azimuth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/texture"
+        android:layout_below="@id/cameraLayout"
         android:layout_centerHorizontal="true"/>
 
     <TextView
@@ -24,6 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/azimuth"
         android:layout_centerHorizontal="true"/>
+
+
 
 </RelativeLayout>
 
