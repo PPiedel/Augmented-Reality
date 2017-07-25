@@ -15,6 +15,7 @@ import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesContrac
 import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsContract;
 import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsPresenter;
+import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
 import dagger.Module;
 import dagger.Provides;
@@ -72,6 +73,5 @@ public class ActivityModule {
     ARContract.Presenter<ARContract.View> provideARPresenter(ARPresenter<ARContract.View> presenter){
         return presenter;
     }
-
 
 }

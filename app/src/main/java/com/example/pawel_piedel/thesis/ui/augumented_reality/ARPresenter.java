@@ -19,15 +19,20 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -49,6 +54,8 @@ import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
+import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +64,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Pawel_Piedel on 24.07.2017.
@@ -97,6 +108,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     };
 
+    private AzimuthManager azimuthManager;
+    private int sensorType = Sensor.TYPE_ROTATION_VECTOR;
+    private ReactiveSensors reactiveSensors;
+    private int azimuthTo = 0;
+    private int azimuthFrom = 0;
+    private Subscription subscription;
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
@@ -108,6 +126,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Inject
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
+
     }
 
     @Override
@@ -119,6 +138,54 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void detachView() {
         super.detachView();
     }
+
+    @Override
+    public void startObservingSensor() {
+        if (reactiveSensors.hasSensor(sensorType)) {
+            subscription = azimuthManager.getReactiveSensorEvents()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<ReactiveSensorEvent>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            Log.i(LOG_TAG,throwable.getMessage());
+                            throwable.printStackTrace();
+                            getView().showToast("Sorry, something went wrong.");
+
+                        }
+
+                        @Override
+                        public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
+                            azimuthFrom = azimuthTo;
+
+                            SensorEvent event = reactiveSensorEvent.getSensorEvent();
+                            float[] orientation = new float[3];
+                            float[] rMat = new float[9];
+                            SensorManager.getRotationMatrixFromVector(rMat, event.values);
+                            azimuthTo = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+
+                            getView().setAzimuthText(azimuthTo);
+                        }
+                    });
+        } else {
+            // show error message
+        }
+    }
+
+    @Override
+    public void stopObservingSensor() {
+        azimuthManager.safelyUnsubscribe(subscription);
+    }
+
+    @Override
+    public void setReactiveSensors(Context context) {
+        reactiveSensors = new ReactiveSensors(context);
+        azimuthManager = new AzimuthManager(reactiveSensors,sensorType);
+    }
+
 
     public void managePermissions() {
         if (!checkPermissions()) {
@@ -170,6 +237,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void openCamera(int width, int height) {
         CameraManager manager = (CameraManager) getView().getViewActivity().getSystemService(Context.CAMERA_SERVICE);
@@ -284,15 +352,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                 rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                 maxPreviewHeight, largest);
 
-        /*// We fit the aspect ratio of TextureView to the size of preview we picked.
+        // We fit the aspect ratio of TextureView to the size of preview we picked.
         int orientation = getView().getViewActivity().getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getView().setAspectRatio(
-                    mPreviewSize.getWidth(), mPreviewSize.getHeight());
+            getView().setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
         } else {
-            getView().setAspectRatio(
-                    mPreviewSize.getHeight(), mPreviewSize.getWidth());
-        }*/
+            getView().setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
+        }
 
 
     }
@@ -319,6 +385,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
         getView().setTransform(matrix);
     }
+
 
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
                                           int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {

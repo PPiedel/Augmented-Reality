@@ -1,7 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothClass;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -16,6 +15,7 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pawel_piedel.thesis.R;
@@ -58,6 +58,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.texture)
     AutoFitTextureView textureView;
 
+    @BindView(R.id.azimuth)
+    TextView azimuthTextView;
+
     @Inject
     ARPresenter<ARContract.View> presenter;
 
@@ -70,6 +73,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         setUnBinder(ButterKnife.bind(this));
         presenter.attachView(this);
         presenter.managePermissions();
+        presenter.setReactiveSensors(this);
 
         textureView.setSurfaceTextureListener(textureListener);
 
@@ -85,13 +89,16 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
-    }
 
+        presenter.startObservingSensor();
+    }
+    
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
         //closeCamera();
         presenter.stopBackgroundThread();
+        presenter.stopObservingSensor();
         super.onPause();
     }
 
@@ -160,6 +167,17 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         textureView.setTransform(matrix);
     }
 
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setAzimuthText(int  azimuth) {
+        azimuthTextView.setText(String.format("%d", azimuth));
+    }
+
+    @Override
     public void setAspectRatio(int x,int y){
         textureView.setAspectRatio(x,y);
     }
