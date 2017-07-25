@@ -10,41 +10,43 @@
         android:id="@+id/cameraLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.example.pawel_piedel.thesis.ui.augumented_reality.AutoFitTextureView
             android:id="@+id/texture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true" />
 
         <TextView
-            android:id="@+id/business"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Business"
+            android:id="@+id/businessTitle"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:visibility="gone"
-            />
-
+            android:background="#ffffff"
+            android:gravity="top|center_horizontal" />
     </RelativeLayout>
-
 
     <TextView
         android:id="@+id/azimuth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cameraLayout"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/azimuth"
-        android:layout_centerHorizontal="true"/>
-
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
+
+
+
 
 
 

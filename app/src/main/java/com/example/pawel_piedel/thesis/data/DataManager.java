@@ -10,11 +10,10 @@ import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
+import com.example.pawel_piedel.thesis.util.Util;
 import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,8 +67,8 @@ public class DataManager {
 
     @SuppressLint("MissingPermission")
     public Observable<Location> getLastKnownLocation(){
-        if (LocationService.mLastLocation != null) {
-            return Observable.just(LocationService.mLastLocation);
+        if (Util.mLastLocation != null) {
+            return Observable.just(Util.mLastLocation);
         }
         else {
             return locationProvider.getLastKnownLocation();
@@ -79,7 +78,7 @@ public class DataManager {
     @SuppressLint("MissingPermission")
     public Observable<Location> getLocationUpdates(){
         LocationRequest request = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setInterval(5 * 1000)
                 .setFastestInterval(1000);
 
@@ -96,8 +95,8 @@ public class DataManager {
         apiService = ServiceFactory.createService(ApiService.class);
         return apiService.getBusinessesList(
                 term,
-                LocationService.mLastLocation.getLatitude(),
-                LocationService.mLastLocation.getLongitude(),
+                Util.mLastLocation.getLatitude(),
+                Util.mLastLocation.getLongitude(),
                 null,
                 null);
 
@@ -109,7 +108,7 @@ public class DataManager {
     }
 
     public void saveLocation(Location location){
-        LocationService.mLastLocation = location;
+        Util.mLastLocation = location;
     }
 
     public void setBusinesses(List<Business> businesses) {

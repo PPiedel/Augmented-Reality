@@ -17,6 +17,7 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,8 +68,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.location)
     TextView locationTextView;
 
-    @BindView(R.id.business)
-    TextView businessTextView;
+    @BindView(R.id.businessTitle)
+    TextView businessTitle;
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -121,7 +122,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     public void showBusinessOnScreen(Business business) {
-        businessTextView.setVisibility(View.VISIBLE);
+       businessTitle.setVisibility(View.VISIBLE);
+       businessTitle.setText(""+business.getName());
     }
 
     @Override

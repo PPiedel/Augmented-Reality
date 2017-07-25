@@ -53,10 +53,10 @@ import android.view.View;
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.LocationService;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.example.pawel_piedel.thesis.util.Util;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
@@ -135,7 +135,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Inject
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
-        lastLocation = LocationService.mLastLocation;
+        lastLocation = Util.mLastLocation;
         azimuths = new double[getDataManager().getBusinesses().size()];
     }
 

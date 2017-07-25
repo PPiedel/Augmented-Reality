@@ -1,5 +1,7 @@
 package com.example.pawel_piedel.thesis.util;
 
+import android.location.Location;
+
 import com.google.gson.Gson;
 
 /**
@@ -11,5 +13,5 @@ public class Util {
    public static Gson gson = new Gson();
 
 
-
+   public static Location mLastLocation;
 }
