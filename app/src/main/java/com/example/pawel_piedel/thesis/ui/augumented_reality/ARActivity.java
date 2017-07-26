@@ -12,11 +12,17 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.transition.Fade;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +65,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     };
 
 
-    @BindView(R.id.texture)
+    @BindView(R.id.textureaAR)
     AutoFitTextureView textureView;
 
     @BindView(R.id.azimuth)
@@ -68,8 +74,14 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.location)
     TextView locationTextView;
 
-    @BindView(R.id.businessTitle)
+    @BindView(R.id.businessViewAR)
+    ViewGroup businessView;
+
+    @BindView(R.id.businessTitleAR)
     TextView businessTitle;
+
+    @BindView(R.id.businessDistanceAR)
+    TextView businessDistance;
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -122,8 +134,16 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     public void showBusinessOnScreen(Business business) {
-       businessTitle.setVisibility(View.VISIBLE);
-       businessTitle.setText(""+business.getName());
+       businessView.setVisibility(View.VISIBLE);
+       businessTitle.setText(String.format("%s", business.getName()));
+       businessDistance.setText(String.format("%.1f km", business.getDistance()/1000));
+    }
+
+    @Override
+    public void hideBusiness() {
+        Log.i(TAG,"Hiding busines...");
+        businessView.setVisibility(View.GONE);
+        //businessTitle.setVisibility(View.GONE);
     }
 
     @Override
@@ -190,8 +210,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     }
 
     @Override
-    public void setAzimuthText(int  azimuth) {
-        azimuthTextView.setText(String.format("%d", azimuth));
+    public void setAzimuthText(double  azimuth) {
+        azimuthTextView.setText(String.format("%.2f", azimuth));
     }
 
     @Override

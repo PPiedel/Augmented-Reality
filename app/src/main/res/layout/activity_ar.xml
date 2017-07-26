@@ -12,20 +12,37 @@
         android:layout_height="wrap_content">
 
         <com.example.pawel_piedel.thesis.ui.augumented_reality.AutoFitTextureView
-            android:id="@+id/texture"
+            android:id="@+id/textureaAR"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true" />
 
-        <TextView
-            android:id="@+id/businessTitle"
-            android:textSize="20sp"
-            android:textAlignment="center"
+        <RelativeLayout
+            android:id="@+id/businessViewAR"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:visibility="gone"
+            android:orientation="vertical"
             android:background="#ffffff"
-            android:gravity="top|center_horizontal" />
+            >
+            <TextView
+                android:id="@+id/businessTitleAR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:gravity="top|center_horizontal"
+                 />
+            <TextView
+                android:id="@+id/businessDistanceAR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/businessTitleAR"
+                android:gravity="center_horizontal"
+                android:textAlignment="center"/>
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <TextView

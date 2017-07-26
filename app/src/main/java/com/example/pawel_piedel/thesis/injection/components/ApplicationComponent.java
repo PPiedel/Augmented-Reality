@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 
 import com.example.pawel_piedel.thesis.ThesisApplication;
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesHelper;
+import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.injection.modules.ApplicationModule;
 
@@ -27,7 +27,7 @@ public interface ApplicationComponent {
 
     Application application();
 
-    SharedPreferencesHelper getSharedPreferenceHelper();
+    SharedPreferencesManager getSharedPreferenceHelper();
 
     SharedPreferences sharedPreferences();
 

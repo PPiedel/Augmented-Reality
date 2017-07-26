@@ -15,14 +15,14 @@ import static com.example.pawel_piedel.thesis.util.Util.gson;
  */
 
 @Singleton
-public class SharedPreferencesHelper {
+public class SharedPreferencesManager {
     public static final String ACCESS_TOKEN = "access_token";
-    private final String LOG_TAG = SharedPreferencesHelper.class.getSimpleName();
+    private final String LOG_TAG = SharedPreferencesManager.class.getSimpleName();
 
     private SharedPreferences sharedPreferences;
 
     @Inject
-    public SharedPreferencesHelper(SharedPreferences sharedPreferences) {
+    public SharedPreferencesManager(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 

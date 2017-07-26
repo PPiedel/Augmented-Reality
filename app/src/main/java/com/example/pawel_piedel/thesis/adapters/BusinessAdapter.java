@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,14 +70,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
 
         holder.title.setText(business.getName());
         holder.address1.setText((String.valueOf(business.getLocation().getAddress1())));
-        holder.address2.setText(""+business.getLocation().getZipCode()+" "+business.getLocation().getCity());
+        holder.address2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
         holder.rating.setText(String.valueOf(business.getRating()));
-        if (business.isIsClosed()){
-            holder.isClosed.setText(R.string.isClosed);
-        }
-        else {
-            holder.isClosed.setText(R.string.open);
-        }
+        holder.distance.setText(String.format("%.1f km", business.getDistance()/1000));
 
     }
 
@@ -98,7 +92,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         @BindView(R.id.address) TextView address1;
         @BindView(R.id.address2) TextView address2;
         @BindView(R.id.rating) TextView rating;
-        @BindView(R.id.isClosed) TextView isClosed;
+        @BindView(R.id.distance) TextView distance;
 
         public ViewHolder(View view) {
             super(view);

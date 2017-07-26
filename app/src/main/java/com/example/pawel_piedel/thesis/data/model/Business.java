@@ -1,6 +1,8 @@
 
 package com.example.pawel_piedel.thesis.data.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -9,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class Business {
+public class Business implements Comparable<Business> {
 
     @SerializedName("id")
     @Expose
@@ -59,6 +61,8 @@ public class Business {
     @SerializedName("transactions")
     @Expose
     private List<String> transactions = null;
+    @SerializedName("distance")
+    private double distance;
 
     public String getId() {
         return id;
@@ -188,6 +192,30 @@ public class Business {
         this.transactions = transactions;
     }
 
+    public boolean isClaimed() {
+        return isClaimed;
+    }
+
+    public void setClaimed(boolean claimed) {
+        isClaimed = claimed;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     @Override
     public String toString() {
         return "Business{" +
@@ -207,6 +235,12 @@ public class Business {
                 ", coordinates=" + coordinates +
                 ", location=" + location +
                 ", transactions=" + transactions +
+                ", distance=" + distance +
                 '}';
+    }
+
+    @Override
+    public int compareTo(@NonNull Business business) {
+        return Double.compare(this.distance,business.distance);
     }
 }

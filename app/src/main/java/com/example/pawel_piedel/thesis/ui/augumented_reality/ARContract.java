@@ -22,6 +22,8 @@ public interface ARContract {
     public interface View extends BaseView {
         void showBusinessOnScreen(Business business);
 
+        void hideBusiness();
+
         Activity getViewActivity();
 
         void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice);
@@ -30,7 +32,7 @@ public interface ARContract {
 
         void showToast(String message);
 
-        void setAzimuthText(int azimuth);
+        void setAzimuthText(double azimuth);
 
         void setLocationText(Location location);
 

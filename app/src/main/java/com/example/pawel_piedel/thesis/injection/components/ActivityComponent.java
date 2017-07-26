@@ -1,5 +1,8 @@
 package com.example.pawel_piedel.thesis.injection.components;
 
+import android.content.Context;
+
+import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
 import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
@@ -22,4 +25,7 @@ public interface ActivityComponent {
     void inject(CafesFragment cafesFragment);
     void inject(DeliveriesFragment deliveriesFragment);
     void inject(RestaurantsFragment restaurantsFragment);
+
+    @ActivityContext
+    Context context();
 }

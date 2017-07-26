@@ -1,16 +1,11 @@
-package com.example.pawel_piedel.thesis.ui.augumented_reality;
+package com.example.pawel_piedel.thesis.data.augumented_reality;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
