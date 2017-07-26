@@ -12,11 +12,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.transition.Fade;
 import android.transition.TransitionManager;
-import android.transition.TransitionSet;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -46,12 +42,12 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            presenter.openCamera(width,height);
+            presenter.openCamera(width, height);
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            presenter.configureTransform(width,height);
+            presenter.configureTransform(width, height);
         }
 
         @Override
@@ -75,7 +71,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     TextView locationTextView;
 
     @BindView(R.id.businessViewAR)
-    ViewGroup businessView;
+    RelativeLayout businessView;
 
     @BindView(R.id.businessTitleAR)
     TextView businessTitle;
@@ -107,7 +103,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         Log.e(TAG, "onResume");
         presenter.startBackgroundThread();
         if (textureView.isAvailable()) {
-            presenter.openCamera(textureView.getWidth(),textureView.getHeight());
+            presenter.openCamera(textureView.getWidth(), textureView.getHeight());
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
@@ -134,14 +130,16 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     public void showBusinessOnScreen(Business business) {
-       businessView.setVisibility(View.VISIBLE);
-       businessTitle.setText(String.format("%s", business.getName()));
-       businessDistance.setText(String.format("%.1f km", business.getDistance()/1000));
+        TransitionManager.beginDelayedTransition(businessView);
+        businessView.setVisibility(View.VISIBLE);
+        businessTitle.setText(String.format("%s", business.getName()));
+        businessDistance.setText(String.format("%.1f km", business.getDistance() / 1000));
     }
 
     @Override
     public void hideBusiness() {
-        Log.i(TAG,"Hiding busines...");
+        TransitionManager.beginDelayedTransition(businessView);
+        Log.i(TAG, "Hiding busines...");
         businessView.setVisibility(View.GONE);
         //businessTitle.setVisibility(View.GONE);
     }
@@ -175,7 +173,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
                     }
                     // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
-                    updatePreview(mBackgroundHandler,cameraDevice);
+                    updatePreview(mBackgroundHandler, cameraDevice);
                 }
 
                 @Override
@@ -188,7 +186,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
-    protected void updatePreview(Handler mBackgroundHandler,CameraDevice cameraDevice) {
+    protected void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
@@ -200,28 +198,28 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
-    public void setTransform(Matrix matrix){
+    public void setTransform(Matrix matrix) {
         textureView.setTransform(matrix);
     }
 
     @Override
     public void showToast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void setAzimuthText(double  azimuth) {
+    public void setAzimuthText(double azimuth) {
         azimuthTextView.setText(String.format("%.2f", azimuth));
     }
 
     @Override
-    public void setLocationText(Location location){
+    public void setLocationText(Location location) {
         locationTextView.setText(String.format("Lat %s Long %s", location.getLatitude(), location.getLongitude()));
     }
 
     @Override
-    public void setAspectRatio(int x,int y){
-        textureView.setAspectRatio(x,y);
+    public void setAspectRatio(int x, int y) {
+        textureView.setAspectRatio(x, y);
     }
 
 
