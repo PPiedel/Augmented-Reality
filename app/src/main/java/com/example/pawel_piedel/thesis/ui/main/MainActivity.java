@@ -84,10 +84,10 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
     private void addNetworkConnectionFragment() {
         networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
-        if (networkFragment==null){
+        if (networkFragment == null) {
             networkFragment = NetworkFragment.newInstance();
             getFragmentManager().beginTransaction()
-                    .add(networkFragment,NetworkFragment.LOG_TAG)
+                    .add(networkFragment, NetworkFragment.LOG_TAG)
                     .commit();
         }
     }

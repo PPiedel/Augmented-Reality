@@ -144,29 +144,34 @@ public class DataManager {
         checkNotNull(businesses);
         switch (category) {
             case CafesPresenter.CATEGORY:
+                Log.d(LOG_TAG, "Saving cafes...");
                 if (cafes == null) {
                     cafes = new ArrayList<>(businesses.size());
                     Collections.sort(cafes, Business::compareTo);
                 }
-                Log.i(LOG_TAG, "Saving cafes...");
+                cafes.clear();
                 cafes.addAll(businesses);
+                Log.d(LOG_TAG,Arrays.toString(cafes.toArray()));
                 break;
             case RestaurantsPresenter.CATEGORY:
+                Log.d(LOG_TAG, "Saving restaurants...");
                 if (restaurants == null) {
                     restaurants = new ArrayList<>(businesses.size());
                 }
+                restaurants.clear();
                 restaurants.addAll(businesses);
                 Collections.sort(restaurants, Business::compareTo);
-                Log.i(LOG_TAG, "Saving restaurants...");
+                Log.d(LOG_TAG,Arrays.toString(restaurants.toArray()));
                 break;
             case DeliveriesPresenter.CATEGORY:
+                Log.d(LOG_TAG, "Saving deliveries...");
                 if (deliveries == null) {
                     deliveries = new ArrayList<>(businesses.size());
                 }
-                Log.i(LOG_TAG, "Saving deliveries...");
+                deliveries.clear();
                 deliveries.addAll(businesses);
                 Collections.sort(deliveries,Business::compareTo);
-                Log.i(LOG_TAG,Arrays.toString(deliveries.toArray()));
+                Log.d(LOG_TAG,Arrays.toString(deliveries.toArray()));
                 break;
         }
     }

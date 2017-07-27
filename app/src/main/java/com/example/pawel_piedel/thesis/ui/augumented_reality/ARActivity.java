@@ -34,6 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String TAG = ARActivity.class.getSimpleName();
@@ -127,7 +128,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        //closeCamera();
+        presenter.closeCamera();
         presenter.stopBackgroundThread();
         presenter.unsubscribeAll();
         super.onPause();
@@ -136,7 +137,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.closeCamera();
+
         presenter.detachView();
     }
 
@@ -198,6 +199,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
+
     protected void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
@@ -233,6 +235,12 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     public void setAspectRatio(int x, int y) {
         textureView.setAspectRatio(x, y);
     }
+
+    @OnClick(R.id.businessViewAR)
+    public void businessViewOnClick(){
+        presenter.openDetailActivity();
+    }
+
 
 
 }

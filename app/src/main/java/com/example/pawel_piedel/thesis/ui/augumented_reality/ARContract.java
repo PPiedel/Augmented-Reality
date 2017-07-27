@@ -28,6 +28,7 @@ public interface ARContract {
 
         void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice);
 
+
         void setTransform(Matrix matrix);
 
         void showToast(String message);
@@ -57,6 +58,8 @@ public interface ARContract {
         void setReactiveSensors(Context context);
 
         void startObservingLocation();
+
+        void openDetailActivity();
 
 
     }

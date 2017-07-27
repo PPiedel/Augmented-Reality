@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
  */
 
 public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHolder> {
+    public final static String BUSINESS = "business";
     private final String LOG_TAG = BusinessAdapter.class.getName();
     private List<Business> businessList = new ArrayList<>();
     private Context context;
@@ -35,12 +36,12 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     public BusinessAdapter() {
     }
 
-    public void addBusinessList(List<Business> businessList){
+    public void addBusinessList(List<Business> businessList) {
         this.businessList.addAll(businessList);
         notifyDataSetChanged();
     }
 
-    public void addBusiness(Business business){
+    public void addBusiness(Business business) {
         this.businessList.add(business);
         notifyDataSetChanged();
     }
@@ -63,13 +64,13 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         holder.onBind(position);
 
         Business business = businessList.get(position);
-        if (!Objects.equals(business.getImageUrl(), "")){
-           // Log.v(LOG_TAG,""+business.getName()+" "+business.getImageUrl());
+        if (!Objects.equals(business.getImageUrl(), "")) {
+            // Log.v(LOG_TAG,""+business.getName()+" "+business.getImageUrl());
             Glide.with(context)
                     .load(business.getImageUrl())
                     .centerCrop()
                     .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(holder.image);
         }
 
@@ -77,7 +78,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         holder.address1.setText((String.valueOf(business.getLocation().getAddress1())));
         holder.address2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
         holder.rating.setText(String.valueOf(business.getRating()));
-        holder.distance.setText(String.format("%.1f km", business.getDistance()/1000));
+        holder.distance.setText(String.format("%.1f km", business.getDistance() / 1000));
 
     }
 
@@ -92,12 +93,18 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.thubnail) ImageView image;
-        @BindView(R.id.title) TextView title;
-        @BindView(R.id.address) TextView address1;
-        @BindView(R.id.address2) TextView address2;
-        @BindView(R.id.rating) TextView rating;
-        @BindView(R.id.distance) TextView distance;
+        @BindView(R.id.thubnail)
+        ImageView image;
+        @BindView(R.id.title)
+        TextView title;
+        @BindView(R.id.address)
+        TextView address1;
+        @BindView(R.id.address2)
+        TextView address2;
+        @BindView(R.id.rating)
+        TextView rating;
+        @BindView(R.id.distance)
+        TextView distance;
 
         ViewHolder(View view) {
             super(view);
@@ -105,10 +112,14 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         }
 
         void onBind(int position) {
+            setOnItemClickListener(position);
+        }
+
+        private void setOnItemClickListener(int position) {
             itemView.setOnClickListener(view -> {
-                Log.d(LOG_TAG,""+position);
+                Log.d(LOG_TAG, "" + position);
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("business",businessList.get(position));
+                intent.putExtra(BUSINESS, businessList.get(position));
                 context.startActivity(intent);
 
 

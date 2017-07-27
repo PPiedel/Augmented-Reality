@@ -20,4 +20,5 @@
     <dimen name="rating">14sp</dimen>
     <dimen name="genre">12sp</dimen>
     <dimen name="year">12sp</dimen>
+    <dimen name="spacing_large">16dp</dimen>
 </resources>

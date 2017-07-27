@@ -57,6 +57,7 @@ import com.example.pawel_piedel.thesis.data.augumented_reality.AzimuthManager;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.util.Util;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
@@ -72,9 +73,9 @@ import javax.inject.Inject;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+
+import static com.example.pawel_piedel.thesis.adapters.BusinessAdapter.BUSINESS;
 
 /**
  * Created by Pawel_Piedel on 24.07.2017.
@@ -84,7 +85,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
-    private static final float ALPHA = 0.6f;
+    private static final float ALPHA = 0.4f;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
     private String cameraId;
@@ -121,13 +122,12 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private int sensorType = Sensor.TYPE_ROTATION_VECTOR;
     private ReactiveSensors reactiveSensors;
     private double deviceAzimuth = 0;
-    private int azimuthFrom = 0;
     private Subscription azimuthSubscription;
     private Subscription locationSubscription;
     private double[] azimuths;
     private int i = 0;
     private boolean pointsTo = false;
-    private float[] output = {0,0,0,0,0};
+    private float[] output = {0, 0, 0, 0, 0};
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -178,7 +178,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable throwable) {
-                           // Log.i(LOG_TAG, throwable.getMessage());
+                            // Log.i(LOG_TAG, throwable.getMessage());
                             throwable.printStackTrace();
                             getView().showToast("Sorry, something went wrong.");
 
@@ -232,8 +232,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
-        output = lowPass(event.values,output);
-        Log.i(LOG_TAG,Arrays.toString(output));
+        output = lowPass(event.values, output);
+        Log.i(LOG_TAG, Arrays.toString(output));
         float[] orientation = new float[3];
         float[] rMat = new float[9];
         SensorManager.getRotationMatrixFromVector(rMat, output);
@@ -279,6 +279,14 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         updateBusinessAzimuths(location);
                     }
                 });
+    }
+
+    @Override
+    public void openDetailActivity() {
+
+        Intent detailActivityIntent = new Intent(getView().getViewActivity(), DetailActivity.class);
+        detailActivityIntent.putExtra(BUSINESS, getDataManager().getRestaurants().get(i));
+        getView().getViewActivity().startActivity(detailActivityIntent);
     }
 
     private boolean locationsAreDiffrent(Location first, Location second) {
