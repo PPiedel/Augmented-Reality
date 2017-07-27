@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
+import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
 import java.util.Arrays;
 
@@ -59,7 +60,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
-
+    private NetworkFragment networkFragment;
 
     @BindView(R.id.textureaAR)
     AutoFitTextureView textureView;
@@ -86,15 +87,26 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar);
-
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
+
+        addNetworkConnectionFragment();
         presenter.attachView(this);
         presenter.managePermissions();
         presenter.setReactiveSensors(this);
 
         textureView.setSurfaceTextureListener(textureListener);
 
+    }
+
+    private void addNetworkConnectionFragment() {
+        networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
+        if (networkFragment==null){
+            networkFragment = NetworkFragment.newInstance();
+            getFragmentManager().beginTransaction()
+                    .add(networkFragment,NetworkFragment.LOG_TAG)
+                    .commit();
+        }
     }
 
     @Override

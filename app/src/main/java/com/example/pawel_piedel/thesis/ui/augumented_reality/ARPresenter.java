@@ -161,7 +161,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     .doOnNext(reactiveSensorEvent -> {
                         pointsTo = false;
                         deviceAzimuth = calculateNewDeviceAzimuth(reactiveSensorEvent);
-                        Log.i(LOG_TAG, "Device azimuth : " + deviceAzimuth);
+                        //Log.i(LOG_TAG, "Device azimuth : " + deviceAzimuth);
                         for (int i = 0; i < azimuths.length && !pointsTo; i++) {
                             if (newAzimuthPointsTo(azimuths[i])) {
                                 this.pointsTo = true;
@@ -178,7 +178,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable throwable) {
-                            Log.i(LOG_TAG, throwable.getMessage());
+                           // Log.i(LOG_TAG, throwable.getMessage());
                             throwable.printStackTrace();
                             getView().showToast("Sorry, something went wrong.");
 

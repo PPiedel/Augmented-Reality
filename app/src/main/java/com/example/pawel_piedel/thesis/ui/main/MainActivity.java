@@ -33,6 +33,7 @@ import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private NetworkFragment networkFragment;
 
     @Inject
     MainPresenter<MainContract.View> mPresenter;
@@ -70,6 +73,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpLayout();
 
+        addNetworkConnectionFragment();
+
         setupViewPager(viewPager);
 
         setUpTabLayout();
@@ -77,6 +82,16 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         mPresenter.managePermissions();
 
 
+    }
+
+    private void addNetworkConnectionFragment() {
+        networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
+        if (networkFragment==null){
+            networkFragment = NetworkFragment.newInstance();
+            getFragmentManager().beginTransaction()
+                    .add(networkFragment,NetworkFragment.LOG_TAG)
+                    .commit();
+        }
     }
 
     @Override
