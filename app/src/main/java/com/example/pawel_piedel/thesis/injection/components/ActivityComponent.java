@@ -6,6 +6,7 @@ import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
 import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
+import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.main.MainActivity;
 import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
@@ -25,6 +26,7 @@ public interface ActivityComponent {
     void inject(CafesFragment cafesFragment);
     void inject(DeliveriesFragment deliveriesFragment);
     void inject(RestaurantsFragment restaurantsFragment);
+    void inject(DetailActivity detailActivity);
 
     @ActivityContext
     Context context();

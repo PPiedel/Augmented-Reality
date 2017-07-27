@@ -3,6 +3,7 @@ package com.example.pawel_piedel.thesis.data.model;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -11,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class Business implements Comparable<Business> {
+public class Business implements Comparable<Business>, Serializable {
 
     @SerializedName("id")
     @Expose

@@ -7,6 +7,9 @@ import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARContract;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter;
+import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
+import com.example.pawel_piedel.thesis.ui.detail.DetailContract;
+import com.example.pawel_piedel.thesis.ui.detail.DetailPresenter;
 import com.example.pawel_piedel.thesis.ui.main.MainContract;
 import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
 import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesContract;
@@ -52,25 +55,31 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    CafesContract.Presenter<CafesContract.View> provideCafesPresenter(CafesPresenter<CafesContract.View> presenter){
+    CafesContract.Presenter<CafesContract.View> provideCafesPresenter(CafesPresenter<CafesContract.View> presenter) {
         return presenter;
     }
 
     @Provides
     @PerActivity
-    DeliveriesContract.Presenter<DeliveriesContract.View> provideDeliveriesPresenter(DeliveriesPresenter<DeliveriesContract.View> presenter){
+    DeliveriesContract.Presenter<DeliveriesContract.View> provideDeliveriesPresenter(DeliveriesPresenter<DeliveriesContract.View> presenter) {
         return presenter;
     }
 
     @Provides
     @PerActivity
-    RestaurantsContract.Presenter<RestaurantsContract.View> provideRestaurantsPresenter(RestaurantsPresenter<RestaurantsContract.View> presenter){
+    RestaurantsContract.Presenter<RestaurantsContract.View> provideRestaurantsPresenter(RestaurantsPresenter<RestaurantsContract.View> presenter) {
         return presenter;
     }
 
     @Provides
     @PerActivity
-    ARContract.Presenter<ARContract.View> provideARPresenter(ARPresenter<ARContract.View> presenter){
+    ARContract.Presenter<ARContract.View> provideARPresenter(ARPresenter<ARContract.View> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    DetailContract.Presenter<DetailContract.View> provideDetailsPresenter(DetailPresenter<DetailContract.View> presenter) {
         return presenter;
     }
 

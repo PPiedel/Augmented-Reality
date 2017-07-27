@@ -29,6 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.augumented_reality.ARActivity"></activity>
+        <activity android:name=".ui.detail.DetailActivity" />
     </application>
 
 </manifest>

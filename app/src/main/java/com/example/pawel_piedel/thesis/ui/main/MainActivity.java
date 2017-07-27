@@ -49,8 +49,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     @Inject
     MainPresenter<MainContract.View> mPresenter;
 
-    @Inject
-    SharedPreferences sharedPreferences;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -102,7 +100,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
     private void setUpLayout() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     public void setupViewPager(ViewPager viewPager) {

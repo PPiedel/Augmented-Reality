@@ -1,7 +1,9 @@
 package com.example.pawel_piedel.thesis.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,8 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.onBind(position);
+
         Business business = businessList.get(position);
         if (!Objects.equals(business.getImageUrl(), "")){
            // Log.v(LOG_TAG,""+business.getName()+" "+business.getImageUrl());
@@ -86,7 +91,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         return businessList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.thubnail) ImageView image;
         @BindView(R.id.title) TextView title;
         @BindView(R.id.address) TextView address1;
@@ -94,10 +99,23 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         @BindView(R.id.rating) TextView rating;
         @BindView(R.id.distance) TextView distance;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+
+        void onBind(int position) {
+            itemView.setOnClickListener(view -> {
+                Log.d(LOG_TAG,""+position);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("business",businessList.get(position));
+                context.startActivity(intent);
+
+
+            });
+        }
+
+
     }
 
 

@@ -1,6 +1,7 @@
 
 package com.example.pawel_piedel.thesis.data.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -9,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class ReviewsResponse {
+public class ReviewsResponse implements Serializable {
 
     @SerializedName("reviews")
     @Expose
