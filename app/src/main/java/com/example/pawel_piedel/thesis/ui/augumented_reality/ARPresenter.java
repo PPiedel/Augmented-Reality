@@ -85,7 +85,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
-    private static final float ALPHA = 0.4f;
+    private static final float ALPHA = 0.25f;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
     private String cameraId;
@@ -232,12 +232,25 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
-        output = lowPass(event.values, output);
+        float[] rotationMatrix = new float[16];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+
+        float[] remappedRotationMatrix = new float[16];
+        SensorManager.remapCoordinateSystem(rotationMatrix,
+                SensorManager.AXIS_X,
+                SensorManager.AXIS_Z,
+                remappedRotationMatrix);
+
+        float[] orientation = new float[3];
+        return (int) (Math.toDegrees(SensorManager.getOrientation(remappedRotationMatrix, orientation)[0]) + 360) % 360;
+
+
+        /*output = lowPass(event.values, output);
         Log.i(LOG_TAG, Arrays.toString(output));
         float[] orientation = new float[3];
         float[] rMat = new float[9];
         SensorManager.getRotationMatrixFromVector(rMat, output);
-        return (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+        return (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;*/
     }
 
     protected float[] lowPass(float[] input, float[] output) {
@@ -274,7 +287,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     public void onNext(Location location) {
                         Log.i(LOG_TAG, location.toString());
 
-                        Util.mLastLocation = location;
+                        getDataManager().saveLocation(location);
                         getView().setLocationText(location);
                         updateBusinessAzimuths(location);
                     }
