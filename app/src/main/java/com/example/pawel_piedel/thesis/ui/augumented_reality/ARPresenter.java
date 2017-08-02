@@ -85,7 +85,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
-    private static final float ALPHA = 0.25f;
+    private static final float ALPHA = 0.4f;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
     private String cameraId;
@@ -232,8 +232,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
+        output = lowPass(event.values,output);
         float[] rotationMatrix = new float[16];
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, output);
 
         float[] remappedRotationMatrix = new float[16];
         SensorManager.remapCoordinateSystem(rotationMatrix,

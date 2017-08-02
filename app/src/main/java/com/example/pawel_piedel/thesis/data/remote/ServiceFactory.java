@@ -33,7 +33,7 @@ public class ServiceFactory {
 
     public static <S> S createService(Class<S> serviceClass) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         if (accessToken != null) {
             httpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AuthenticationInterceptor(accessToken));

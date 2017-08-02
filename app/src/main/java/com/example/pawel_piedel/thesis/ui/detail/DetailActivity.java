@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -11,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Category;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 
 import javax.inject.Inject;
@@ -36,6 +38,24 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @BindView(R.id.business_image)
     ImageView imageView;
 
+    @BindView(R.id.title_details)
+    TextView title;
+
+    @BindView(R.id.rating_bar_details)
+    RatingBar ratingBar;
+
+    @BindView(R.id.rating_details)
+    TextView rating;
+
+    @BindView(R.id.review_count_details)
+    TextView review_count;
+
+    @BindView(R.id.categories_details)
+    TextView categories;
+
+    @BindView(R.id.distance_details)
+    TextView distance;
+
 
     private Business business;
 
@@ -60,22 +80,48 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
 
     private void setUpLayout() {
+        checkNotNull(business);
         setUpToolbar();
+        setUpRating();
+        setUpReviewCount();
+        setUpCategories();
+        setUpDistance();
 
     }
 
     public void setUpTitle() {
-        checkNotNull(business);
-        mToolbar.setTitle(business.getName());
-        //businessTitle.setText(business.getName());
+        title.setText(String.format("%s", business.getName()));
     }
 
+    public void setUpRating() {
+
+        ratingBar.setRating((float) business.getRating());
+
+        rating.setText(String.format("%s", business.getRating()));
+    }
+
+    public void setUpReviewCount() {
+        review_count.setText(String.format("(%s)", business.getReviewCount()));
+    }
+
+    public void setUpCategories() {
+        String categoryBuilder = "";
+        for (Category cat : business.getCategories()) {
+            categoryBuilder+=", "+cat.getTitle();
+        }
+        String category = categoryBuilder.substring(2,categoryBuilder.length()-1);
+        categories.setText(category);
+    }
+
+    public void setUpDistance(){
+        distance.setText(String.format("%.1f km", business.getDistance() / 1000));
+    }
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-       // getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override

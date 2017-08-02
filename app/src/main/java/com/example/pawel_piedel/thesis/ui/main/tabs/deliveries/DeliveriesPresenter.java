@@ -22,7 +22,7 @@ import rx.schedulers.Schedulers;
 @ConfigPersistent
 public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
     private final static String LOG_TAG = DeliveriesPresenter.class.getName();
-    public final static String CATEGORY = "DELIVERIES";
+    public final static String DELIVERIES = "deliveries";
 
 
     @Inject
@@ -75,7 +75,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     public void loadFromApi() {
-        getDataManager().loadBusinesses("delivery",CATEGORY)
+        getDataManager().loadBusinesses("delivery", DELIVERIES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -91,7 +91,9 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        getDataManager().saveBusinesses(searchResponse.getBusinesses(),CATEGORY);
+                        if (!searchResponse.getBusinesses().isEmpty()){
+                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
+                        }
                         getView().showDeliveries(searchResponse.getBusinesses());
                     }
                 });

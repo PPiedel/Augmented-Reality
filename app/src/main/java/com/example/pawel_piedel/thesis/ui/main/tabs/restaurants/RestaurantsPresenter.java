@@ -23,7 +23,7 @@ import rx.schedulers.Schedulers;
 @ConfigPersistent
 public class RestaurantsPresenter<V extends RestaurantsContract.View> extends BasePresenter<V> implements RestaurantsContract.Presenter<V> {
     private final static String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
-    public final static String CATEGORY = "restaurants";
+    public final static String RESTAURANTS = "restaurants";
 
     @Inject
     public RestaurantsPresenter(DataManager dataManager) {
@@ -75,7 +75,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     public void loadFromApi() {
-        getDataManager().loadBusinesses("restaurant",CATEGORY)
+        getDataManager().loadBusinesses("restaurant", RESTAURANTS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -91,7 +91,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        getDataManager().saveBusinesses(searchResponse.getBusinesses(),CATEGORY);
+                        getDataManager().saveBusinesses(searchResponse.getBusinesses(),RESTAURANTS);
                         getView().showRestaurants(searchResponse.getBusinesses());
                     }
                 });

@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.main.tabs.cafes;
 
 import android.location.Location;
+import android.util.Log;
 import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
@@ -23,7 +24,7 @@ import rx.schedulers.Schedulers;
 @ConfigPersistent
 public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
     private final static String LOG_TAG = CafesPresenter.class.getName();
-    public final static String CATEGORY = "cafes";
+    public final static String CAFES = "cafes";
 
     @Inject
     public CafesPresenter(DataManager dataManager) {
@@ -42,10 +43,10 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     @Override
     public void onViewPrepared() {
-        loadCafes();
+        load();
     }
 
-    public void loadCafes() {
+    public void load() {
         Observable
                 .zip(
                         getDataManager().getAccessToken(),
@@ -56,7 +57,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                 .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                     @Override
                     public void onCompleted() {
-                        loadFromApi();
+                        loadCafes();
                     }
 
                     @Override
@@ -73,8 +74,8 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     }
 
-    public void loadFromApi() {
-        getDataManager().loadBusinesses("coffee",CATEGORY)
+    public void loadCafes() {
+        getDataManager().loadBusinesses("coffee", CAFES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -85,12 +86,14 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.e(LOG_TAG, e.getMessage());
                     }
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        getDataManager().saveBusinesses(searchResponse.getBusinesses(),CATEGORY);
+                        if (!searchResponse.getBusinesses().isEmpty()) {
+                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
+                        }
                         getView().showCafes(searchResponse.getBusinesses());
                     }
                 });

@@ -21,12 +21,8 @@ import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -107,15 +103,15 @@ public class DataManager {
 
     public Observable<SearchResponse> loadBusinesses(String term, String category) {
         Observable<SearchResponse> observable;
-        if (Objects.equals(category, CafesPresenter.CATEGORY) && cafes != null) {
+        if (Objects.equals(category, CafesPresenter.CAFES) && cafes != null && !cafes.isEmpty()) {
             SearchResponse searchResponse = new SearchResponse();
             searchResponse.setBusinesses(cafes);
             observable = Observable.just(searchResponse);
-        } else if (Objects.equals(category, RestaurantsPresenter.CATEGORY) && restaurants != null) {
+        } else if (Objects.equals(category, RestaurantsPresenter.RESTAURANTS) && restaurants != null && !restaurants.isEmpty()) {
             SearchResponse searchResponse = new SearchResponse();
             searchResponse.setBusinesses(restaurants);
             observable = Observable.just(searchResponse);
-        } else if (Objects.equals(category, DeliveriesPresenter.CATEGORY) && deliveries != null) {
+        } else if (Objects.equals(category, DeliveriesPresenter.DELIVERIES) && deliveries != null && !deliveries.isEmpty()) {
             SearchResponse searchResponse = new SearchResponse();
             searchResponse.setBusinesses(deliveries);
             observable = Observable.just(searchResponse);
@@ -140,39 +136,45 @@ public class DataManager {
         Util.mLastLocation = location;
     }
 
-    public void saveBusinesses(@NonNull List<Business> businesses, String category) {
+    public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
         checkNotNull(businesses);
+        Log.d(LOG_TAG, "Saving : " + Arrays.toString(businesses.toArray()));
+        Log.d(LOG_TAG, "Kategoria : " + category);
         switch (category) {
-            case CafesPresenter.CATEGORY:
+            case CafesPresenter.CAFES:
                 Log.d(LOG_TAG, "Saving cafes...");
-                if (cafes == null) {
-                    cafes = new ArrayList<>(businesses.size());
-                    Collections.sort(cafes, Business::compareTo);
-                }
-                cafes.clear();
+
+                cafes = new ArrayList<>();
                 cafes.addAll(businesses);
+                //Collections.sort(cafes, Business::compareTo);
+
                 Log.d(LOG_TAG,Arrays.toString(cafes.toArray()));
+                Log.d(LOG_TAG,""+cafes.size());
                 break;
-            case RestaurantsPresenter.CATEGORY:
+            case RestaurantsPresenter.RESTAURANTS:
                 Log.d(LOG_TAG, "Saving restaurants...");
-                if (restaurants == null) {
-                    restaurants = new ArrayList<>(businesses.size());
-                }
-                restaurants.clear();
+
+                restaurants = new ArrayList<>();
                 restaurants.addAll(businesses);
-                Collections.sort(restaurants, Business::compareTo);
-                Log.d(LOG_TAG,Arrays.toString(restaurants.toArray()));
+               // Collections.sort(restaurants, Business::compareTo);
+
+                Log.d(LOG_TAG, Arrays.toString(restaurants.toArray()));
+                Log.d(LOG_TAG,""+restaurants.size());
                 break;
-            case DeliveriesPresenter.CATEGORY:
+            case DeliveriesPresenter.DELIVERIES:
                 Log.d(LOG_TAG, "Saving deliveries...");
-                if (deliveries == null) {
-                    deliveries = new ArrayList<>(businesses.size());
-                }
-                deliveries.clear();
+
+                deliveries = new ArrayList<>();
                 deliveries.addAll(businesses);
-                Collections.sort(deliveries,Business::compareTo);
-                Log.d(LOG_TAG,Arrays.toString(deliveries.toArray()));
+               // Collections.sort(deliveries,Business::compareTo);
+
+                Log.d(LOG_TAG, Arrays.toString(deliveries.toArray()));
+                Log.d(LOG_TAG,""+deliveries.size());
                 break;
+            default:
+                Log.d(LOG_TAG, "Kategoria nierozpoznana");
+                break;
+
         }
     }
 
