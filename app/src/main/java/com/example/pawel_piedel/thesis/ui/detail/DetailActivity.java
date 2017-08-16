@@ -12,7 +12,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
-import com.example.pawel_piedel.thesis.data.model.Category;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 
 import javax.inject.Inject;
@@ -50,12 +49,14 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @BindView(R.id.review_count_details)
     TextView review_count;
 
-    @BindView(R.id.categories_details)
-    TextView categories;
+    @BindView(R.id.zipcode_details)
+    TextView address;
 
     @BindView(R.id.distance_details)
     TextView distance;
 
+    @BindView(R.id.street_details)
+    TextView street;
 
     private Business business;
 
@@ -84,7 +85,8 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         setUpToolbar();
         setUpRating();
         setUpReviewCount();
-        setUpCategories();
+        setUpZipCode();
+        setUpStreet();
         setUpDistance();
 
     }
@@ -104,13 +106,12 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         review_count.setText(String.format("(%s)", business.getReviewCount()));
     }
 
-    public void setUpCategories() {
-        String categoryBuilder = "";
-        for (Category cat : business.getCategories()) {
-            categoryBuilder+=", "+cat.getTitle();
-        }
-        String category = categoryBuilder.substring(2,categoryBuilder.length()-1);
-        categories.setText(category);
+    public void setUpZipCode() {
+        address.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
+    }
+
+    public void setUpStreet(){
+        street.setText(String.valueOf(business.getLocation().getAddress1()));
     }
 
     public void setUpDistance(){
