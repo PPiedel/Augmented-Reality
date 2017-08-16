@@ -47,6 +47,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     }
 
     public void load() {
+        getView().showProgressDialog();
         Observable
                 .zip(
                         getDataManager().getAccessToken(),
@@ -94,6 +95,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                         if (!searchResponse.getBusinesses().isEmpty()) {
                             getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
                         }
+                        getView().hideProgressDialog();
                         getView().showCafes(searchResponse.getBusinesses());
                     }
                 });

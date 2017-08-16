@@ -1,10 +1,14 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 
 import butterknife.Unbinder;
@@ -17,6 +21,7 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
 
     private BaseActivity baseActivity;
     private Unbinder mUnBinder;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,6 +73,28 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
     }
 
     @Override
+    public void showProgressDialog() {
+        hideProgressDialog();
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.show();
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.cancel();
+        }
+    }
+
+    @Override
     public void showLocationPermissionsRequest() {
         if (baseActivity !=null){
             baseActivity.showLocationPermissionsRequest();
@@ -96,5 +123,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         }
         return has;
     }
+
 
 }

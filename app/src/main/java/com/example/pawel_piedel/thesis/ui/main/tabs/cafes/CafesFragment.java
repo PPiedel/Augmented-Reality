@@ -92,7 +92,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
 
     @Override
     public void showCafes(List<Business> cafes) {
-        businessAdapter.addBusinessList(cafes);
+        businessAdapter.setBusinessList(cafes);
     }
 
     @Override

@@ -47,6 +47,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     public void loadDeliveries() {
+        getView().showProgressDialog();
         Observable
                 .zip(
                         getDataManager().getAccessToken(),
@@ -94,6 +95,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                         if (!searchResponse.getBusinesses().isEmpty()){
                             getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
                         }
+                        getView().hideProgressDialog();
                         getView().showDeliveries(searchResponse.getBusinesses());
                     }
                 });

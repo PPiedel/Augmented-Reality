@@ -20,5 +20,10 @@ public interface BaseView<T extends Presenter> {
 
     void requestRequiredPermissions(String[] permissions, int requestCode);
 
+    void showProgressDialog();
+
+    void hideProgressDialog();
+
     boolean hasPermission(String permission);
+
 }

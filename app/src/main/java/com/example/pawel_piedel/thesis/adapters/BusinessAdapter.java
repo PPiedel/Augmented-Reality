@@ -36,18 +36,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     public BusinessAdapter() {
     }
 
-    public void addBusinessList(List<Business> businessList) {
-        this.businessList.addAll(businessList);
-        notifyDataSetChanged();
-    }
-
-    public void addBusiness(Business business) {
-        this.businessList.add(business);
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
+    public void setBusinessList(List<Business> businessList) {
         this.businessList.clear();
+        this.businessList.addAll(businessList);
         notifyDataSetChanged();
     }
 

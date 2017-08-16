@@ -143,6 +143,16 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         }
     }
 
+    @Override
+    public void showProgressDialog() {
+
+    }
+
+    @Override
+    public void hideProgressDialog() {
+
+    }
+
     public boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }

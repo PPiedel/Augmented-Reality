@@ -47,6 +47,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     public void loadRestaurannts() {
+        getView().showProgressDialog();
         Observable
                 .zip(
                         getDataManager().getAccessToken(),
@@ -91,8 +92,13 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        getDataManager().saveBusinesses(searchResponse.getBusinesses(),RESTAURANTS);
+                        if (!searchResponse.getBusinesses().isEmpty()) {
+                            getDataManager().saveBusinesses(searchResponse.getBusinesses(),RESTAURANTS);
+                        }
+
+                        getView().hideProgressDialog();
                         getView().showRestaurants(searchResponse.getBusinesses());
+
                     }
                 });
     }

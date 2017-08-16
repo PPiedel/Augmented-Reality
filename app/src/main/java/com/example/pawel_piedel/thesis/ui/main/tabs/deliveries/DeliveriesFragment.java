@@ -98,7 +98,7 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
     @Override
     public void showDeliveries(List<Business> deliveries) {
-        businessAdapter.addBusinessList(deliveries);
+        businessAdapter.setBusinessList(deliveries);
     }
 
     @Override

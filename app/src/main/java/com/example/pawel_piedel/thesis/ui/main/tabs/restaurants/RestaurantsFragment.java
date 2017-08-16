@@ -80,7 +80,7 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
 
     @Override
     public void showRestaurants(List<Business> list) {
-        businessAdapter.addBusinessList(list);
+        businessAdapter.setBusinessList(list);
     }
 
     @Override
