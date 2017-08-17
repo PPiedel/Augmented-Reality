@@ -57,7 +57,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.example.pawel_piedel.thesis.adapters.BusinessAdapter.BUSINESS;
+import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
 /*
  * Based on https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java

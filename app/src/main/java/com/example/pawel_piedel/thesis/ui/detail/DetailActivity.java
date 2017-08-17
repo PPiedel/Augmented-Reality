@@ -14,10 +14,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
-import com.example.pawel_piedel.thesis.adapters.HorizontalPhotosAdapter;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -158,7 +159,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     private void setUpRecyclerView(Business business){
         if ( business.getPhotos()!=null && !business.getPhotos().isEmpty()){
-            horizontalAdapter=new HorizontalPhotosAdapter(getApplicationContext(), business.getPhotos());
+            horizontalAdapter=new HorizontalPhotosAdapter(this, new ArrayList<>(business.getPhotos()));
             horizontalRecyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
 

@@ -19,16 +19,13 @@
 package com.example.pawel_piedel.thesis.ui.main;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.adapters.ViewPagerAdapter;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
@@ -104,7 +101,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
     public void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
         // RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);

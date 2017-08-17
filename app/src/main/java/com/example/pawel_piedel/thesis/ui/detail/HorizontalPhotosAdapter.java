@@ -1,6 +1,9 @@
-package com.example.pawel_piedel.thesis.adapters;
+package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +12,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.ui.slideshow.SlideShowDialogFragment;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,16 +25,16 @@ import butterknife.ButterKnife;
 
 public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhotosAdapter.MyViewHolder> {
     private Context context;
-    private List<String> imageUrls;
+    private ArrayList<String> imageUrls;
 
-    public HorizontalPhotosAdapter(Context context, List<String> imageUrls) {
+    public HorizontalPhotosAdapter(Context context, ArrayList<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.horizontal_list_item, parent, false);
 
         if (itemView.getLayoutParams().width == RecyclerView.LayoutParams.MATCH_PARENT)
             itemView.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
@@ -40,6 +44,8 @@ public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhot
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        holder.onBind(position);
+
         Glide.with(context)
                 .load(imageUrls.get(position))
                 .centerCrop()
@@ -61,6 +67,25 @@ public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhot
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+
+        void onBind(int position) {
+            setOnItemClickListener(position);
+        }
+
+        private void setOnItemClickListener(int position) {
+            itemView.setOnClickListener(view -> {
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("images", imageUrls);
+                bundle.putInt("position", position);
+
+                FragmentTransaction ft = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                SlideShowDialogFragment newFragment = SlideShowDialogFragment.newInstance();
+                newFragment.setCancelable(true);
+                newFragment.setArguments(bundle);
+                newFragment.show(ft, "slideshow");
+
+            });
         }
     }
 }

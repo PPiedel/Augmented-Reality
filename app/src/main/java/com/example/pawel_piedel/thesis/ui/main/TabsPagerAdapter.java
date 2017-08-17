@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.adapters;
+package com.example.pawel_piedel.thesis.ui.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,11 +11,11 @@ import java.util.List;
  * Created by Pawel_Piedel on 14.06.2017.
  */
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class TabsPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public ViewPagerAdapter(FragmentManager manager) {
+    public TabsPagerAdapter(FragmentManager manager) {
         super(manager);
     }
 
