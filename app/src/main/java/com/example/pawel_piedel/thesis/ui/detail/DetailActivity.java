@@ -1,8 +1,12 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -11,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.adapters.BusinessAdapter;
+import com.example.pawel_piedel.thesis.adapters.HorizontalPhotosAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 
@@ -18,6 +23,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
@@ -58,7 +64,15 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @BindView(R.id.street_details)
     TextView street;
 
-    private Business business;
+    @BindView(R.id.horizontal_recycler_view)
+    RecyclerView horizontalRecyclerView;
+
+    private HorizontalPhotosAdapter horizontalAdapter;
+
+    private Business newBusiness;
+
+    private String businessId;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,57 +86,87 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         presenter.attachView(this);
 
-        getBusinessFromIntent();
+        getOldBusinessFromIntent();
 
-        presenter.onViewPrepared();
-
-        setUpLayout();
-    }
-
-
-    private void setUpLayout() {
-        checkNotNull(business);
         setUpToolbar();
-        setUpRating();
-        setUpReviewCount();
-        setUpZipCode();
-        setUpStreet();
-        setUpDistance();
+
+        presenter.onViewPrepared(businessId);
 
     }
 
-    public void setUpTitle() {
+    @Override
+    public void showBusinessDetails(Business business) {
+        showBusinessImage(business);
+
         title.setText(String.format("%s", business.getName()));
-    }
-
-    public void setUpRating() {
 
         ratingBar.setRating((float) business.getRating());
-
         rating.setText(String.format("%s", business.getRating()));
-    }
 
-    public void setUpReviewCount() {
         review_count.setText(String.format("(%s)", business.getReviewCount()));
-    }
 
-    public void setUpZipCode() {
+        street.setText(business.getLocation().getAddress1());
+
         address.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
-    }
 
-    public void setUpStreet(){
-        street.setText(String.valueOf(business.getLocation().getAddress1()));
-    }
-
-    public void setUpDistance(){
         distance.setText(String.format("%.1f km", business.getDistance() / 1000));
+
+        setUpRecyclerView(business);
     }
+
+    public void showBusinessImage(Business business) {
+        Glide.with(this)
+                .load(business.getImageUrl())
+                .centerCrop()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
+    }
+
+    @Override
+    public void showOldBusiness() {
+        Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
+        Log.d(LOG_TAG,business.toString());
+        showBusinessDetails(business);
+    }
+
+    @Override
+    @OnClick(R.id.call_action)
+    public void onCallButtonClicked() {
+        presenter.makeCall(newBusiness);
+    }
+
+    @Override
+    @OnClick(R.id.website_action)
+    public void onWebsiteButtonclicked() {
+        presenter.goToWebsite(newBusiness);
+    }
+
+    @Override
+    @OnClick(R.id.favourite_action)
+    public void onFavouriteButtonClicked() {
+        presenter.addToFavourite(newBusiness);
+    }
+
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void setUpRecyclerView(Business business){
+        if ( business.getPhotos()!=null && !business.getPhotos().isEmpty()){
+            horizontalAdapter=new HorizontalPhotosAdapter(getApplicationContext(), business.getPhotos());
+            horizontalRecyclerView.setAdapter(horizontalAdapter);
+            horizontalAdapter.notifyDataSetChanged();
+
+            LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+            horizontalRecyclerView.setLayoutManager(horizontalLayoutManagaer);
+            horizontalRecyclerView.setAdapter(horizontalAdapter);
+        }
+
     }
 
     @Override
@@ -132,17 +176,20 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     }
 
     @Override
-    public void getBusinessFromIntent() {
-        business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
+    public void getOldBusinessFromIntent() {
+       Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
+       businessId = business.getId();
+        Log.d(LOG_TAG,"Business id : "+businessId);
     }
 
     @Override
-    public void showBusinessImage() {
-        Glide.with(this)
-                .load(business.getImageUrl())
-                .centerCrop()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
+    public Activity getViewActivity() {
+        return this;
+    }
+
+
+    @Override
+    public void setUpBusiness(Business business) {
+        this.newBusiness = business;
     }
 }

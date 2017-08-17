@@ -28,7 +28,7 @@ public interface ApiService {
             @Query("radius") Integer radius,
             @Query("categories") String categories);
 
-    @GET("/businesses/{id}")
+    @GET("/v3/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);
 
     @FormUrlEncoded

@@ -127,6 +127,13 @@ public class DataManager {
         return observable;
     }
 
+    public Observable<Business> loadBusinessDetails(String id){
+        Observable<Business> observable;
+        apiService = ServiceFactory.createService(ApiService.class);
+        observable = apiService.getBusinessDetails(id);
+        return observable;
+    }
+
     public void saveAccessToken(AccessToken accessToken) {
         ServiceFactory.accessToken = accessToken;
         preferencesHelper.saveAccessToken(accessToken);

@@ -1,11 +1,22 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
@@ -34,17 +45,88 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     @Override
-    public void showBusinessImage() {
+    public void loadBusinessDetails(String id) {
+        getView().showProgressDialog();
+        getDataManager().getAccessToken()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                        loadBusiness(id);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+
+                    }
+                });
+    }
+
+
+    public void loadBusiness(String id) {
+        getDataManager().loadBusinessDetails(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Business>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOG_TAG,e.getMessage());
+                        getView().showOldBusiness();
+                    }
+
+                    @Override
+                    public void onNext(Business business) {
+                        Log.d(LOG_TAG,business.toString());
+                        getView().hideProgressDialog();
+                        getView().setUpBusiness(business);
+                        getView().showBusinessDetails(business);
+                    }
+
+                });
+    }
+
+
+    @Override
+    public void onViewPrepared(String businessId) {
+        loadBusinessDetails(businessId);
+    }
+
+    @Override
+    public void makeCall(Business business) {
+        if (business.getPhone() != null) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + business.getPhone()));
+            if (intent.resolveActivity(getView().getViewActivity().getPackageManager()) != null) {
+                getView().getViewActivity().startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    public void goToWebsite(Business business) {
+        if (business.getUrl() != null) {
+            String url = business.getUrl();
+            if (!url.startsWith("http://") && !url.startsWith("https://"))
+                url = "http://" + url;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            getView().getViewActivity().startActivity(browserIntent);
+        }
 
     }
 
     @Override
-    public void onViewPrepared() {
-        getView().getBusinessFromIntent();
-
-        getView().showBusinessImage();
-
-        getView().setUpTitle();
+    public void addToFavourite(Business business) {
 
     }
 }
