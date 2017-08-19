@@ -48,6 +48,7 @@ public class SlideShowDialogFragment extends DialogFragment {
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             d.getWindow().setLayout(width, height);
         }
+        d.setCancelable(true);
     }
 
     @Override

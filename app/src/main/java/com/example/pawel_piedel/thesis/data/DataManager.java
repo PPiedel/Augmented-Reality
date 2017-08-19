@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
 import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
@@ -130,7 +131,13 @@ public class DataManager {
     public Observable<Business> loadBusinessDetails(String id){
         Observable<Business> observable;
         apiService = ServiceFactory.createService(ApiService.class);
-        observable = apiService.getBusinessDetails(id);
+        return apiService.getBusinessDetails(id);
+    }
+
+    public Observable<ReviewsResponse> loadReviews(String id){
+        Observable<ReviewsResponse> observable;
+        apiService = ServiceFactory.createService(ApiService.class);
+        observable =  apiService.getBusinessReviews(id,"pl_PL");
         return observable;
     }
 

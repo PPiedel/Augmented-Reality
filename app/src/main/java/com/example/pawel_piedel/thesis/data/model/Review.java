@@ -13,19 +13,19 @@ public class Review implements Serializable {
 
     @SerializedName("rating")
     @Expose
-    private int rating;
+    public int rating;
     @SerializedName("user")
     @Expose
-    private User user;
+    public User user;
     @SerializedName("text")
     @Expose
-    private String text;
+    public String text;
     @SerializedName("time_created")
     @Expose
-    private String timeCreated;
+    public String timeCreated;
     @SerializedName("url")
     @Expose
-    private String url;
+    public String url;
 
     public int getRating() {
         return rating;
@@ -67,4 +67,14 @@ public class Review implements Serializable {
         this.url = url;
     }
 
+    @Override
+    public String toString() {
+        return "Review{" +
+                "rating=" + rating +
+                ", user=" + user +
+                ", text='" + text + '\'' +
+                ", timeCreated='" + timeCreated + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

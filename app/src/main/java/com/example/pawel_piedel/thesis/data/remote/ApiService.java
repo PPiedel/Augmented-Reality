@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.data.remote;
 
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 
 
@@ -30,6 +31,10 @@ public interface ApiService {
 
     @GET("/v3/businesses/{id}")
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);
+
+    @GET("/v3/businesses/{id}/reviews")
+    Observable<ReviewsResponse> getBusinessReviews(@Path(BUSINESS_ID_PARAM) String id,
+                                                   @Query("locale") String localeParam);
 
     @FormUrlEncoded
     @POST("/oauth2/token")

@@ -2,6 +2,8 @@
 package com.example.pawel_piedel.thesis.data.model;
 
 import java.io.Serializable;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -14,16 +16,17 @@ public class ReviewsResponse implements Serializable {
 
     @SerializedName("reviews")
     @Expose
-    private List<Review> reviews = null;
+    public ArrayList<Review> reviews = null;
+
     @SerializedName("total")
     @Expose
-    private int total;
+    public int total;
 
     public List<Review> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
 
@@ -34,5 +37,4 @@ public class ReviewsResponse implements Serializable {
     public void setTotal(int total) {
         this.total = total;
     }
-
 }

@@ -29,4 +29,5 @@
     <string name="call_string">Zadzwoń</string>
     <string name="website_string">Strona internetowa</string>
     <string name="favourite_string">Zapisz</string>
+    <string name="profile_image">Profile image</string>
 </resources>

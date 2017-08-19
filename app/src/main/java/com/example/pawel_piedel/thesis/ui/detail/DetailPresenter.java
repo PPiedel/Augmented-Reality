@@ -7,6 +7,8 @@ import android.util.Log;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Review;
+import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
@@ -68,6 +70,55 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
                 });
     }
 
+    @Override
+    public void manageToLoadReviews(String id) {
+        getDataManager().getAccessToken()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                       loadReviews(id);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+
+                    }
+                });
+
+    }
+
+    private void loadReviews(String id){
+        getDataManager().loadReviews(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ReviewsResponse>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ReviewsResponse reviewsResponse) {
+                        Log.d(LOG_TAG,"Total : "+reviewsResponse.getTotal());
+                        for (Review review : reviewsResponse.getReviews()){
+                            Log.d(LOG_TAG,review.toString());
+                        }
+                        getView().showReviews(reviewsResponse.getReviews());
+                    }
+                });
+    }
+
 
     public void loadBusiness(String id) {
         getDataManager().loadBusinessDetails(id)
@@ -76,7 +127,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
                 .subscribe(new Subscriber<Business>() {
                     @Override
                     public void onCompleted() {
-
+                        manageToLoadReviews(id);
                     }
 
                     @Override

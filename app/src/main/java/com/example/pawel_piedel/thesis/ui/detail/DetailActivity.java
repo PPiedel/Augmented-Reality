@@ -14,11 +14,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.model.Review;
 import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -68,7 +70,12 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @BindView(R.id.horizontal_recycler_view)
     RecyclerView horizontalRecyclerView;
 
+    @BindView(R.id.reviews_recycler_view)
+    RecyclerView reviewsRecyclerView;
+
     private HorizontalPhotosAdapter horizontalAdapter;
+
+    private ReviewsAdapter reviewsAdapter;
 
     private Business newBusiness;
 
@@ -91,6 +98,13 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         setUpToolbar();
 
+        reviewsAdapter = new ReviewsAdapter(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        reviewsRecyclerView.setLayoutManager(llm);
+        reviewsRecyclerView.setAdapter(reviewsAdapter);
+        reviewsRecyclerView.setNestedScrollingEnabled(false);
+
         presenter.onViewPrepared(businessId);
 
     }
@@ -112,8 +126,17 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         distance.setText(String.format("%.1f km", business.getDistance() / 1000));
 
-        setUpRecyclerView(business);
+        setUpHorizontalRecyclerView(business);
+
+
     }
+
+    @Override
+    public void showReviews(List<Review> reviews) {
+        reviewsAdapter.setReviews(reviews);
+    }
+
+
 
     public void showBusinessImage(Business business) {
         Glide.with(this)
@@ -127,7 +150,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     public void showOldBusiness() {
         Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
-        Log.d(LOG_TAG,business.toString());
+        Log.d(LOG_TAG, business.toString());
         showBusinessDetails(business);
     }
 
@@ -157,9 +180,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void setUpRecyclerView(Business business){
-        if ( business.getPhotos()!=null && !business.getPhotos().isEmpty()){
-            horizontalAdapter=new HorizontalPhotosAdapter(this, new ArrayList<>(business.getPhotos()));
+    private void setUpHorizontalRecyclerView(Business business) {
+        if (business.getPhotos() != null && !business.getPhotos().isEmpty()) {
+            horizontalAdapter = new HorizontalPhotosAdapter(this, new ArrayList<>(business.getPhotos()));
             horizontalRecyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
 
@@ -170,6 +193,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     }
 
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -178,9 +202,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     @Override
     public void getOldBusinessFromIntent() {
-       Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
-       businessId = business.getId();
-        Log.d(LOG_TAG,"Business id : "+businessId);
+        Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
+        businessId = business.getId();
+        Log.d(LOG_TAG, "Business id : " + businessId);
     }
 
     @Override
