@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.model.Hour;
 import com.example.pawel_piedel.thesis.data.model.Review;
 import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
@@ -66,6 +68,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     @BindView(R.id.street_details)
     TextView street;
+
+    @BindView(R.id.today_hours)
+    TextView todayHours;
 
     @BindView(R.id.horizontal_recycler_view)
     RecyclerView horizontalRecyclerView;
@@ -127,6 +132,21 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         distance.setText(String.format("%.1f km", business.getDistance() / 1000));
 
         setUpHorizontalRecyclerView(business);
+
+        if (business.getHours()!=null){
+            boolean isOpenNow = false;
+            for (Hour hour : business.getHours()){
+                if (hour.isIsOpenNow()){
+                    todayHours.setText(R.string.open_now);
+                    isOpenNow = true;
+                }
+            }
+            if (!isOpenNow){
+                todayHours.setText(R.string.closed_now);
+                todayHours.setTextColor(Color.RED);
+            }
+
+        }
 
 
     }

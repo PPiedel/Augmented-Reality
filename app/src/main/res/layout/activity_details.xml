@@ -96,7 +96,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:paddingBottom="16dp"
-
                         android:paddingTop="24dp">
 
 
@@ -136,54 +135,74 @@
 
                     </RelativeLayout>
 
-
-                    <RatingBar
-                        android:id="@+id/rating_bar_details"
-                        style="@style/RatingBar"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/details_container"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/top"
-                        android:numStars="5"
-                        android:stepSize="0.5" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/rating_details"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/top"
-                        android:layout_marginEnd="8dp"
-                        android:layout_toEndOf="@id/rating_bar_details"
-                        android:textSize="14sp" />
+                        <TextView
+                            android:id="@+id/street_details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/review_count_details"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/top"
-                        android:layout_toEndOf="@id/rating_details"
-                        android:textSize="14sp" />
+                        <TextView
+                            android:id="@+id/zipcode_details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/street_details"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/rating_bar_details"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="8dp"
+                            >
 
-                        android:paddingTop="16dp"
-                        android:textSize="14sp" />
+                            <RatingBar
+                                android:id="@+id/rating_bar_details"
+                                style="@style/RatingBar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:numStars="5"
+                                android:stepSize="0.5" />
 
-                    <TextView
-                        android:id="@+id/zipcode_details"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/street_details"
-                        android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/rating_details"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingEnd="8dp"
+                                android:paddingStart="8dp"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/review_count_details"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingEnd="8dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/today_hours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="8dp"
+                            android:textColor="@android:color/holo_green_light"
+                            android:textSize="14sp" />
+
+
+                    </LinearLayout>
+
 
                     <View
                         android:id="@+id/separator1"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:layout_below="@id/zipcode_details"
+                        android:layout_below="@id/details_container"
                         android:layout_marginTop="16dp"
                         android:background="#90909090" />
 
