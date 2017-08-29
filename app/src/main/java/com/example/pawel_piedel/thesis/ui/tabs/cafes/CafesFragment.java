@@ -37,7 +37,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
 
     RecyclerView mRecyclerView;
 
-    private CafesFragment() {
+    public CafesFragment() {
         // Required empty public constructor
     }
 
