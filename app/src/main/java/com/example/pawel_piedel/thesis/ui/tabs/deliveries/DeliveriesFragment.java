@@ -30,14 +30,14 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
     private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-    private
+
     DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter;
 
     @BindView(R.id.deliveries_recycler_view)
-    private
+
     RecyclerView mRecyclerView;
 
-    private DeliveriesFragment() {
+    public DeliveriesFragment() {
         // Required empty public constructor
     }
 

@@ -30,14 +30,14 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
     private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-    private
+
     RestaurantsContract.Presenter<RestaurantsContract.View> restaurantsPresenter;
 
     @BindView(R.id.restaurants_recycler_view)
-    private
+
     RecyclerView mRecyclerView;
 
-    private RestaurantsFragment() {
+    public RestaurantsFragment() {
         // Required empty public constructor
     }
 

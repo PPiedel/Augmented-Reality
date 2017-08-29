@@ -28,7 +28,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     public final static String CAFES = "cafes";
 
     @Inject
-    private CafesPresenter(DataManager dataManager) {
+    CafesPresenter(DataManager dataManager) {
         super(dataManager);
     }
 

@@ -28,7 +28,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     private Business business;
 
     @Inject
-    private DetailPresenter(DataManager dataManager) {
+    DetailPresenter(DataManager dataManager) {
         super(dataManager);
     }
 

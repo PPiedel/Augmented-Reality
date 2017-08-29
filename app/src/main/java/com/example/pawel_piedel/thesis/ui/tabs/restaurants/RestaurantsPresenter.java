@@ -27,7 +27,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     public final static String RESTAURANTS = "restaurants";
 
     @Inject
-    private RestaurantsPresenter(DataManager dataManager) {
+   RestaurantsPresenter(DataManager dataManager) {
         super(dataManager);
     }
 

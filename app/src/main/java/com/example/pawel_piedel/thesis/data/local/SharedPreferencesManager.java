@@ -22,7 +22,7 @@ public class SharedPreferencesManager {
     private final SharedPreferences sharedPreferences;
 
     @Inject
-    private SharedPreferencesManager(SharedPreferences sharedPreferences) {
+     SharedPreferencesManager(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 

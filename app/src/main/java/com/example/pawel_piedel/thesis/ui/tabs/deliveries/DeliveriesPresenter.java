@@ -27,7 +27,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
 
     @Inject
-    private DeliveriesPresenter(DataManager dataManager) {
+    DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
     }
 

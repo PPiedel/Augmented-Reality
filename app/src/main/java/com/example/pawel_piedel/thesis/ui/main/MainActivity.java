@@ -42,18 +42,18 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Inject
-    private
+
     MainPresenter<MainContract.View> mPresenter;
 
 
     @BindView(R.id.toolbar)
-    private
+
     Toolbar mToolbar;
     @BindView(R.id.viewpager)
-    private
+
     ViewPager viewPager;
     @BindView(R.id.tabs)
-    private
+
     TabLayout tabLayout;
 
     @Override

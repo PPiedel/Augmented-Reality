@@ -11,11 +11,15 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0-alpha7'
     }
+
 }
 
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '4.1'
 }
+
+
 
 
 

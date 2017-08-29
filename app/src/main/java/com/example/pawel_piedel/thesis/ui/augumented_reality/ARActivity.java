@@ -63,31 +63,28 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     };
 
     @BindView(R.id.textureaAR)
-    private
     AutoFitTextureView textureView;
 
     @BindView(R.id.azimuth)
-    private
     TextView azimuthTextView;
 
     @BindView(R.id.location)
-    private
+
     TextView locationTextView;
 
     @BindView(R.id.businessViewAR)
-    private
+
     RelativeLayout businessView;
 
     @BindView(R.id.businessTitleAR)
-    private
+
     TextView businessTitle;
 
     @BindView(R.id.businessDistanceAR)
-    private
+
     TextView businessDistance;
 
     @Inject
-    private
     ARPresenter<ARContract.View> presenter;
 
     @Override

@@ -50,7 +50,7 @@ public class DataManager {
     private List<Business> deliveries;
 
     @Inject
-    private DataManager(@ApplicationContext Context context,
+    DataManager(@ApplicationContext Context context,
                         ApiService apiService,
                         SharedPreferencesManager preferencesHelper) {
         this.preferencesHelper = preferencesHelper;

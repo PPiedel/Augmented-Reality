@@ -29,7 +29,6 @@ public class SlideShowDialogFragment extends DialogFragment {
     private static final String LOG_TAG = SlideShowDialogFragment.class.getSimpleName();
 
     @BindView(R.id.image_slider_view_pager)
-    private
     ViewPager viewPager;
 
     private ImagesPagerAdapter imagesPagerAdapter;

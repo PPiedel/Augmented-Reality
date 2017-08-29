@@ -30,11 +30,11 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-    private
+
     CafesContract.Presenter<CafesContract.View> cafesPresenter;
 
     @BindView(R.id.cafes_recycler_view)
-    private
+
     RecyclerView mRecyclerView;
 
     private CafesFragment() {
