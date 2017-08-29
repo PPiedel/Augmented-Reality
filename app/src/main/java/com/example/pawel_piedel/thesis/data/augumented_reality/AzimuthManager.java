@@ -14,8 +14,8 @@ import rx.schedulers.Schedulers;
 
 public class AzimuthManager {
     private final static String LOG_TAG = AzimuthManager.class.getSimpleName();
-    private ReactiveSensors reactiveSensors;
-    private int sensorType;
+    private final ReactiveSensors reactiveSensors;
+    private final int sensorType;
 
 
     public AzimuthManager(ReactiveSensors reactiveSensors, int sensorType) {

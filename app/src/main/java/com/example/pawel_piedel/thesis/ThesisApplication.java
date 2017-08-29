@@ -15,7 +15,7 @@ import javax.inject.Inject;
  */
 
 public class ThesisApplication extends Application {
-    ApplicationComponent mApplicationComponent;
+    private ApplicationComponent mApplicationComponent;
 
     @Inject
     DataManager dataManager;

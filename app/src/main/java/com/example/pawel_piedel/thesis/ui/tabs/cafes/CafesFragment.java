@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.main.tabs.cafes;
+package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -27,15 +27,17 @@ import butterknife.ButterKnife;
 public class CafesFragment extends BaseFragment implements CafesContract.View {
     private String LOG_TAG = CafesFragment.class.getName();
 
-    private BusinessAdapter businessAdapter = new BusinessAdapter();
+    private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
+    private
     CafesContract.Presenter<CafesContract.View> cafesPresenter;
 
     @BindView(R.id.cafes_recycler_view)
+    private
     RecyclerView mRecyclerView;
 
-    public CafesFragment() {
+    private CafesFragment() {
         // Required empty public constructor
     }
 
@@ -59,7 +61,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         return view;
     }
 
-    protected void setUpRecyclerView() {
+    private void setUpRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));

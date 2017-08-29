@@ -2,7 +2,6 @@
 package com.example.pawel_piedel.thesis.data.model;
 
 import java.io.Serializable;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +15,11 @@ public class ReviewsResponse implements Serializable {
 
     @SerializedName("reviews")
     @Expose
-    public ArrayList<Review> reviews = null;
+    private ArrayList<Review> reviews = null;
 
     @SerializedName("total")
     @Expose
-    public int total;
+    private int total;
 
     public List<Review> getReviews() {
         return reviews;

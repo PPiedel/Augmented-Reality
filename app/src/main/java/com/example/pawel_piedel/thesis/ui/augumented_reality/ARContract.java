@@ -10,16 +10,13 @@ import android.util.Size;
 
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
-import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
-
-import rx.Subscription;
 
 /**
  * Created by Pawel_Piedel on 24.07.2017.
  */
 
 public interface ARContract {
-    public interface View extends BaseView {
+    interface View extends BaseView {
         void showBusinessOnScreen(Business business);
 
         void hideBusiness();
@@ -40,7 +37,7 @@ public interface ARContract {
         void setAspectRatio(int x, int y);
     }
 
-    public interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
+    interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
         void openCamera(int width, int height);
 
         void createCameraPreview();

@@ -1,7 +1,9 @@
-package com.example.pawel_piedel.thesis.ui.main.tabs.deliveries;
+package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.location.Location;
+import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
@@ -16,17 +18,17 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+
 /**
- * Created by Pawel_Piedel on 19.07.2017.
+ * Created by Pawel_Piedel on 18.07.2017.
  */
 @ConfigPersistent
-public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
-    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
-    public final static String DELIVERIES = "deliveries";
-
+public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
+    private final static String LOG_TAG = CafesPresenter.class.getName();
+    public final static String CAFES = "cafes";
 
     @Inject
-    public DeliveriesPresenter(DataManager dataManager) {
+    private CafesPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -40,13 +42,12 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
         super.detachView();
     }
 
-
     @Override
     public void onViewPrepared() {
-        loadDeliveries();
+        load();
     }
 
-    public void loadDeliveries() {
+    private void load() {
         getView().showProgressDialog();
         Observable
                 .zip(
@@ -58,11 +59,14 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                 .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                     @Override
                     public void onCompleted() {
-                        loadFromApi();
+                        loadCafes();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                        getView().hideProgressDialog();
+                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
 
                     }
 
@@ -75,8 +79,8 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
     }
 
-    public void loadFromApi() {
-        getDataManager().loadBusinesses("delivery", DELIVERIES)
+    private void loadCafes() {
+        getDataManager().loadBusinesses("coffee", CAFES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResponse>() {
@@ -87,18 +91,22 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.e(LOG_TAG, e.getMessage());
+                        getView().hideProgressDialog();
+                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onNext(SearchResponse searchResponse) {
-                        if (!searchResponse.getBusinesses().isEmpty()){
-                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
+                        if (!searchResponse.getBusinesses().isEmpty()) {
+                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
                         }
                         getView().hideProgressDialog();
-                        getView().showDeliveries(searchResponse.getBusinesses());
+                        getView().showCafes(searchResponse.getBusinesses());
                     }
                 });
+
     }
+
 
 }

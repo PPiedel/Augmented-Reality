@@ -16,9 +16,6 @@
 
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
-/**
- * Created by Pawel_Piedel on 24.07.2017.
- */
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.TextureView;
@@ -31,11 +28,11 @@ public class AutoFitTextureView extends TextureView {
         this(context, null);
     }
 
-    public AutoFitTextureView(Context context, AttributeSet attrs) {
+    private AutoFitTextureView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
+    private AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

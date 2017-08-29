@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.main.tabs.deliveries;
+package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
 import android.content.Context;
 

@@ -1,7 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.main;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
 

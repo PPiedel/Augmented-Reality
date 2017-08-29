@@ -29,10 +29,10 @@ public class SlideShowDialogFragment extends DialogFragment {
     private static final String LOG_TAG = SlideShowDialogFragment.class.getSimpleName();
 
     @BindView(R.id.image_slider_view_pager)
+    private
     ViewPager viewPager;
 
-    ImagesPagerAdapter imagesPagerAdapter;
-    private int selectedPosition = 0;
+    private ImagesPagerAdapter imagesPagerAdapter;
     private ArrayList<String> images;
 
     public static SlideShowDialogFragment newInstance() {
@@ -69,7 +69,7 @@ public class SlideShowDialogFragment extends DialogFragment {
 
         images = (ArrayList<String>) getArguments().getSerializable("images");
        // Log.d(LOG_TAG, Arrays.toString(images.toArray()));
-        selectedPosition = getArguments().getInt("position");
+        int selectedPosition = getArguments().getInt("position");
        // Log.d(LOG_TAG,""+selectedPosition);
 
 

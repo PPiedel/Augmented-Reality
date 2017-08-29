@@ -88,14 +88,12 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private static final float ALPHA = 0.4f;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
-    private String cameraId;
-    private int mSensorOrientation;
     private CameraDevice cameraDevice;
     private Size imageDimension;
     private Size mPreviewSize;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
-    private CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
             //This is called when the camera is open
@@ -119,7 +117,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private static final int AZIMUTH_ACCURACY = 10;
     private AzimuthManager azimuthManager;
-    private int sensorType = Sensor.TYPE_ROTATION_VECTOR;
+    private final int sensorType = Sensor.TYPE_ROTATION_VECTOR;
     private ReactiveSensors reactiveSensors;
     private double deviceAzimuth = 0;
     private Subscription azimuthSubscription;
@@ -138,7 +136,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     @Inject
-    public ARPresenter(DataManager dataManager) {
+    private ARPresenter(DataManager dataManager) {
         super(dataManager);
         //lastLocation = Util.mLastLocation;
         azimuths = new double[getDataManager().getRestaurants().size()];
@@ -147,11 +145,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void attachView(V view) {
         super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
     }
 
     @Override
@@ -180,7 +173,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         public void onError(Throwable throwable) {
                             // Log.i(LOG_TAG, throwable.getMessage());
                             throwable.printStackTrace();
-                            getView().showToast("Sorry, something went wrong.");
+                            getView().showToast(throwable.getMessage());
 
                         }
 
@@ -254,7 +247,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;*/
     }
 
-    protected float[] lowPass(float[] input, float[] output) {
+    private float[] lowPass(float[] input, float[] output) {
         if (output == null) return input;
         for (int i = 0; i < input.length; i++) {
             output[i] = output[i] + ALPHA * (input[i] - output[i]);
@@ -307,7 +300,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return first.getLatitude() != second.getLatitude() && first.getLongitude() != second.getLongitude();
     }
 
-    public void updateBusinessAzimuths(Location currentLocation) {
+    private void updateBusinessAzimuths(Location currentLocation) {
         if (!getDataManager().getRestaurants().isEmpty()) {
             for (int i = 0; i < azimuths.length; i++) {
                 azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getRestaurants().get(i).getCoordinates(), currentLocation);
@@ -318,7 +311,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
-    public double calculateTeoreticalAzimuth(Coordinates coordinates, Location currentLocation) {
+    private double calculateTeoreticalAzimuth(Coordinates coordinates, Location currentLocation) {
         double dX = coordinates.getLatitude() - currentLocation.getLatitude();
         double dY = coordinates.getLongitude() - currentLocation.getLongitude();
 
@@ -356,17 +349,17 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     public void managePermissions() {
-        if (!checkPermissions()) {
+        if (checkPermissions()) {
             requestPermissions();
         }
     }
 
-    public boolean checkPermissions() {
-        return getView().hasPermission(Manifest.permission.CAMERA);
+    private boolean checkPermissions() {
+        return !getView().hasPermission(Manifest.permission.CAMERA);
     }
 
 
-    public void requestPermissions() {
+    private void requestPermissions() {
         getView().showCameraPermissionRequest();
     }
 
@@ -411,7 +404,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         CameraManager manager = (CameraManager) getView().getViewActivity().getSystemService(Context.CAMERA_SERVICE);
         Log.e(LOG_TAG, "is camera open");
         try {
-            cameraId = manager.getCameraIdList()[0];
+            String cameraId = manager.getCameraIdList()[0];
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             setUpCameraOutputs(characteristics, width, height);
@@ -421,7 +414,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
             // Add permission for camera and let user grant the permission
-            if (!checkPermissions()) {
+            if (checkPermissions()) {
                 requestPermissions();
                 return;
             }
@@ -463,7 +456,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
-    public void setUpCameraOutputs(CameraCharacteristics characteristics, int width, int height) {
+    private void setUpCameraOutputs(CameraCharacteristics characteristics, int width, int height) {
         StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         Size largest = Collections.max(
                 Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
@@ -472,7 +465,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         // coordinate.
         int displayRotation = getView().getViewActivity().getWindowManager().getDefaultDisplay().getRotation();
         //noinspection ConstantConditions
-        mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        int mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         boolean swappedDimensions = false;
         switch (displayRotation) {
             case Surface.ROTATION_0:

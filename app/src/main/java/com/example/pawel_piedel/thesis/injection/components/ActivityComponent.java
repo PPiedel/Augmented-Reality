@@ -8,9 +8,9 @@ import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.main.MainActivity;
-import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
-import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
-import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
 
 import dagger.Subcomponent;
 

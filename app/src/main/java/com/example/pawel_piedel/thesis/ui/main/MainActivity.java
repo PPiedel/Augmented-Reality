@@ -27,9 +27,9 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
-import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesFragment;
-import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesFragment;
-import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
 import javax.inject.Inject;
@@ -41,17 +41,19 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private NetworkFragment networkFragment;
-
     @Inject
+    private
     MainPresenter<MainContract.View> mPresenter;
 
 
     @BindView(R.id.toolbar)
+    private
     Toolbar mToolbar;
     @BindView(R.id.viewpager)
+    private
     ViewPager viewPager;
     @BindView(R.id.tabs)
+    private
     TabLayout tabLayout;
 
     @Override
@@ -80,7 +82,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
     private void addNetworkConnectionFragment() {
-        networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
+        NetworkFragment networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
         if (networkFragment == null) {
             networkFragment = NetworkFragment.newInstance();
             getFragmentManager().beginTransaction()
@@ -100,7 +102,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    public void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager) {
         TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();

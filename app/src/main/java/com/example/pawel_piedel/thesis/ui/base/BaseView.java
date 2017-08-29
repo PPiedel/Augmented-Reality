@@ -2,10 +2,6 @@ package com.example.pawel_piedel.thesis.ui.base;
 
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.data.model.Business;
-
-import java.util.List;
-
 /**
  * Created by Pawel_Piedel on 18.07.2017.
  */

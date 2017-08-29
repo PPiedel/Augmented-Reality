@@ -1,7 +1,8 @@
-package com.example.pawel_piedel.thesis.ui.main.tabs.restaurants;
+package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.location.Location;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
@@ -26,7 +27,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     public final static String RESTAURANTS = "restaurants";
 
     @Inject
-    public RestaurantsPresenter(DataManager dataManager) {
+    private RestaurantsPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -63,7 +64,8 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onError(Throwable e) {
-
+                        getView().hideProgressDialog();
+                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -75,7 +77,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
     }
 
-    public void loadFromApi() {
+    private void loadFromApi() {
         getDataManager().loadBusinesses("restaurant", RESTAURANTS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -87,7 +89,8 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onError(Throwable e) {
-
+                        getView().hideProgressDialog();
+                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                     }
 
                     @Override

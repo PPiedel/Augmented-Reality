@@ -29,7 +29,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     private static final String LOG_TAG = MainPresenter.class.getName();
 
     @Inject
-    public MainPresenter(DataManager dataManager) {
+    private MainPresenter(DataManager dataManager) {
         super(dataManager);
     }
 

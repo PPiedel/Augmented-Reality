@@ -10,13 +10,16 @@ import com.google.gson.annotations.SerializedName;
 public class AccessToken {
     @SerializedName("access_token")
     @Expose
+    private
     String accessToken;
 
     @SerializedName("token_type")
     @Expose
+    private
     String tokenType;
 
     @SerializedName("expires_in")
+    private
     int expiresIn;
 
     public String getAccessToken() {

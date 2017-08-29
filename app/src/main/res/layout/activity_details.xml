@@ -229,7 +229,8 @@
                                 android:layout_gravity="center_horizontal"
                                 android:background="@null"
                                 android:padding="8dp"
-                                android:src="@drawable/ic_call_black_24dp" />
+                                android:src="@drawable/ic_call_black_24dp"
+                                android:contentDescription="@string/call_action" />
 
                             <TextView
                                 android:id="@+id/textView"
@@ -255,7 +256,8 @@
                                 android:layout_gravity="center_horizontal"
                                 android:background="@null"
                                 android:padding="8dp"
-                                android:src="@drawable/ic_language_black_24dp" />
+                                android:src="@drawable/ic_language_black_24dp"
+                                android:contentDescription="@string/website_action" />
 
                             <TextView
                                 android:id="@+id/textView2"
@@ -281,7 +283,8 @@
                                 android:layout_gravity="center_horizontal"
                                 android:background="@null"
                                 android:padding="8dp"
-                                android:src="@drawable/ic_favorite_border_black_24dp" />
+                                android:src="@drawable/ic_favorite_border_black_24dp"
+                                android:contentDescription="@string/favourite_action" />
 
                             <TextView
                                 android:id="@+id/textView3"
@@ -306,8 +309,8 @@
 
                     <LinearLayout
                         android:id="@+id/horizontal_thubnails"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_below="@id/separator2"
                         android:orientation="vertical">
 
@@ -322,7 +325,8 @@
                             android:horizontalSpacing="10dp"
                             android:isScrollContainer="false"
                             android:stretchMode="columnWidth"
-                            android:verticalSpacing="10dp" />
+                            android:verticalSpacing="10dp"
+                            />
                     </LinearLayout>
 
                     <View

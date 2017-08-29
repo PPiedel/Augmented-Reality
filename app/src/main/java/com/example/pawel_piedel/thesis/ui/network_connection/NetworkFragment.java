@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -34,7 +33,7 @@ public class NetworkFragment extends Fragment {
         return fragment;
     }
 
-    public NetworkFragment() {
+    private NetworkFragment() {
     }
 
     @Override
@@ -52,8 +51,8 @@ public class NetworkFragment extends Fragment {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (!isNetworkAvailable(context)){
-                    showAlertDialog("Please check your Internet connection","Network not available");
+                if (isNetworkAvailable(context)){
+                    showAlertDialog();
                 }
                 else if (alertDialog!=null && alertDialog.isShowing()){
                     alertDialog.dismiss();
@@ -62,8 +61,8 @@ public class NetworkFragment extends Fragment {
         };
         activity.registerReceiver(broadcastReceiver, filter);
 
-        if (!isNetworkAvailable(activity)){
-            showAlertDialog("Please check your Internet connection","Network not available");
+        if (isNetworkAvailable(activity)){
+            showAlertDialog();
         }
         else if (alertDialog!=null && alertDialog.isShowing()){
             alertDialog.dismiss();
@@ -94,26 +93,24 @@ public class NetworkFragment extends Fragment {
         }
     }
 
-    public void showAlertDialog(String message, String title) {
+    private void showAlertDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        builder.setMessage(message)
-                .setTitle(title);
+        builder.setMessage("Please check your Internet connection")
+                .setTitle("Network not available");
 
-        builder.setPositiveButton(R.string.ok, (dialog, id) -> {
-            dialog.dismiss();
-        });
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss());
         //builder.setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());
 
         alertDialog= builder.create();
         alertDialog.show();
     }
 
-    public static boolean  isNetworkAvailable(Context context){
+    private static boolean  isNetworkAvailable(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return networkInfo != null && networkInfo.isConnected();
+        return networkInfo == null || !networkInfo.isConnected();
     }
 
 }

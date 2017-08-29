@@ -13,8 +13,8 @@ import okhttp3.Response;
  * Created by Pawel_Piedel on 17.07.2017.
  */
 
-public class AuthenticationInterceptor implements Interceptor {
-    private AccessToken accessToken;
+class AuthenticationInterceptor implements Interceptor {
+    private final AccessToken accessToken;
 
     public AuthenticationInterceptor(AccessToken token) {
         this.accessToken = token;

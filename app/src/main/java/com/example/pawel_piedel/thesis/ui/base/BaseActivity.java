@@ -1,7 +1,10 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +37,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
     private final String LOG_TAG = BaseActivity.class.getSimpleName();
     private ActivityComponent activityComponent;
     private Unbinder unbinder;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +53,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         return activityComponent;
     }
 
-    public void setUnBinder(Unbinder unBinder) {
+    protected void setUnBinder(Unbinder unBinder) {
         this.unbinder = unBinder;
     }
 
@@ -73,12 +77,9 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
             Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
 
             showSnackbar(R.string.permission_rationale, android.R.string.ok,
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            requestLocationPermissions();
-                        }
+                    view -> {
+                        // Request permission
+                        requestLocationPermissions();
                     });
 
         } else {
@@ -92,7 +93,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         showCameraPermiassionRequest();
     }
 
-    public void showCameraPermiassionRequest(){
+    private void showCameraPermiassionRequest(){
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.CAMERA);
@@ -103,12 +104,9 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
             Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
 
             showSnackbar(R.string.permission_rationale, android.R.string.ok,
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                          requestCamerapERMISSIONS();
-                        }
+                    view -> {
+                        // Request permission
+                      requestCamerapERMISSIONS();
                     });
 
         } else {
@@ -117,13 +115,13 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         }
     }
 
-    public void requestLocationPermissions() {
+    private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 REQUEST_PERMISSIONS_REQUEST_CODE);
     }
 
-    public void requestCamerapERMISSIONS(){
+    private void requestCamerapERMISSIONS(){
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CAMERA},
                 REQUEST_CAMERA_PERMISSION);
@@ -145,12 +143,24 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
 
     @Override
     public void showProgressDialog() {
+        hideProgressDialog();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.show();
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
     public void hideProgressDialog() {
-
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.cancel();
+        }
     }
 
     public boolean hasPermission(String permission) {

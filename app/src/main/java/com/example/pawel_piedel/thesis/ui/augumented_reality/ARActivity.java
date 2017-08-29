@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -18,7 +19,6 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +28,7 @@ import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -38,9 +38,9 @@ import butterknife.OnClick;
 
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String TAG = ARActivity.class.getSimpleName();
-    protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest.Builder captureRequestBuilder;
-    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+    private CameraCaptureSession cameraCaptureSessions;
+    private CaptureRequest.Builder captureRequestBuilder;
+    private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
@@ -61,27 +61,33 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
-    private NetworkFragment networkFragment;
 
     @BindView(R.id.textureaAR)
+    private
     AutoFitTextureView textureView;
 
     @BindView(R.id.azimuth)
+    private
     TextView azimuthTextView;
 
     @BindView(R.id.location)
+    private
     TextView locationTextView;
 
     @BindView(R.id.businessViewAR)
+    private
     RelativeLayout businessView;
 
     @BindView(R.id.businessTitleAR)
+    private
     TextView businessTitle;
 
     @BindView(R.id.businessDistanceAR)
+    private
     TextView businessDistance;
 
     @Inject
+    private
     ARPresenter<ARContract.View> presenter;
 
     @Override
@@ -101,8 +107,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     }
 
     private void addNetworkConnectionFragment() {
-        networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
-        if (networkFragment==null){
+        NetworkFragment networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
+        if (networkFragment ==null){
             networkFragment = NetworkFragment.newInstance();
             getFragmentManager().beginTransaction()
                     .add(networkFragment,NetworkFragment.LOG_TAG)
@@ -141,6 +147,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         presenter.detachView();
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void showBusinessOnScreen(Business business) {
         TransitionManager.beginDelayedTransition(businessView);
@@ -177,7 +184,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+            cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     //The camera is already closed
@@ -200,7 +207,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     }
 
 
-    protected void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
+    private void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
@@ -221,6 +228,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void setAzimuthText(double azimuth) {
         azimuthTextView.setText(String.format("%.2f", azimuth));

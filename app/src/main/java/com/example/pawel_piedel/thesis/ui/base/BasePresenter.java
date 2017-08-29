@@ -12,11 +12,11 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
     private DataManager dataManager;
     private V view;
 
-    public BasePresenter() {
+    protected BasePresenter() {
     }
 
     @Inject
-    public BasePresenter(DataManager dataManager) {
+    protected BasePresenter(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 
@@ -31,11 +31,11 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
         view = null;
     }
 
-    public V getView() {
+    protected V getView() {
         return view;
     }
 
-    public DataManager getDataManager() {
+    protected DataManager getDataManager() {
         return dataManager;
     }
 

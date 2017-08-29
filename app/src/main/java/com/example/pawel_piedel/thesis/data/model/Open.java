@@ -9,7 +9,7 @@ import java.io.Serializable;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class Open implements Serializable {
+class Open implements Serializable {
 
     @SerializedName("is_overnight")
     @Expose

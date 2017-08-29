@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.main.tabs.restaurants;
+package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,69 +24,73 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static dagger.internal.Preconditions.checkNotNull;
+public class DeliveriesFragment extends BaseFragment implements DeliveriesContract.View {
+    private final String LOG_TAG = DeliveriesFragment.class.getName();
 
-public class RestaurantsFragment extends BaseFragment implements RestaurantsContract.View {
-    private final String LOG_TAG = RestaurantsFragment.class.getSimpleName();
-
-    private BusinessAdapter businessAdapter = new BusinessAdapter();
+    private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-    RestaurantsContract.Presenter<RestaurantsContract.View> restaurantsPresenter;
+    private
+    DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter;
 
-    @BindView(R.id.restaurants_recycler_view)
+    @BindView(R.id.deliveries_recycler_view)
+    private
     RecyclerView mRecyclerView;
 
-    public RestaurantsFragment() {
+    private DeliveriesFragment() {
         // Required empty public constructor
     }
 
-    public static RestaurantsFragment newInstance(){
-        return new RestaurantsFragment();
+    public static DeliveriesFragment newInstance() {
+        return new DeliveriesFragment();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_restaurants, container, false);
+        View view =  inflater.inflate(R.layout.fragment_deliveries, container, false);
         ActivityComponent component = getActivityComponent();
         if (component != null) {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
-            restaurantsPresenter.attachView(this);
+            deliveriesPresenter.attachView(this);
             //mBlogAdapter.setCallback(this);
         }
+
         setUpRecyclerView();
         return view;
     }
 
-    protected void setUpRecyclerView() {
+    private void setUpRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
-        restaurantsPresenter.onViewPrepared();
 
-
+        deliveriesPresenter.onViewPrepared();
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
-
 
     @Override
-    public void showRestaurants(List<Business> list) {
-        businessAdapter.setBusinessList(list);
+    public void onDestroyView() {
+        deliveriesPresenter.detachView();
+        super.onDestroyView();
     }
+
 
     @Override
     public void requestRequiredPermissions(String[] permissions, int requestCode) {
 
     }
+
+
 
     @Override
     public boolean hasPermission(String permission) {
@@ -95,11 +99,13 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
 
 
     @Override
+    public void showDeliveries(List<Business> deliveries) {
+        businessAdapter.setBusinessList(deliveries);
+    }
+
+    @Override
     public Context provideContext(){
         return getActivity();
     }
-
-
-
 
 }

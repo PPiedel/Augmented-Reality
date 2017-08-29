@@ -7,18 +7,16 @@ import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARContract;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter;
-import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.detail.DetailContract;
 import com.example.pawel_piedel.thesis.ui.detail.DetailPresenter;
 import com.example.pawel_piedel.thesis.ui.main.MainContract;
 import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
-import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesContract;
-import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesPresenter;
-import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesContract;
-import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesPresenter;
-import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsContract;
-import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsPresenter;
-import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesContract;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesContract;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -30,7 +28,7 @@ import dagger.Provides;
 @Module
 public class ActivityModule {
 
-    private Activity mActivity;
+    private final Activity mActivity;
 
     public ActivityModule(Activity activity) {
         mActivity = activity;

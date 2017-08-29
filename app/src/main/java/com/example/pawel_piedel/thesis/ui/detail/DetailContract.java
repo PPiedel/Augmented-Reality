@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public interface DetailContract {
-    public interface View extends BaseView {
+    interface View extends BaseView {
 
         Activity getViewActivity();
 

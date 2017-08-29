@@ -17,12 +17,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceFactory {
 
-    public static final String API_BASE_URL = "https://api.yelp.com";
+    private static final String API_BASE_URL = "https://api.yelp.com";
     public static final String CLIENT_ID = "VokcbDNJly63jzOhJqJ0JA";
     public static final String CLIENT_SECRET = "gaFo3VLh1cNWS5L7nHJ6nRxVq97iRJCqvBAWnvmoiAWCf2xriOKhp6h5U0LNuj8F";
     public static final String GRANT_TYPE = "client_credentials";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    public static Retrofit.Builder builder =
+    private static final Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())

@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +31,7 @@ import butterknife.ButterKnife;
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
     private static final String LOG_TAG = ReviewsAdapter.class.getSimpleName();
     private ViewHolder holder;
-    private List<Review> reviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
     private Context context;
 
     public ReviewsAdapter(Context context) {

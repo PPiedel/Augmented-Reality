@@ -18,14 +18,15 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by Pawel_Piedel on 17.08.2017.
  */
 
 public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhotosAdapter.MyViewHolder> {
-    private Context context;
-    private ArrayList<String> imageUrls;
+    private final Context context;
+    private final ArrayList<String> imageUrls;
 
     public HorizontalPhotosAdapter(Context context, ArrayList<String> imageUrls) {
         this.context = context;
@@ -50,6 +51,7 @@ public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhot
                 .load(imageUrls.get(position))
                 .centerCrop()
                 .crossFade()
+                .bitmapTransform(new RoundedCornersTransformation(context,2,2))
                 //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.image);
     }

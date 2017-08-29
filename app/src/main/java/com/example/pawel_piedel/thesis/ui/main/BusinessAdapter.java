@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHolder> {
     public final static String BUSINESS = "business";
     private final String LOG_TAG = BusinessAdapter.class.getName();
-    private List<Business> businessList = new ArrayList<>();
+    private final List<Business> businessList = new ArrayList<>();
     private Context context;
 
     public BusinessAdapter() {

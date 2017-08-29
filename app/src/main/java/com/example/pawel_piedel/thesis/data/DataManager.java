@@ -14,9 +14,9 @@ import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
 import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
-import com.example.pawel_piedel.thesis.ui.main.tabs.cafes.CafesPresenter;
-import com.example.pawel_piedel.thesis.ui.main.tabs.deliveries.DeliveriesPresenter;
-import com.example.pawel_piedel.thesis.ui.main.tabs.restaurants.RestaurantsPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
+import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
 import com.example.pawel_piedel.thesis.util.Util;
 import com.google.android.gms.location.LocationRequest;
 
@@ -34,9 +34,6 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
 
-import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
-import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
-import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -45,21 +42,19 @@ import static dagger.internal.Preconditions.checkNotNull;
 @Singleton
 public class DataManager {
     private final String LOG_TAG = DataManager.class.getSimpleName();
-    private ReactiveLocationProvider locationProvider;
+    private final ReactiveLocationProvider locationProvider;
     private final SharedPreferencesManager preferencesHelper;
     private ApiService apiService;
-    private Context context;
     private List<Business> restaurants;
     private List<Business> cafes;
     private List<Business> deliveries;
 
     @Inject
-    public DataManager(@ApplicationContext Context context,
-                       ApiService apiService,
-                       SharedPreferencesManager preferencesHelper) {
+    private DataManager(@ApplicationContext Context context,
+                        ApiService apiService,
+                        SharedPreferencesManager preferencesHelper) {
         this.preferencesHelper = preferencesHelper;
         this.apiService = apiService;
-        this.context = context;
         locationProvider = new ReactiveLocationProvider(context);
     }
 
@@ -73,7 +68,7 @@ public class DataManager {
         if (accessToken != null) {
             return Observable.just(accessToken);
         } else {
-            return apiService.getAccessToken(CLIENT_ID, CLIENT_SECRET, GRANT_TYPE);
+            return apiService.getAccessToken();
         }
     }
 
@@ -121,9 +116,8 @@ public class DataManager {
             observable = apiService.getBusinessesList(
                     term,
                     Util.mLastLocation.getLatitude(),
-                    Util.mLastLocation.getLongitude(),
-                    null,
-                    null);
+                    Util.mLastLocation.getLongitude()
+            );
         }
         return observable;
     }
@@ -137,7 +131,7 @@ public class DataManager {
     public Observable<ReviewsResponse> loadReviews(String id){
         Observable<ReviewsResponse> observable;
         apiService = ServiceFactory.createService(ApiService.class);
-        observable =  apiService.getBusinessReviews(id,"pl_PL");
+        observable =  apiService.getBusinessReviews(id);
         return observable;
     }
 
@@ -160,7 +154,7 @@ public class DataManager {
 
                 cafes = new ArrayList<>();
                 cafes.addAll(businesses);
-                //Collections.sort(cafes, Business::compareTo);
+                Collections.sort(cafes, Business::compareTo);
 
                 Log.d(LOG_TAG,Arrays.toString(cafes.toArray()));
                 Log.d(LOG_TAG,""+cafes.size());
@@ -170,7 +164,7 @@ public class DataManager {
 
                 restaurants = new ArrayList<>();
                 restaurants.addAll(businesses);
-               // Collections.sort(restaurants, Business::compareTo);
+                Collections.sort(restaurants, Business::compareTo);
 
                 Log.d(LOG_TAG, Arrays.toString(restaurants.toArray()));
                 Log.d(LOG_TAG,""+restaurants.size());
@@ -180,7 +174,7 @@ public class DataManager {
 
                 deliveries = new ArrayList<>();
                 deliveries.addAll(businesses);
-               // Collections.sort(deliveries,Business::compareTo);
+                Collections.sort(deliveries,Business::compareTo);
 
                 Log.d(LOG_TAG, Arrays.toString(deliveries.toArray()));
                 Log.d(LOG_TAG,""+deliveries.size());

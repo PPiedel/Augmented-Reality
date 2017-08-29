@@ -30,8 +30,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static dagger.internal.Preconditions.checkNotNull;
-
 /**
  * Created by Pawel_Piedel on 27.07.2017.
  */
@@ -40,45 +38,56 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     @Inject
+    private
     DetailPresenter<DetailContract.View> presenter;
 
     @BindView(R.id.collapsing_toolbar)
+    private
     Toolbar mToolbar;
 
     @BindView(R.id.business_image)
+    private
     ImageView imageView;
 
     @BindView(R.id.title_details)
+    private
     TextView title;
 
     @BindView(R.id.rating_bar_details)
+    private
     RatingBar ratingBar;
 
     @BindView(R.id.rating_details)
+    private
     TextView rating;
 
     @BindView(R.id.review_count_details)
+    private
     TextView review_count;
 
     @BindView(R.id.zipcode_details)
+    private
     TextView address;
 
     @BindView(R.id.distance_details)
+    private
     TextView distance;
 
     @BindView(R.id.street_details)
+    private
     TextView street;
 
     @BindView(R.id.today_hours)
+    private
     TextView todayHours;
 
     @BindView(R.id.horizontal_recycler_view)
+    private
     RecyclerView horizontalRecyclerView;
 
     @BindView(R.id.reviews_recycler_view)
+    private
     RecyclerView reviewsRecyclerView;
-
-    private HorizontalPhotosAdapter horizontalAdapter;
 
     private ReviewsAdapter reviewsAdapter;
 
@@ -158,7 +167,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
 
 
-    public void showBusinessImage(Business business) {
+    private void showBusinessImage(Business business) {
         Glide.with(this)
                 .load(business.getImageUrl())
                 .centerCrop()
@@ -202,7 +211,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     private void setUpHorizontalRecyclerView(Business business) {
         if (business.getPhotos() != null && !business.getPhotos().isEmpty()) {
-            horizontalAdapter = new HorizontalPhotosAdapter(this, new ArrayList<>(business.getPhotos()));
+            HorizontalPhotosAdapter horizontalAdapter = new HorizontalPhotosAdapter(this, new ArrayList<>(business.getPhotos()));
             horizontalRecyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
 

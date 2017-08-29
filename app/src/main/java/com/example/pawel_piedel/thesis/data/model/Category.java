@@ -9,7 +9,7 @@ import java.io.Serializable;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class Category implements Serializable {
+class Category implements Serializable {
 
     @SerializedName("alias")
     @Expose

@@ -13,19 +13,19 @@ public class Review implements Serializable {
 
     @SerializedName("rating")
     @Expose
-    public int rating;
+    private int rating;
     @SerializedName("user")
     @Expose
-    public User user;
+    private User user;
     @SerializedName("text")
     @Expose
-    public String text;
+    private String text;
     @SerializedName("time_created")
     @Expose
-    public String timeCreated;
+    private String timeCreated;
     @SerializedName("url")
     @Expose
-    public String url;
+    private String url;
 
     public int getRating() {
         return rating;

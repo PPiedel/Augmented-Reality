@@ -14,13 +14,9 @@ import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-
-import static dagger.internal.Preconditions.checkNotNull;
 
 /**
  * Created by Pawel_Piedel on 27.07.2017.
@@ -32,7 +28,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     private Business business;
 
     @Inject
-    public DetailPresenter(DataManager dataManager) {
+    private DetailPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -120,7 +116,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
 
-    public void loadBusiness(String id) {
+    private void loadBusiness(String id) {
         getDataManager().loadBusinessDetails(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,6 +128,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
                     @Override
                     public void onError(Throwable e) {
+                        getView().hideProgressDialog();
                         Log.d(LOG_TAG,e.getMessage());
                         getView().showOldBusiness();
                     }

@@ -32,8 +32,7 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof BaseActivity) {
-            BaseActivity activity = (BaseActivity) context;
-            this.baseActivity = activity;
+            this.baseActivity = (BaseActivity) context;
            // activity.onFragmentAttached();
         }
     }
@@ -52,7 +51,7 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         super.onDestroy();
     }
 
-    public void setUnBinder(Unbinder unBinder) {
+    protected void setUnBinder(Unbinder unBinder) {
         mUnBinder = unBinder;
     }
 
@@ -60,7 +59,7 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         return baseActivity;
     }
 
-    public ActivityComponent getActivityComponent() {
+    protected ActivityComponent getActivityComponent() {
         if (baseActivity != null) {
             return baseActivity.getActivityComponent();
         }
