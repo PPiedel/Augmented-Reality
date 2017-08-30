@@ -14,8 +14,6 @@ import static org.junit.Assert.*;
 public class DataManagerTest {
     private DataManager dataManager;
 
-
-
     @Test
     public void getLastKnownLocation() throws Exception {
     }
