@@ -13,7 +13,6 @@ import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
-import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
@@ -29,41 +28,29 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     private static final String LOG_TAG = MainPresenter.class.getName();
 
     @Inject
-    MainPresenter(DataManager dataManager) {
+    public MainPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
-    public void managePermissions() {
-        if (!checkPermissions()) {
-            requestPermissions();
+    public void manageLocationPermissions() {
+        if (!checkLocationPermissions()) {
+            requestLocationPermissions();
         }
     }
 
-    @Override
-    public void attachView(V view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
-
-    public boolean checkPermissions() {
+    public boolean checkLocationPermissions() {
         return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
                 getView().hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
 
-    public void requestPermissions() {
+    public void requestLocationPermissions() {
         getView().showLocationPermissionsRequest();
     }
 
     @Override
-    public void openArActivity() {
-        Intent arIntent = new Intent(getView().getViewActivity().getApplication(), ARActivity.class);
-        getView().getViewActivity().startActivity(arIntent);
+    public void onFabClick() {
+        getView().startArActivity();
 
     }
 

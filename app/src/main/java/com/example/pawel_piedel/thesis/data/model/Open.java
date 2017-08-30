@@ -20,7 +20,7 @@ class Open implements Serializable {
     @SerializedName("day")
     @Expose
     private int day;
-    @SerializedName("managePermissions")
+    @SerializedName("manageLocationPermissions")
     @Expose
     private String start;
 

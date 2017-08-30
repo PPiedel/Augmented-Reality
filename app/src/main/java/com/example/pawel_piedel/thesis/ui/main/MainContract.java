@@ -13,14 +13,16 @@ public interface MainContract {
 
         Activity getViewActivity();
 
+        void startArActivity();
+
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
-        boolean checkPermissions();
+        boolean checkLocationPermissions();
 
-        void requestPermissions();
+        void requestLocationPermissions();
 
-        void openArActivity();
+        void onFabClick();
 
 
     }

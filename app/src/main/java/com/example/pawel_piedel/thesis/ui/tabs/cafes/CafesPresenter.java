@@ -33,21 +33,11 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     }
 
     @Override
-    public void attachView(V view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
-    @Override
     public void onViewPrepared() {
         load();
     }
 
-    private void load() {
+    public void load() {
         getView().showProgressDialog();
         Observable
                 .zip(
@@ -79,7 +69,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     }
 
-    private void loadCafes() {
+    public void loadCafes() {
         getDataManager().loadBusinesses("coffee", CAFES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

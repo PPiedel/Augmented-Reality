@@ -28,11 +28,11 @@ public class AutoFitTextureView extends TextureView {
         this(context, null);
     }
 
-    private AutoFitTextureView(Context context, AttributeSet attrs) {
+    public AutoFitTextureView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    private AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
+    public AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

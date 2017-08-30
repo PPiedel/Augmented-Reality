@@ -19,6 +19,7 @@
 package com.example.pawel_piedel.thesis.ui.main;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -26,6 +27,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
@@ -76,7 +78,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpTabLayout();
 
-        mPresenter.managePermissions();
+        mPresenter.manageLocationPermissions();
 
 
     }
@@ -137,9 +139,15 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         return this;
     }
 
+    @Override
+    public void startArActivity() {
+        Intent arIntent = new Intent(getViewActivity().getApplication(), ARActivity.class);
+        getViewActivity().startActivity(arIntent);
+    }
+
     @OnClick(R.id.fab)
     public void fabOnClick() {
-        mPresenter.openArActivity();
+        mPresenter.onFabClick();
     }
 
 
