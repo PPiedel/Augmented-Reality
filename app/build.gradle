@@ -48,6 +48,7 @@ dependencies {
     testCompile 'org.powermock:powermock-core:1.7.0'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.7.0'
 
+
     //android support
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
     compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"

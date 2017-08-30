@@ -44,9 +44,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Inject
-
     MainPresenter<MainContract.View> mPresenter;
-
 
     @BindView(R.id.toolbar)
 
@@ -65,7 +63,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         getActivityComponent().inject(this);
 
         setContentView(R.layout.activity_main);
-
         setUnBinder(ButterKnife.bind(this));
 
         mPresenter.attachView(this);
