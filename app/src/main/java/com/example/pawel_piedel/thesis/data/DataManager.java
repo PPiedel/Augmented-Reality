@@ -34,6 +34,9 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
 
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -48,6 +51,7 @@ public class DataManager {
     private List<Business> restaurants;
     private List<Business> cafes;
     private List<Business> deliveries;
+
 
     @Inject
     DataManager(@ApplicationContext Context context,
@@ -68,7 +72,7 @@ public class DataManager {
         if (accessToken != null) {
             return Observable.just(accessToken);
         } else {
-            return apiService.getAccessToken();
+            return apiService.getAccessToken(GRANT_TYPE,CLIENT_ID,CLIENT_SECRET);
         }
     }
 

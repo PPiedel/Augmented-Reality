@@ -43,8 +43,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            //open your camera here
-            presenter.openCamera(width, height);
+            presenter.setStateCallback(stateCallback);
+            presenter.openCamera(width, height,ARActivity.this);
         }
 
         @Override
@@ -59,6 +59,25 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        }
+    };
+
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(CameraDevice camera) {
+            presenter.setCameraDevice(camera);
+            presenter.onCameraOpened();
+        }
+
+        @Override
+        public void onDisconnected(CameraDevice camera) {
+            presenter.closeCamera();
+        }
+
+        @Override
+        public void onError(CameraDevice camera, int error) {
+            presenter.closeCamera();
+            presenter.setCameraDevice(null);
         }
     };
 
@@ -99,6 +118,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         presenter.managePermissions();
         presenter.setReactiveSensors(this);
 
+
         textureView.setSurfaceTextureListener(textureListener);
 
     }
@@ -117,9 +137,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     protected void onResume() {
         super.onResume();
         //Log.e(TAG, "onResume");
-        presenter.startBackgroundThread();
+        presenter.startCameraBackgroundThread();
         if (textureView.isAvailable()) {
-            presenter.openCamera(textureView.getWidth(), textureView.getHeight());
+            presenter.openCamera(textureView.getWidth(), textureView.getHeight(),this);
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }

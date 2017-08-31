@@ -25,7 +25,6 @@ public interface ARContract {
 
         void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice);
 
-
         void setTransform(Matrix matrix);
 
         void showToast(String message);
@@ -38,15 +37,8 @@ public interface ARContract {
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
-        void openCamera(int width, int height);
 
-        void createCameraPreview();
-
-        void stopBackgroundThread();
-
-        void startBackgroundThread();
-
-        void configureTransform(int viewWidth, int viewHeight);
+        void onCameraOpened();
 
         void startObservingAzimuth();
 

@@ -6,6 +6,7 @@ import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 
 
+import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -34,7 +35,9 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/oauth2/token")
-    Observable<AccessToken> getAccessToken();
+    Observable<AccessToken> getAccessToken(@Field("grant_type") String grantType,
+                                           @Field("client_id") String clientId,
+                                            @Field("client_secret") String clientSecret);
 
 
 }

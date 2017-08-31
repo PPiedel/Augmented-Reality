@@ -1,40 +1,23 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Point;
-import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.Size;
-import android.view.Surface;
 import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.augumented_reality.AzimuthManager;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
@@ -43,11 +26,7 @@ import com.example.pawel_piedel.thesis.util.Util;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -81,39 +60,9 @@ import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
  */
 @ConfigPersistent
 public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> implements ARContract.Presenter<V> {
-    public static final int REQUEST_CAMERA_PERMISSION = 200;
-    private static final int MAX_PREVIEW_WIDTH = 1920;
-    private static final int MAX_PREVIEW_HEIGHT = 1080;
-    private static final float ALPHA = 0.4f;
-
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
-    private CameraDevice cameraDevice;
-    private Size imageDimension;
-    private Size mPreviewSize;
-    private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice camera) {
-            //This is called when the camera is open
-            Log.e(LOG_TAG, "onOpened");
-            cameraDevice = camera;
-            createCameraPreview();
-        }
-
-        @Override
-        public void onDisconnected(CameraDevice camera) {
-            cameraDevice.close();
-        }
-
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    };
-
-
+    public static final int REQUEST_CAMERA_PERMISSION = 200;
+    private static final float ALPHA = 0.4f;
     private static final int AZIMUTH_ACCURACY = 10;
     private AzimuthManager azimuthManager;
     private final int sensorType = Sensor.TYPE_ROTATION_VECTOR;
@@ -126,7 +75,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private boolean pointsTo = false;
     private float[] output = {0, 0, 0, 0, 0};
 
-
+    @Inject
+    CameraManager cameraManager;
 
 
     @Inject
@@ -134,12 +84,15 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         super(dataManager);
         //lastLocation = Util.mLastLocation;
         azimuths = new double[getDataManager().getRestaurants().size()];
+
     }
 
     @Override
     public void attachView(V view) {
         super.attachView(view);
     }
+
+
 
     @Override
     public void startObservingAzimuth() {
@@ -188,7 +141,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
             Log.e(LOG_TAG, "Device does not has sensor !");
         }
     }
-
 
     private boolean newAzimuthPointsTo(double businessAzimuth) {
         double minAngle = businessAzimuth - AZIMUTH_ACCURACY;
@@ -248,7 +200,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
         return output;
     }
-
 
     public void startObservingLocation() {
         if (Util.mLastLocation != null) {
@@ -392,198 +343,41 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
-    @SuppressLint("MissingPermission")
-    @Override
-    public void openCamera(int width, int height) {
-        CameraManager manager = (CameraManager) getView().getViewActivity().getSystemService(Context.CAMERA_SERVICE);
-        Log.e(LOG_TAG, "is camera open");
-        try {
-            String cameraId = manager.getCameraIdList()[0];
-
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            setUpCameraOutputs(characteristics, width, height);
-            configureTransform(width, height);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            assert map != null;
-
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
-            if (checkPermissions()) {
-                requestPermissions();
-                return;
-            }
-            manager.openCamera(cameraId, stateCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Log.e(LOG_TAG, "openCamera X");
-    }
-
-    public void closeCamera() {
-        if (null != cameraDevice) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
+    public void setCameraDevice(CameraDevice cameraDevice){
+        cameraManager.setCameraDevice(cameraDevice);
     }
 
     @Override
-    public void createCameraPreview() {
-        getView().showCameraPreview(imageDimension, mBackgroundHandler, cameraDevice);
+    public void onCameraOpened() {
+        getView().showCameraPreview(cameraManager.getImageDimension(), cameraManager.getmBackgroundHandler(), cameraManager.getCameraDevice());
     }
 
-    @Override
-    public void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    public void openCamera(int width, int height,ARActivity activity){
+        cameraManager.openCamera(width,height,activity);
     }
 
-    @Override
-    public void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void closeCamera(){
+        cameraManager.closeCamera();
     }
 
-    private void setUpCameraOutputs(CameraCharacteristics characteristics, int width, int height) {
-        StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        Size largest = Collections.max(
-                Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
-                new CompareSizesByArea());
-        // Find out if we need to swap dimension to get the preview size relative to sensor
-        // coordinate.
-        int displayRotation = getView().getViewActivity().getWindowManager().getDefaultDisplay().getRotation();
-        //noinspection ConstantConditions
-        int mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-        boolean swappedDimensions = false;
-        switch (displayRotation) {
-            case Surface.ROTATION_0:
-            case Surface.ROTATION_180:
-                if (mSensorOrientation == 90 || mSensorOrientation == 270) {
-                    swappedDimensions = true;
-                }
-                break;
-            case Surface.ROTATION_90:
-            case Surface.ROTATION_270:
-                if (mSensorOrientation == 0 || mSensorOrientation == 180) {
-                    swappedDimensions = true;
-                }
-                break;
-            default:
-                Log.e(LOG_TAG, "Display rotation is invalid: " + displayRotation);
-        }
-
-        Point displaySize = new Point();
-        getView().getViewActivity().getWindowManager().getDefaultDisplay().getSize(displaySize);
-        int rotatedPreviewWidth = width;
-        int rotatedPreviewHeight = height;
-        int maxPreviewWidth = displaySize.x;
-        int maxPreviewHeight = displaySize.y;
-
-        if (swappedDimensions) {
-            rotatedPreviewWidth = height;
-            rotatedPreviewHeight = width;
-            maxPreviewWidth = displaySize.y;
-            maxPreviewHeight = displaySize.x;
-        }
-
-        if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
-            maxPreviewWidth = MAX_PREVIEW_WIDTH;
-        }
-
-        if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
-            maxPreviewHeight = MAX_PREVIEW_HEIGHT;
-        }
-
-        // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-        // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-        // garbage capture data.
-        mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-                rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
-                maxPreviewHeight, largest);
-
-        // We fit the aspect ratio of TextureView to the size of preview we picked.
-        int orientation = getView().getViewActivity().getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getView().setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-        } else {
-            getView().setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
-        }
-
-
+    public void configureTransform(int width,int height){
+        cameraManager.configureTransform(width,height,(ARActivity) getView());
     }
 
-    public void configureTransform(int viewWidth, int viewHeight) {
-        Activity activity = getView().getViewActivity();
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        Matrix matrix = new Matrix();
-        RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-        RectF bufferRect = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
-        float centerX = viewRect.centerX();
-        float centerY = viewRect.centerY();
-        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
-            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
-            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
-            float scale = Math.max(
-                    (float) viewHeight / mPreviewSize.getHeight(),
-                    (float) viewWidth / mPreviewSize.getWidth());
-            matrix.postScale(scale, scale, centerX, centerY);
-            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
-        } else if (Surface.ROTATION_180 == rotation) {
-            matrix.postRotate(180, centerX, centerY);
-        }
+    public void startCameraBackgroundThread(){
+        cameraManager.startBackgroundThread();
+    }
 
-        getView().setTransform(matrix);
+    public void stopBackgroundThread(){
+        cameraManager.stopBackgroundThread();
+    }
+
+    public void setStateCallback(CameraDevice.StateCallback stateCallback){
+        cameraManager.setStateCallback(stateCallback);
     }
 
 
-    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
-                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
 
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        // Collect the supported resolutions that are smaller than the preview Surface
-        List<Size> notBigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
-                    option.getHeight() == option.getWidth() * h / w) {
-                if (option.getWidth() >= textureViewWidth &&
-                        option.getHeight() >= textureViewHeight) {
-                    bigEnough.add(option);
-                } else {
-                    notBigEnough.add(option);
-                }
-            }
-        }
 
-        // Pick the smallest of those big enough. If there is no one big enough, pick the
-        // largest of those not big enough.
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else if (notBigEnough.size() > 0) {
-            return Collections.max(notBigEnough, new CompareSizesByArea());
-        } else {
-            Log.e(LOG_TAG, "Couldn't find any suitable preview size");
-            return choices[0];
-        }
-    }
-
-    static class CompareSizesByArea implements Comparator<Size> {
-
-        @Override
-        public int compare(Size lhs, Size rhs) {
-            // We cast here to ensure the multiplications won't overflow
-            return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
-                    (long) rhs.getWidth() * rhs.getHeight());
-        }
-
-    }
 
 }
