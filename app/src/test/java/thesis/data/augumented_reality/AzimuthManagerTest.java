@@ -1,7 +1,8 @@
-package com.example.pawel_piedel.thesis.data.augumented_reality;
+package thesis.data.augumented_reality;
 
 import android.hardware.SensorEvent;
 
+import com.example.pawel_piedel.thesis.data.augumented_reality.AzimuthManager;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 
 import org.junit.Before;

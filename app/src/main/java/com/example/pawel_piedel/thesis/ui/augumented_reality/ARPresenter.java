@@ -130,7 +130,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     @Inject
-    ARPresenter(DataManager dataManager) {
+    public ARPresenter(DataManager dataManager) {
         super(dataManager);
         //lastLocation = Util.mLastLocation;
         azimuths = new double[getDataManager().getRestaurants().size()];

@@ -116,7 +116,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume");
+        //Log.e(TAG, "onResume");
         presenter.startBackgroundThread();
         if (textureView.isAvailable()) {
             presenter.openCamera(textureView.getWidth(), textureView.getHeight());
@@ -130,7 +130,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     protected void onPause() {
-        Log.e(TAG, "onPause");
+       // Log.e(TAG, "onPause");
         presenter.closeCamera();
         presenter.stopBackgroundThread();
         presenter.unsubscribeAll();
@@ -140,7 +140,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         presenter.detachView();
     }
 

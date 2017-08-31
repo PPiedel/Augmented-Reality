@@ -1,20 +1,20 @@
-package com.example.pawel_piedel.thesis.ui.main;
+package thesis.ui.main;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.ui.main.MainContract;
+import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by Pawel_Piedel on 30.08.2017.
@@ -39,32 +39,32 @@ public class MainPresenterTest {
 
     @Test
     public void manageLocationPermissionsShouldCallRequestPermissions() throws Exception {
-        when(mainView.hasPermission(anyString())).thenReturn(false);
+        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(false);
 
         mainPresenter.manageLocationPermissions();
 
-        verify(mainView).showLocationPermissionsRequest();
+        Mockito.verify(mainView).showLocationPermissionsRequest();
     }
 
     @Test
     public void manageLocationPermissionsShouldDoNothing() throws Exception {
-        when(mainView.hasPermission(anyString())).thenReturn(true);
+        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(true);
 
         mainPresenter.manageLocationPermissions();
 
-        verify(mainView,never()).showLocationPermissionsRequest();
+        Mockito.verify(mainView, Mockito.never()).showLocationPermissionsRequest();
     }
 
     @Test
     public void checkLocationPermissionsShouldReturnTrue() throws Exception {
-        when(mainView.hasPermission(anyString())).thenReturn(true);
+        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(true);
 
         assertTrue(mainPresenter.checkLocationPermissions());
     }
 
     @Test
     public void checkLocationPermissionShouldReturnFalse() throws  Exception {
-        when(mainView.hasPermission(anyString())).thenReturn(false);
+        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(false);
 
         assertFalse(mainPresenter.checkLocationPermissions());
     }
@@ -73,14 +73,14 @@ public class MainPresenterTest {
     public void requestLocationPermissions() throws Exception {
         mainPresenter.requestLocationPermissions();
 
-        verify(mainView).showLocationPermissionsRequest();
+        Mockito.verify(mainView).showLocationPermissionsRequest();
     }
 
     @Test
     public void onFabClick() throws Exception {
         mainPresenter.onFabClick();
 
-        verify(mainView).startArActivity();
+        Mockito.verify(mainView).startArActivity();
     }
 
     @Test
