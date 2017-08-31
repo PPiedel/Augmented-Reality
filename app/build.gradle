@@ -38,7 +38,11 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.9.0'
+
+    testCompile "org.powermock:powermock-module-junit4:1.7.0"
+    // https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito-common
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito-common', version: '1.7.0RC2'
+
 
     //android
     compile fileTree(include: ['*.jar'], dir: 'libs')

@@ -28,7 +28,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.View;
 
@@ -86,7 +85,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
     private static final float ALPHA = 0.4f;
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
     private CameraDevice cameraDevice;
     private Size imageDimension;
@@ -127,12 +126,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private boolean pointsTo = false;
     private float[] output = {0, 0, 0, 0, 0};
 
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
+
 
 
     @Inject
@@ -337,7 +331,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void unsubscribeAll() {
-        azimuthManager.safelyUnsubscribe(azimuthSubscription);
+        azimuthManager.unsubscribe(azimuthSubscription);
         getDataManager().safelyUnsubscribe(locationSubscription);
     }
 

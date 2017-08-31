@@ -31,7 +31,7 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
         view = null;
     }
 
-    protected V getView() {
+    public V getView() {
         return view;
     }
 
