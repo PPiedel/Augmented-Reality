@@ -13,13 +13,7 @@ import com.google.gson.Gson;
 public class Util {
    public static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
    public static final Gson gson = new Gson();
-   private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-   static {
-      ORIENTATIONS.append(Surface.ROTATION_0, 90);
-      ORIENTATIONS.append(Surface.ROTATION_90, 0);
-      ORIENTATIONS.append(Surface.ROTATION_180, 270);
-      ORIENTATIONS.append(Surface.ROTATION_270, 180);
-   }
+
 
 
    public static Location mLastLocation;

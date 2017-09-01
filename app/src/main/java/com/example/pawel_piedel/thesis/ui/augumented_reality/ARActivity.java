@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
+import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
 import java.util.Collections;
@@ -35,6 +37,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String TAG = ARActivity.class.getSimpleName();
@@ -258,6 +262,13 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void setAspectRatio(int x, int y) {
         textureView.setAspectRatio(x, y);
+    }
+
+    @Override
+    public void startDetailActivity(Business business) {
+        Intent detailActivityIntent = new Intent(getViewActivity(), DetailActivity.class);
+        detailActivityIntent.putExtra(BUSINESS, business);
+        getViewActivity().startActivity(detailActivityIntent);
     }
 
     @OnClick(R.id.businessViewAR)

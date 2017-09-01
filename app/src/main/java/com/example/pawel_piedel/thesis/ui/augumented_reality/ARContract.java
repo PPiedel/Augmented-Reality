@@ -34,6 +34,8 @@ public interface ARContract {
         void setLocationText(Location location);
 
         void setAspectRatio(int x, int y);
+
+        void startDetailActivity(Business business);
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {

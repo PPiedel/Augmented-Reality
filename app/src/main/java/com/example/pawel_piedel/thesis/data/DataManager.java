@@ -127,7 +127,6 @@ public class DataManager {
     }
 
     public Observable<Business> loadBusinessDetails(String id){
-        Observable<Business> observable;
         apiService = ServiceFactory.createService(ApiService.class);
         return apiService.getBusinessDetails(id);
     }
@@ -200,5 +199,17 @@ public class DataManager {
 
     public List<Business> getDeliveries() {
         return deliveries;
+    }
+
+    public void setRestaurants(List<Business> restaurants) {
+        this.restaurants = restaurants;
+    }
+
+    public void setCafes(List<Business> cafes) {
+        this.cafes = cafes;
+    }
+
+    public void setDeliveries(List<Business> deliveries) {
+        this.deliveries = deliveries;
     }
 }

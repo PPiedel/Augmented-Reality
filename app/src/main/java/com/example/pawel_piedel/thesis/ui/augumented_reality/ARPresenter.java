@@ -64,7 +64,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final float ALPHA = 0.4f;
     private static final int AZIMUTH_ACCURACY = 10;
-    private AzimuthManager azimuthManager;
+
     private final int sensorType = Sensor.TYPE_ROTATION_VECTOR;
     private ReactiveSensors reactiveSensors;
     private double deviceAzimuth = 0;
@@ -77,6 +77,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Inject
     CameraManager cameraManager;
+
+    private AzimuthManager azimuthManager;
 
 
     @Inject
@@ -138,6 +140,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         }
                     });
         } else {
+
             Log.e(LOG_TAG, "Device does not has sensor !");
         }
     }
@@ -236,9 +239,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void openDetailActivity() {
 
-        Intent detailActivityIntent = new Intent(getView().getViewActivity(), DetailActivity.class);
-        detailActivityIntent.putExtra(BUSINESS, getDataManager().getRestaurants().get(i));
-        getView().getViewActivity().startActivity(detailActivityIntent);
+        getView().startDetailActivity(getDataManager().getRestaurants().get(i));
     }
 
     private boolean locationsAreDiffrent(Location first, Location second) {
@@ -376,8 +377,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         cameraManager.setStateCallback(stateCallback);
     }
 
-
-
-
-
+    public void setI(int i) {
+        this.i = i;
+    }
 }
