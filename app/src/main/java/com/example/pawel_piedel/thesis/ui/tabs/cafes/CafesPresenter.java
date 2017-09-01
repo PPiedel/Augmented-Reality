@@ -63,7 +63,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                     @Override
                     public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
                         getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                        getDataManager().saveLocation(accessTokenLocationPair.second);
+                        getDataManager().setLastLocation(accessTokenLocationPair.second);
                     }
                 });
 

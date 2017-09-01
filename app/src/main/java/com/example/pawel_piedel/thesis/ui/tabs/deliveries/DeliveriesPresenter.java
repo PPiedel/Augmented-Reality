@@ -71,7 +71,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                     @Override
                     public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
                         getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                        getDataManager().saveLocation(accessTokenLocationPair.second);
+                        getDataManager().setLastLocation(accessTokenLocationPair.second);
                     }
                 });
 

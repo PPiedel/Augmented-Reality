@@ -22,7 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import rx.Observable;
-import rx.Subscription;
 import rx.observers.TestSubscriber;
 
 import static junit.framework.Assert.assertTrue;
@@ -141,12 +140,5 @@ public class DataManagerTest {
 
     }
 
-    @Test
-    public void saveLocation() throws Exception {
-    }
-
-    @Test
-    public void saveBusinesses() throws Exception {
-    }
 
 }

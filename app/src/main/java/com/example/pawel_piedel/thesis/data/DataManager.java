@@ -141,8 +141,8 @@ public class DataManager {
         preferencesHelper.saveAccessToken(accessToken);
     }
 
-    public void saveLocation(Location location) {
-        lastLocation = location;
+    public void setLastLocation(Location location) {
+        this.lastLocation = location;
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
@@ -215,7 +215,4 @@ public class DataManager {
         return lastLocation;
     }
 
-    public void setLastLocation(Location lastLocation) {
-        this.lastLocation = lastLocation;
-    }
 }

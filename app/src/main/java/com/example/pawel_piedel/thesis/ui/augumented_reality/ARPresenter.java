@@ -21,8 +21,6 @@ import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
-import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
-import com.example.pawel_piedel.thesis.util.Util;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 
@@ -34,8 +32,6 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
 /*
  * Based on https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
@@ -229,7 +225,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     public void onNext(Location location) {
                         Log.i(LOG_TAG, location.toString());
 
-                        getDataManager().saveLocation(location);
+                        getDataManager().setLastLocation(location);
                         getView().setLocationText(location);
                         updateBusinessAzimuths(location);
                     }

@@ -55,7 +55,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     }
 
 
-    public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onPermissionResult(int requestCode, @NonNull int[] grantResults) {
         Log.i(LOG_TAG, "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {

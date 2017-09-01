@@ -62,10 +62,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         getActivityComponent().inject(this);
 
-        setContentView(R.layout.activity_main);
-        setUnBinder(ButterKnife.bind(this));
+        init();
 
-        mPresenter.attachView(this);
+
 
         setUpLayout();
 
@@ -78,6 +77,12 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         mPresenter.manageLocationPermissions();
 
 
+    }
+
+    private void init() {
+        setContentView(R.layout.activity_main);
+        setUnBinder(ButterKnife.bind(this));
+        mPresenter.attachView(this);
     }
 
     private void addNetworkConnectionFragment() {
@@ -127,7 +132,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mPresenter.onPermissionResult(requestCode, permissions, grantResults);
+        mPresenter.onPermissionResult(requestCode, grantResults);
 
     }
 
@@ -147,5 +152,12 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         mPresenter.onFabClick();
     }
 
+    public void setmPresenter(MainPresenter<MainContract.View> mPresenter) {
+        this.mPresenter = mPresenter;
+        init();
+    }
 
+    public MainPresenter<MainContract.View> getmPresenter() {
+        return mPresenter;
+    }
 }
