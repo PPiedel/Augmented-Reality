@@ -41,7 +41,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
         getView().showProgressDialog();
         Observable
                 .zip(
-                        getDataManager().getAccessToken(),
+                        getDataManager().loadAccessToken(),
                         getDataManager().getLastKnownLocation(),
                         Pair::create)
                 .subscribeOn(Schedulers.io())

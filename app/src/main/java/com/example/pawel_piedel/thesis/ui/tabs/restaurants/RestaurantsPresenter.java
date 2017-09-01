@@ -51,7 +51,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
         getView().showProgressDialog();
         Observable
                 .zip(
-                        getDataManager().getAccessToken(),
+                        getDataManager().loadAccessToken(),
                         getDataManager().getLastKnownLocation(),
                         Pair::create)
                 .subscribeOn(Schedulers.io())

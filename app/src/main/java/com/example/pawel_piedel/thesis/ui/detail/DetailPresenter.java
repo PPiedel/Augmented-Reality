@@ -45,7 +45,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     @Override
     public void loadBusinessDetails(String id) {
         getView().showProgressDialog();
-        getDataManager().getAccessToken()
+        getDataManager().loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -68,7 +68,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void manageToLoadReviews(String id) {
-        getDataManager().getAccessToken()
+        getDataManager().loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {

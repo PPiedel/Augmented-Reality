@@ -1,13 +1,15 @@
 package com.example.pawel_piedel.thesis.data;
 
 import android.annotation.SuppressLint;
+import android.location.Location;
 import android.test.mock.MockContext;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
+import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
+import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
-import com.google.android.gms.common.data.DataBufferObserver;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +19,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
+
 import rx.Observable;
+import rx.Subscription;
 import rx.observers.TestSubscriber;
 
-import static org.mockito.ArgumentMatchers.anyChar;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class DataManagerTest {
 
     @Mock
-    SharedPreferencesManager sharedPreferencesManager;
+    SharedPreferencesManager preferenceHelper;
 
     @Mock
     ApiService apiService;
@@ -42,17 +49,27 @@ public class DataManagerTest {
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        dataManager = new DataManager(new MockContext(),apiService,sharedPreferencesManager);
+        dataManager = new DataManager(new MockContext(),apiService, preferenceHelper);
     }
 
 
-
     @Test
-    public void getPreferencesHelper() throws Exception {
-    }
+    public void loadAccessToken() throws Exception {
+        //when there is no access token saved in shared preferences
+        when(preferenceHelper.getAccessToken()).thenReturn(null);
 
-    @Test
-    public void getAccessToken() throws Exception {
+        AccessToken accessToken = Mockito.mock(AccessToken.class);
+        when(apiService.getAccessToken(anyString(),anyString(),anyString())).thenReturn(Observable.just(accessToken));
+
+        //then load access token from Internet
+        TestSubscriber<AccessToken> testSubscriber = TestSubscriber.create();
+        dataManager.loadAccessToken().subscribe(testSubscriber);
+
+        //assert everything is ok
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(accessToken));
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+
     }
 
     @Test
@@ -66,24 +83,51 @@ public class DataManagerTest {
 
     @Test
     public void safelyUnsubscribe() throws Exception {
+
     }
 
     @Test
     public void loadBusinesses() throws Exception {
+        //mock objects and api service behaviour
+        Location lastLocation = mock(Location.class);
+        dataManager.setLastLocation(lastLocation);
+        SearchResponse searchResponse = Mockito.mock(SearchResponse.class);
+        when(apiService.getBusinessesList(anyString(),anyDouble(),anyDouble())).thenReturn(Observable.just(searchResponse));
+
+        //load businesses
+        TestSubscriber<SearchResponse> testSubscriber = TestSubscriber.create();
+        dataManager.loadBusinesses("example_term","example_category").subscribe(testSubscriber);
+
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(searchResponse));
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+
     }
 
     @Test
     public void loadBusinessDetails() throws Exception {
+        //mock business object and api service behaviour
+        Business business = Mockito.mock(Business.class);
+        when(apiService.getBusinessDetails(anyString())).thenReturn(Observable.just(business));
+
+        TestSubscriber<Business> testSubscriber = TestSubscriber.create();
+        dataManager.loadBusinessDetails("example_id").subscribe(testSubscriber);
+
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(business));
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
     }
 
     @Test
     public void loadReviews() throws Exception {
+        //mock review response and api service behaviour
         ReviewsResponse reviewsResponse = Mockito.mock(ReviewsResponse.class);
-        when(apiService.getBusinessReviews(anyString())).thenReturn(Observable.just(reviewsResponse));
+        when(apiService.getBusinessReviews(anyString(),anyString())).thenReturn(Observable.just(reviewsResponse));
 
         TestSubscriber<ReviewsResponse> testSubscriber = TestSubscriber.create();
-        dataManager.loadReviews("id").subscribe(testSubscriber);
+        dataManager.loadReviews("example_id").subscribe(testSubscriber);
 
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(reviewsResponse));
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
     }
@@ -93,7 +137,7 @@ public class DataManagerTest {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
         dataManager.saveAccessToken(accessToken);
 
-        verify(sharedPreferencesManager).saveAccessToken(accessToken);
+        verify(preferenceHelper).saveAccessToken(accessToken);
 
     }
 

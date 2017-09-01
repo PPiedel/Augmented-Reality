@@ -84,7 +84,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Inject
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
-        //lastLocation = Util.mLastLocation;
+        //lastLocation = Util.lastLocation;
         azimuths = new double[getDataManager().getRestaurants().size()];
 
     }
@@ -205,13 +205,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void startObservingLocation() {
-        if (Util.mLastLocation != null) {
-            getView().setLocationText(Util.mLastLocation);
-            updateBusinessAzimuths(Util.mLastLocation);
+        if (getDataManager().getLastLocation() != null) {
+            getView().setLocationText(getDataManager().getLastLocation());
+            updateBusinessAzimuths(getDataManager().getLastLocation());
         }
         locationSubscription = getDataManager().getLocationUpdates()
                 .subscribeOn(Schedulers.io())
-                .filter(location -> locationsAreDiffrent(location, Util.mLastLocation))
+                .filter(location -> locationsAreDiffrent(location, getDataManager().getLastLocation()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override

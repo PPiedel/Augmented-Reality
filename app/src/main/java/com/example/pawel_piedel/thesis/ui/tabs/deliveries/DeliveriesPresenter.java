@@ -51,7 +51,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
         getView().showProgressDialog();
         Observable
                 .zip(
-                        getDataManager().getAccessToken(),
+                        getDataManager().loadAccessToken(),
                         getDataManager().getLastKnownLocation(),
                         Pair::create)
                 .subscribeOn(Schedulers.io())

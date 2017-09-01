@@ -52,6 +52,7 @@ public class DataManager {
     private List<Business> restaurants;
     private List<Business> cafes;
     private List<Business> deliveries;
+    private Location lastLocation;
 
 
     @Inject
@@ -63,11 +64,7 @@ public class DataManager {
         locationProvider = new ReactiveLocationProvider(context);
     }
 
-    public SharedPreferencesManager getPreferencesHelper() {
-        return preferencesHelper;
-    }
-
-    public Observable<AccessToken> getAccessToken() {
+    public Observable<AccessToken> loadAccessToken() {
         AccessToken accessToken = preferencesHelper.getAccessToken();
         //just return value without call if cached
         if (accessToken != null) {
@@ -79,8 +76,8 @@ public class DataManager {
 
     @SuppressLint("MissingPermission")
     public Observable<Location> getLastKnownLocation() {
-        if (Util.mLastLocation != null) {
-            return Observable.just(Util.mLastLocation);
+        if (lastLocation != null) {
+            return Observable.just(lastLocation);
         } else {
             return locationProvider.getLastKnownLocation();
         }
@@ -117,18 +114,18 @@ public class DataManager {
             searchResponse.setBusinesses(deliveries);
             observable = Observable.just(searchResponse);
         } else { //non cached
-            apiService = ServiceFactory.createService(ApiService.class);
+            //apiService = ServiceFactory.createService(ApiService.class);
             observable = apiService.getBusinessesList(
                     term,
-                    Util.mLastLocation.getLatitude(),
-                    Util.mLastLocation.getLongitude()
+                    lastLocation.getLatitude(),
+                    lastLocation.getLongitude()
             );
         }
         return observable;
     }
 
     public Observable<Business> loadBusinessDetails(String id){
-        apiService = ServiceFactory.createService(ApiService.class);
+       // apiService = ServiceFactory.createService(ApiService.class);
         return apiService.getBusinessDetails(id);
     }
 
@@ -145,7 +142,7 @@ public class DataManager {
     }
 
     public void saveLocation(Location location) {
-        Util.mLastLocation = location;
+        lastLocation = location;
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
@@ -212,5 +209,13 @@ public class DataManager {
 
     public void setDeliveries(List<Business> deliveries) {
         this.deliveries = deliveries;
+    }
+
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    public void setLastLocation(Location lastLocation) {
+        this.lastLocation = lastLocation;
     }
 }
