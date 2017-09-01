@@ -44,6 +44,7 @@ import static dagger.internal.Preconditions.checkNotNull;
  */
 @Singleton
 public class DataManager {
+    public static final String LOCALE = "pl_PL";
     private final String LOG_TAG = DataManager.class.getSimpleName();
     private final ReactiveLocationProvider locationProvider;
     private final SharedPreferencesManager preferencesHelper;
@@ -133,8 +134,8 @@ public class DataManager {
 
     public Observable<ReviewsResponse> loadReviews(String id){
         Observable<ReviewsResponse> observable;
-        apiService = ServiceFactory.createService(ApiService.class);
-        observable =  apiService.getBusinessReviews(id);
+        //apiService = ServiceFactory.createService(ApiService.class);
+        observable =  apiService.getBusinessReviews(id, LOCALE);
         return observable;
     }
 

@@ -31,7 +31,7 @@ public interface ApiService {
     Observable<Business> getBusinessDetails(@Path(BUSINESS_ID_PARAM) String id);
 
     @GET("/v3/businesses/{id}/reviews")
-    Observable<ReviewsResponse> getBusinessReviews(@Path(BUSINESS_ID_PARAM) String id);
+    Observable<ReviewsResponse> getBusinessReviews(@Path(BUSINESS_ID_PARAM) String id, @Query("locale") String locale);
 
     @FormUrlEncoded
     @POST("/oauth2/token")

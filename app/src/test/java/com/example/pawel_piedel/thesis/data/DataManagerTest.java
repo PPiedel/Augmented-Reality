@@ -5,17 +5,25 @@ import android.test.mock.MockContext;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
+import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
+import com.google.android.gms.common.data.DataBufferObserver;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import rx.Observable;
+import rx.observers.TestSubscriber;
+
 import static org.mockito.ArgumentMatchers.anyChar;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Pawel_Piedel on 01.09.2017.
@@ -33,6 +41,7 @@ public class DataManagerTest {
 
     @Before
     public void setUp(){
+        MockitoAnnotations.initMocks(this);
         dataManager = new DataManager(new MockContext(),apiService,sharedPreferencesManager);
     }
 
@@ -69,6 +78,14 @@ public class DataManagerTest {
 
     @Test
     public void loadReviews() throws Exception {
+        ReviewsResponse reviewsResponse = Mockito.mock(ReviewsResponse.class);
+        when(apiService.getBusinessReviews(anyString())).thenReturn(Observable.just(reviewsResponse));
+
+        TestSubscriber<ReviewsResponse> testSubscriber = TestSubscriber.create();
+        dataManager.loadReviews("id").subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
     }
 
     @Test
