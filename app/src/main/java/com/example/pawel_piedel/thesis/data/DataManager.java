@@ -3,6 +3,7 @@ package com.example.pawel_piedel.thesis.data;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
+import android.location.OnNmeaMessageListener;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
@@ -33,11 +34,16 @@ import javax.inject.Singleton;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.accessToken;
+import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.isServiceWithAccessToken;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -123,19 +129,35 @@ public class DataManager {
             searchResponse.setBusinesses(deliveries);
             observable = Observable.just(searchResponse);
         } else { //non cached
-            apiService = ServiceFactory.createService(ApiService.class);
-            observable = apiService.getBusinessesList(
-                    term,
-                    lastLocation.getLatitude(),
-                    lastLocation.getLongitude()
-            );
+            if (isServiceWithAccessToken){
+                //apiService = ServiceFactory.createService(ApiService.class);
+                observable = apiService.getBusinessesList(
+                        term,
+                        lastLocation.getLatitude(),
+                        lastLocation.getLongitude()
+                );
+            }
+            else {
+                Log.e(LOG_TAG,"Access token is null");
+                observable = Observable.just(new SearchResponse());
+            }
+
         }
         return observable;
     }
 
     public Observable<Business> loadBusinessDetails(String id){
-       // apiService = ServiceFactory.createService(ApiService.class);
-        return apiService.getBusinessDetails(id);
+        Observable<Business> observable;
+        if (isServiceWithAccessToken){
+            observable = apiService.getBusinessDetails(id);
+        }
+        else {
+            Log.e(LOG_TAG,"Access token is null");
+            observable = Observable.just(new Business());
+            loadAccessToken();
+        }
+
+        return observable;
     }
 
     public Observable<ReviewsResponse> loadReviews(String id){

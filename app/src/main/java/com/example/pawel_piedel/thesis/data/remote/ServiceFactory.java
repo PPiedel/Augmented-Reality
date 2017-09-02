@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ServiceFactory {
-
+    private final String LOG_TAG = ServiceFactory.class.getCanonicalName();
     private static final String API_BASE_URL = "https://api.yelp.com";
     public static final String CLIENT_ID = "VokcbDNJly63jzOhJqJ0JA";
     public static final String CLIENT_SECRET = "gaFo3VLh1cNWS5L7nHJ6nRxVq97iRJCqvBAWnvmoiAWCf2xriOKhp6h5U0LNuj8F";
@@ -28,15 +28,16 @@ public class ServiceFactory {
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create());
     public static AccessToken accessToken;
-    private final String LOG_TAG = ServiceFactory.class.getCanonicalName();
+    public static boolean isServiceWithAccessToken;
 
 
     public static <S> S createService(Class<S> serviceClass) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         if (accessToken != null) {
             httpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AuthenticationInterceptor(accessToken));
+            isServiceWithAccessToken = true;
 
         }
         httpClient.addInterceptor(logging);

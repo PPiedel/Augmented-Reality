@@ -66,9 +66,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         init();
 
-        checkNotNull(viewPager);
-
-        mPresenter.attachView(this);
 
         setUpLayout();
 
@@ -88,6 +85,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         ButterKnife.setDebug(true);
         setUnBinder(ButterKnife.bind(this));
+
+        mPresenter.attachView(this);
     }
 
 

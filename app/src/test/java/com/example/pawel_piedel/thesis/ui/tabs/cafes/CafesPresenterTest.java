@@ -1,52 +1,47 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
 
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
-import java.security.acl.LastOwnerException;
 import java.util.Collections;
-import java.util.Observable;
-import java.util.concurrent.TimeUnit;
 
 import rx.Scheduler;
 import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.internal.schedulers.ExecutorScheduler;
 import rx.observers.TestSubscriber;
-import rx.plugins.RxJavaPlugins;
 import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 /**
  * Created by Pawel_Piedel on 02.09.2017.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class)
 public class CafesPresenterTest {
 
     CafesPresenter<CafesContract.View> presenter;
 
     @Mock
     CafesContract.View view;
+
 
     @Mock
     DataManager dataManager;
@@ -97,14 +92,9 @@ public class CafesPresenterTest {
         TestSubscriber<SearchResponse> testSubscriber = TestSubscriber.create();
         dataManager.loadBusinesses("example_term","example_category").subscribe(testSubscriber);
 
+        testSubscriber.assertReceivedOnNext(Collections.singletonList(searchResponse));
         testSubscriber.onCompleted();
         testSubscriber.assertNoErrors();
-
-
-
-
-
-        verify(view).hideProgressDialog();
 
 
     }

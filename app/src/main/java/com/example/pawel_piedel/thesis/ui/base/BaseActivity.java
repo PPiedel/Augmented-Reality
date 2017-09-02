@@ -49,6 +49,10 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
 
     }
 
+    public Unbinder getUnbinder() {
+        return unbinder;
+    }
+
     public ActivityComponent getActivityComponent() {
         return activityComponent;
     }
@@ -78,22 +82,18 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
 
             showSnackbar(R.string.permission_rationale, android.R.string.ok,
                     view -> {
-                        // Request permission
-                        requestLocationPermissions();
+                        //request location permissions
+                        requestRequiredPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
                     });
 
         } else {
             Log.i(LOG_TAG, "Requesting permission");
-            requestLocationPermissions();
+            requestRequiredPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
     @Override
     public void showCameraPermissionRequest() {
-        showCameraPermiassionRequest();
-    }
-
-    private void showCameraPermiassionRequest(){
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.CAMERA);
@@ -101,32 +101,17 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
-
             showSnackbar(R.string.permission_rationale, android.R.string.ok,
                     view -> {
-                        // Request permission
-                      requestCamerapERMISSIONS();
+                        //request camera permission
+                        requestRequiredPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
                     });
 
         } else {
-            Log.i(LOG_TAG, "Requesting permission");
-            requestCamerapERMISSIONS();
+            //request camera permission
+            requestRequiredPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
     }
-
-    private void requestLocationPermissions() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
-    }
-
-    private void requestCamerapERMISSIONS(){
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.CAMERA},
-                REQUEST_CAMERA_PERMISSION);
-    }
-
 
     public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
         Snackbar.make(findViewById(android.R.id.content),
