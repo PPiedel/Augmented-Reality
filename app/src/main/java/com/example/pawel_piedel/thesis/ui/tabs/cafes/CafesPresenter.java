@@ -72,7 +72,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                 .subscribe(new Subscriber<SearchResponse>() {
                     @Override
                     public void onCompleted() {
-
+                        getView().hideProgressDialog();
                     }
 
                     @Override

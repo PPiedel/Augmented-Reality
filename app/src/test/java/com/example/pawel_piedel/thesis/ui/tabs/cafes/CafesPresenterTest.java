@@ -94,7 +94,15 @@ public class CafesPresenterTest {
         SearchResponse searchResponse = Mockito.mock(SearchResponse.class);
         when(dataManager.loadBusinesses(anyString(),anyString())).thenReturn(rx.Observable.just(searchResponse));
 
-        presenter.loadCafes();
+        TestSubscriber<SearchResponse> testSubscriber = TestSubscriber.create();
+        dataManager.loadBusinesses("example_term","example_category").subscribe(testSubscriber);
+
+        testSubscriber.onCompleted();
+        testSubscriber.assertNoErrors();
+
+
+
+
 
         verify(view).hideProgressDialog();
 

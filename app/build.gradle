@@ -95,7 +95,7 @@ dependencies {
 
     //butterknife
     compile 'com.jakewharton:butterknife:8.7.0'
-    testApk 'com.jakewharton:butterknife-compiler:8.7.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
     //dagger
     compile 'com.google.dagger:dagger:2.6'

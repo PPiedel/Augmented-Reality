@@ -123,7 +123,7 @@ public class DataManager {
             searchResponse.setBusinesses(deliveries);
             observable = Observable.just(searchResponse);
         } else { //non cached
-            //apiService = ServiceFactory.createService(ApiService.class);
+            apiService = ServiceFactory.createService(ApiService.class);
             observable = apiService.getBusinessesList(
                     term,
                     lastLocation.getLatitude(),

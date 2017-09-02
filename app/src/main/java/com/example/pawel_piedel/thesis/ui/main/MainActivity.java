@@ -40,6 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -47,30 +49,32 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     MainPresenter<MainContract.View> mPresenter;
 
     @BindView(R.id.toolbar)
-
     Toolbar mToolbar;
+
     @BindView(R.id.viewpager)
-
     ViewPager viewPager;
-    @BindView(R.id.tabs)
 
+    @BindView(R.id.tabs)
     TabLayout tabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         getActivityComponent().inject(this);
 
         init();
 
+        checkNotNull(viewPager);
 
+        mPresenter.attachView(this);
 
         setUpLayout();
 
         addNetworkConnectionFragment();
 
-        setupViewPager(viewPager);
+        setupViewPager();
 
         setUpTabLayout();
 
@@ -81,9 +85,11 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
     private void init() {
         setContentView(R.layout.activity_main);
+
+        ButterKnife.setDebug(true);
         setUnBinder(ButterKnife.bind(this));
-        mPresenter.attachView(this);
     }
+
 
     private void addNetworkConnectionFragment() {
         NetworkFragment networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
@@ -106,20 +112,21 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager() {
         TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
 
+
         RestaurantsFragment restaurantsFragment = RestaurantsFragment.newInstance();
-        // RestaurantsPresenter restaurantsPresenter = new RestaurantsPresenter(restaurantsFragment, sharedPreferences);
         adapter.addFragment(restaurantsFragment, getString(R.string.restaurants));
 
         CafesFragment cafesFragment = CafesFragment.newInstance();
-        //CafesPresenter presenter = new CafesPresenter(cafesFragment, sharedPreferences);
         adapter.addFragment(cafesFragment, getString(R.string.cafes));
 
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
-        //DeliveriesPresenter presenter1 = new DeliveriesPresenter(deliveriesFragment, sharedPreferences);
         adapter.addFragment(deliveriesFragment, getString(R.string.delivery));
+
+        checkNotNull(viewPager);
+        checkNotNull(adapter);
 
         viewPager.setAdapter(adapter);
     }
