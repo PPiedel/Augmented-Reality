@@ -69,7 +69,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     }
 
-    public void loadCafes() {
+    private void loadCafes() {
         getDataManager().loadBusinesses("coffee", CAFES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

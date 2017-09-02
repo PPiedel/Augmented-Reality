@@ -1,4 +1,4 @@
-package thesis.ui.augumented_reality;
+package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.util.Log;
 

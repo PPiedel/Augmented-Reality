@@ -32,17 +32,6 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     @Override
-    public void attachView(V view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
-
-    @Override
     public void onViewPrepared() {
         loadRestaurannts();
     }

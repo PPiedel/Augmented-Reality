@@ -1,4 +1,4 @@
-package thesis.ui.main;
+package com.example.pawel_piedel.thesis.ui.main;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.ui.main.MainContract;

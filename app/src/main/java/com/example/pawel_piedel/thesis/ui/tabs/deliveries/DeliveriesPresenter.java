@@ -30,17 +30,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
     }
-
-    @Override
-    public void attachView(V view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
+    
 
     @Override
     public void onViewPrepared() {

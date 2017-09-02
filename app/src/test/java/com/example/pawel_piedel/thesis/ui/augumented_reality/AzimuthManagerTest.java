@@ -1,4 +1,4 @@
-package thesis.data.augumented_reality;
+package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.hardware.SensorEvent;
 
