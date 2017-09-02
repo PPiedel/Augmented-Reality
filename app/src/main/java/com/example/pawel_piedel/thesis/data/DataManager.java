@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
@@ -81,6 +82,14 @@ public class DataManager {
         } else {
             return locationProvider.getLastKnownLocation();
         }
+    }
+
+    public Observable<Pair<AccessToken, Location>> loadAccessTokenLocationPair(){
+        return   Observable
+                .zip(
+                        loadAccessToken(),
+                        getLastKnownLocation(),
+                        Pair::create);
     }
 
     @SuppressLint("MissingPermission")

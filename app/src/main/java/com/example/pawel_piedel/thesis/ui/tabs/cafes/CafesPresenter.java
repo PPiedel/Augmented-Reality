@@ -39,11 +39,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     public void load() {
         getView().showProgressDialog();
-        Observable
-                .zip(
-                        getDataManager().loadAccessToken(),
-                        getDataManager().getLastKnownLocation(),
-                        Pair::create)
+        getDataManager().loadAccessTokenLocationPair()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
@@ -56,7 +52,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                     public void onError(Throwable e) {
                         Log.e(LOG_TAG, e.getMessage());
                         getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getView().provideContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -69,7 +65,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     }
 
-    private void loadCafes() {
+    public void loadCafes() {
         getDataManager().loadBusinesses("coffee", CAFES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -83,7 +79,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                     public void onError(Throwable e) {
                         Log.e(LOG_TAG, e.getMessage());
                         getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getView().provideContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override

@@ -30,7 +30,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
     }
-    
+
 
     @Override
     public void onViewPrepared() {
