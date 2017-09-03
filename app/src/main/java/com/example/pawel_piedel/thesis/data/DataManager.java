@@ -3,7 +3,6 @@ package com.example.pawel_piedel.thesis.data;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
-import android.location.OnNmeaMessageListener;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
@@ -19,7 +18,6 @@ import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
-import com.example.pawel_piedel.thesis.util.Util;
 import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
@@ -31,19 +29,13 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
-import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.accessToken;
-import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.isServiceWithAccessToken;
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
@@ -53,8 +45,8 @@ import static dagger.internal.Preconditions.checkNotNull;
 public class DataManager {
     public static final String LOCALE = "pl_PL";
     private final String LOG_TAG = DataManager.class.getSimpleName();
-    private final ReactiveLocationProvider locationProvider;
-    private final SharedPreferencesManager preferencesHelper;
+    private ReactiveLocationProvider locationProvider;
+    private SharedPreferencesManager preferencesHelper;
     private ApiService apiService;
     private List<Business> restaurants;
     private List<Business> cafes;
@@ -64,8 +56,8 @@ public class DataManager {
 
     @Inject
     DataManager(@ApplicationContext Context context,
-                        ApiService apiService,
-                        SharedPreferencesManager preferencesHelper) {
+                ApiService apiService,
+                SharedPreferencesManager preferencesHelper) {
         this.preferencesHelper = preferencesHelper;
         this.apiService = apiService;
         locationProvider = new ReactiveLocationProvider(context);
@@ -73,11 +65,13 @@ public class DataManager {
 
     public Observable<AccessToken> loadAccessToken() {
         AccessToken accessToken = preferencesHelper.getAccessToken();
-        //just return value without call if cached
-        if (accessToken != null) {
-            return Observable.just(accessToken);
+
+        if (accessToken == null) {
+          // Log.d(LOG_TAG, "Returning api service.getAccessToken");
+            return apiService.getAccessToken(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET);
         } else {
-            return apiService.getAccessToken(GRANT_TYPE,CLIENT_ID,CLIENT_SECRET);
+         //   Log.d(LOG_TAG, "Acces token is NOT null");
+            return Observable.just(accessToken);
         }
     }
 
@@ -90,8 +84,8 @@ public class DataManager {
         }
     }
 
-    public Observable<Pair<AccessToken, Location>> loadAccessTokenLocationPair(){
-        return   Observable
+    public Observable<Pair<AccessToken, Location>> loadAccessTokenLocationPair() {
+        return Observable
                 .zip(
                         loadAccessToken(),
                         getLastKnownLocation(),
@@ -129,45 +123,31 @@ public class DataManager {
             searchResponse.setBusinesses(deliveries);
             observable = Observable.just(searchResponse);
         } else { //non cached
-            if (isServiceWithAccessToken){
-                //apiService = ServiceFactory.createService(ApiService.class);
-                observable = apiService.getBusinessesList(
-                        term,
-                        lastLocation.getLatitude(),
-                        lastLocation.getLongitude()
-                );
-            }
-            else {
-                Log.e(LOG_TAG,"Access token is null");
-                observable = Observable.just(new SearchResponse());
-            }
-
+            apiService = ServiceFactory.createService(ApiService.class);
+            observable = apiService.getBusinessesList(
+                    term,
+                    lastLocation.getLatitude(),
+                    lastLocation.getLongitude()
+            );
         }
         return observable;
     }
 
-    public Observable<Business> loadBusinessDetails(String id){
-        Observable<Business> observable;
-        if (isServiceWithAccessToken){
-            observable = apiService.getBusinessDetails(id);
-        }
-        else {
-            Log.e(LOG_TAG,"Access token is null");
-            observable = Observable.just(new Business());
-            loadAccessToken();
-        }
+    public Observable<Business> loadBusinessDetails(String id) {
 
-        return observable;
+        return apiService.getBusinessDetails(id);
+
     }
 
-    public Observable<ReviewsResponse> loadReviews(String id){
+    public Observable<ReviewsResponse> loadReviews(String id) {
         Observable<ReviewsResponse> observable;
         //apiService = ServiceFactory.createService(ApiService.class);
-        observable =  apiService.getBusinessReviews(id, LOCALE);
+        observable = apiService.getBusinessReviews(id, LOCALE);
         return observable;
     }
 
     public void saveAccessToken(AccessToken accessToken) {
+        Log.d(LOG_TAG, "Saving access token : " + accessToken.getAccessToken());
         ServiceFactory.accessToken = accessToken;
         preferencesHelper.saveAccessToken(accessToken);
     }
@@ -178,38 +158,38 @@ public class DataManager {
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
         checkNotNull(businesses);
-        Log.d(LOG_TAG, "Saving : " + Arrays.toString(businesses.toArray()));
-        Log.d(LOG_TAG, "Kategoria : " + category);
+       // Log.d(LOG_TAG, "Saving : " + Arrays.toString(businesses.toArray()));
+       // Log.d(LOG_TAG, "Kategoria : " + category);
         switch (category) {
             case CafesPresenter.CAFES:
-                Log.d(LOG_TAG, "Saving cafes...");
+               // Log.d(LOG_TAG, "Saving cafes...");
 
                 cafes = new ArrayList<>();
                 cafes.addAll(businesses);
                 Collections.sort(cafes, Business::compareTo);
 
-                Log.d(LOG_TAG,Arrays.toString(cafes.toArray()));
-                Log.d(LOG_TAG,""+cafes.size());
+              //  Log.d(LOG_TAG, Arrays.toString(cafes.toArray()));
+              //  Log.d(LOG_TAG, "" + cafes.size());
                 break;
             case RestaurantsPresenter.RESTAURANTS:
-                Log.d(LOG_TAG, "Saving restaurants...");
+              //  Log.d(LOG_TAG, "Saving restaurants...");
 
                 restaurants = new ArrayList<>();
                 restaurants.addAll(businesses);
                 Collections.sort(restaurants, Business::compareTo);
 
-                Log.d(LOG_TAG, Arrays.toString(restaurants.toArray()));
-                Log.d(LOG_TAG,""+restaurants.size());
+                //Log.d(LOG_TAG, Arrays.toString(restaurants.toArray()));
+                //Log.d(LOG_TAG, "" + restaurants.size());
                 break;
             case DeliveriesPresenter.DELIVERIES:
-                Log.d(LOG_TAG, "Saving deliveries...");
+               // Log.d(LOG_TAG, "Saving deliveries...");
 
                 deliveries = new ArrayList<>();
                 deliveries.addAll(businesses);
-                Collections.sort(deliveries,Business::compareTo);
+                Collections.sort(deliveries, Business::compareTo);
 
-                Log.d(LOG_TAG, Arrays.toString(deliveries.toArray()));
-                Log.d(LOG_TAG,""+deliveries.size());
+                //Log.d(LOG_TAG, Arrays.toString(deliveries.toArray()));
+               // Log.d(LOG_TAG, "" + deliveries.size());
                 break;
             default:
                 Log.d(LOG_TAG, "Kategoria nierozpoznana");

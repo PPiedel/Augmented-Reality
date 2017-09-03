@@ -11,8 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        // Enabling multidex support.
-        multiDexEnabled true
+
 
     }
 
@@ -35,6 +34,7 @@ android {
         }
     }
 
+
     lintOptions {
         abortOnError false
     }
@@ -47,6 +47,9 @@ android {
 }
 
 dependencies {
+    //android
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
     testCompile 'junit:junit:4.12'
 
     //mockito
@@ -61,13 +64,11 @@ dependencies {
 
 
     //espresso
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    androidTestCompile 'com.android.support.test:rules:1.0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.1'
 
-    //android
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+
+
 
     //android support
     compile "com.android.support:appcompat-v7:26.0.2"
