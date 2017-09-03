@@ -33,7 +33,7 @@ public class SharedPreferencesManager {
     public AccessToken getAccessToken() {
         String json = sharedPreferences
                 .getString(ACCESS_TOKEN, "");
-       // Log.v(LOG_TAG, "Access token from Shared Preferences : " + json);
+        Log.v(LOG_TAG, "Access token from Shared Preferences : " + json);
         return gson.fromJson(json, AccessToken.class);
     }
 

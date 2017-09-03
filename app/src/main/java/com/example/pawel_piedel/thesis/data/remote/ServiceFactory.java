@@ -1,6 +1,9 @@
 package com.example.pawel_piedel.thesis.data.remote;
 
+import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
+
+import javax.inject.Inject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -28,16 +31,14 @@ public class ServiceFactory {
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create());
     public static AccessToken accessToken;
-    public static boolean isServiceWithAccessToken;
 
 
     public static <S> S createService(Class<S> serviceClass) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (accessToken != null) {
             httpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AuthenticationInterceptor(accessToken));
-            isServiceWithAccessToken = true;
 
         }
         httpClient.addInterceptor(logging);

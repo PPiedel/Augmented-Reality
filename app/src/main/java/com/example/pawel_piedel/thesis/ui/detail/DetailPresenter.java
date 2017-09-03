@@ -74,7 +74,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
                 .subscribe(new Subscriber<AccessToken>() {
                     @Override
                     public void onCompleted() {
-                       loadReviews(id);
+                        loadReviews(id);
                     }
 
                     @Override
@@ -90,7 +90,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     }
 
-    private void loadReviews(String id){
+    private void loadReviews(String id) {
         getDataManager().loadReviews(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -106,9 +106,9 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
                     @Override
                     public void onNext(ReviewsResponse reviewsResponse) {
-                        Log.d(LOG_TAG,"Total : "+reviewsResponse.getTotal());
-                        for (Review review : reviewsResponse.getReviews()){
-                            Log.d(LOG_TAG,review.toString());
+                        Log.d(LOG_TAG, "Total : " + reviewsResponse.getTotal());
+                        for (Review review : reviewsResponse.getReviews()) {
+                            Log.d(LOG_TAG, review.toString());
                         }
                         getView().showReviews(reviewsResponse.getReviews());
                     }
@@ -129,13 +129,13 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
                     @Override
                     public void onError(Throwable e) {
                         getView().hideProgressDialog();
-                        Log.d(LOG_TAG,e.getMessage());
+                        Log.d(LOG_TAG, e.getMessage());
                         getView().showOldBusiness();
                     }
 
                     @Override
                     public void onNext(Business business) {
-                        Log.d(LOG_TAG,business.toString());
+                        Log.d(LOG_TAG, business.toString());
                         getView().hideProgressDialog();
                         getView().setUpBusiness(business);
                         getView().showBusinessDetails(business);
@@ -151,14 +151,8 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     @Override
-    public void makeCall(Business business) {
-        if (business.getPhone() != null) {
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:" + business.getPhone()));
-            if (intent.resolveActivity(getView().getViewActivity().getPackageManager()) != null) {
-                getView().getViewActivity().startActivity(intent);
-            }
-        }
+    public void onCallButtonClicked(Business business) {
+        getView().makeCall(business);
     }
 
     @Override

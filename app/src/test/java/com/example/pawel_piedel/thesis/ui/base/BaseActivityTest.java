@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.base;
 
 import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.ui.main.MainActivity;
@@ -30,18 +31,15 @@ import static org.mockito.Mockito.when;
 @Config(constants = BuildConfig.class)
 public class BaseActivityTest {
 
-    @InjectMocks
     BaseActivity baseActivity;
-
-    ActivityController<BaseActivity> controller;
 
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(BaseActivity.class);
-        baseActivity = controller.get();
+        baseActivity = Robolectric.setupActivity(BaseActivity.class);
 
-        MockitoAnnotations.initMocks(this);
+
+        assertNotNull(baseActivity);
 
     }
 
@@ -55,9 +53,6 @@ public class BaseActivityTest {
 
     }
 
-    @Test
-    public void showSnackbar() throws Exception {
-    }
 
     @Test
     public void requestRequiredPermissions() throws Exception {

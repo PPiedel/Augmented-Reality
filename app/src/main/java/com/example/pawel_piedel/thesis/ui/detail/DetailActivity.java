@@ -1,7 +1,9 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -173,7 +175,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     @OnClick(R.id.call_action)
     public void onCallButtonClicked() {
-        presenter.makeCall(newBusiness);
+        presenter.onCallButtonClicked(newBusiness);
     }
 
     @Override
@@ -186,6 +188,17 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @OnClick(R.id.favourite_action)
     public void onFavouriteButtonClicked() {
         presenter.addToFavourite(newBusiness);
+    }
+
+    @Override
+    public void makeCall(Business business) {
+        if (business.getPhone() != null) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + business.getPhone()));
+            if (intent.resolveActivity(getViewActivity().getPackageManager()) != null) {
+                getViewActivity().startActivity(intent);
+            }
+        }
     }
 
 

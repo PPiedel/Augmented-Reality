@@ -72,17 +72,22 @@ public class DataManagerTest {
     }
 
     @Test
-    public void getLastKnownLocation() throws Exception {
+    public void getLastKnownLocationFromDatamanagerField() throws Exception {
+        Location lastlocation = Mockito.mock(Location.class);
+        dataManager.setLastLocation(lastlocation);
+
+        TestSubscriber<Location> locationTestSubscriber = TestSubscriber.create();
+
+        dataManager.getLastKnownLocation().subscribe(locationTestSubscriber);
+
+        locationTestSubscriber.assertReceivedOnNext(Collections.singletonList(lastlocation));
+
+
     }
 
     @SuppressLint("MissingPermission")
     @Test
     public void getLocationUpdates() throws Exception {
-    }
-
-    @Test
-    public void safelyUnsubscribe() throws Exception {
-
     }
 
     @Test
