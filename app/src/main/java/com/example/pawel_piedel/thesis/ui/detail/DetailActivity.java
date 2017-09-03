@@ -17,11 +17,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Hour;
 import com.example.pawel_piedel.thesis.data.model.Review;
-import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
-import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,11 +91,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         getActivityComponent().inject(this);
 
-        setContentView(R.layout.activity_details);
-
-        setUnBinder(ButterKnife.bind(this));
-
-        presenter.attachView(this);
+        init();
 
         getOldBusinessFromIntent();
 
@@ -110,6 +106,14 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         presenter.onViewPrepared(businessId);
 
+    }
+
+    private void init() {
+        setContentView(R.layout.activity_details);
+
+        setUnBinder(ButterKnife.bind(this));
+
+        presenter.attachView(this);
     }
 
     @Override
@@ -181,7 +185,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     @OnClick(R.id.website_action)
     public void onWebsiteButtonclicked() {
-        presenter.goToWebsite(newBusiness);
+        presenter.onWebsiteButtonClicked(newBusiness);
     }
 
     @Override
@@ -198,6 +202,17 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
             if (intent.resolveActivity(getViewActivity().getPackageManager()) != null) {
                 getViewActivity().startActivity(intent);
             }
+        }
+    }
+
+    @Override
+    public void goToWebsite(Business business) {
+        if (business.getUrl() != null) {
+            String url = business.getUrl();
+            if (!url.startsWith("http://") && !url.startsWith("https://"))
+                url = "http://" + url;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            getViewActivity().startActivity(browserIntent);
         }
     }
 
@@ -245,5 +260,13 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     public void setUpBusiness(Business business) {
         this.newBusiness = business;
+    }
+
+    public void setPresenter(DetailPresenter<DetailContract.View> presenter) {
+        this.presenter = presenter;
+    }
+
+    public Business getNewBusiness() {
+        return newBusiness;
     }
 }

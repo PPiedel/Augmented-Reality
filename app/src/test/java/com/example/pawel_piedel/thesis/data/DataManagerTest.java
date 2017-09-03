@@ -24,7 +24,6 @@ import java.util.Collections;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -80,6 +79,8 @@ public class DataManagerTest {
 
         dataManager.getLastKnownLocation().subscribe(locationTestSubscriber);
 
+        locationTestSubscriber.assertNoErrors();
+        locationTestSubscriber.assertCompleted();
         locationTestSubscriber.assertReceivedOnNext(Collections.singletonList(lastlocation));
 
 

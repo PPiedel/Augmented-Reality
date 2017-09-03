@@ -35,6 +35,8 @@ public interface DetailContract {
 
         void makeCall(Business business);
 
+        void goToWebsite(Business business);
+
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
@@ -46,7 +48,7 @@ public interface DetailContract {
 
         void onCallButtonClicked(Business business);
 
-        void goToWebsite(Business business);
+        void onWebsiteButtonClicked(Business business);
 
         void addToFavourite(Business business);
 

@@ -1,7 +1,5 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
@@ -156,14 +154,8 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     @Override
-    public void goToWebsite(Business business) {
-        if (business.getUrl() != null) {
-            String url = business.getUrl();
-            if (!url.startsWith("http://") && !url.startsWith("https://"))
-                url = "http://" + url;
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            getView().getViewActivity().startActivity(browserIntent);
-        }
+    public void onWebsiteButtonClicked(Business business) {
+        getView().goToWebsite(business);
 
     }
 
