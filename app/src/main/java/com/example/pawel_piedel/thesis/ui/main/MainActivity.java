@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         getViewActivity().startActivity(arIntent);
     }
 
-    @OnClick(R.id.fab)
+   @OnClick(R.id.fab)
     public void fabOnClick() {
         mPresenter.onFabClick();
     }

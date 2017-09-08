@@ -38,12 +38,12 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
         }
     }
 
+    @Override
     public boolean checkLocationPermissions() {
-        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
-                getView().hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
-
+    @Override
     public void requestLocationPermissions() {
         getView().showLocationPermissionsRequest();
     }

@@ -10,20 +10,12 @@ import com.example.pawel_piedel.thesis.ui.base.BaseView;
 
 public interface MainContract {
     interface View extends BaseView {
-
         Activity getViewActivity();
-
         void startArActivity();
-
     }
-
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
         boolean checkLocationPermissions();
-
         void requestLocationPermissions();
-
         void onFabClick();
-
-
     }
 }

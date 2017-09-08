@@ -2,9 +2,12 @@ package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Location;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +19,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
@@ -33,15 +37,36 @@ public class DetailActivityTest {
 
     private DetailActivity detailActivity;
     private ActivityController<DetailActivity> controller;
+    private Business intentBusiness;
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(DetailActivity.class);
+        intentBusiness = setUpBussinessForIntent();
+
+        Intent intent = new Intent();
+        intent.putExtra(BusinessAdapter.BUSINESS, intentBusiness);
+
+        controller = Robolectric.buildActivity(DetailActivity.class).withIntent(intent);
         MockitoAnnotations.initMocks(this);
 
         detailActivity = controller.get();
         detailActivity.setPresenter(detailPresenter);
 
+    }
+
+    @NonNull
+    private Business setUpBussinessForIntent() {
+        Business business = new Business();
+        business.setName("test");
+        Location location = new Location();
+        location.setAddress1("test");
+        location.setAddress2("test");
+        location.setZipCode("test");
+        location.setCity("test");
+        business.setLocation(location);
+        business.setPhone("test");
+        business.setId("test");
+        return business;
     }
 
 
@@ -85,23 +110,23 @@ public class DetailActivityTest {
     }
 
     @Test
-    public void makeCall() throws Exception {
+    public void makeCallShuldCallIntent() throws Exception {
+        Intent expectedIntent = new Intent(Intent.ACTION_DIAL);
+        Business business = new Business();
+        business.setPhone("test");
+        expectedIntent.setData(Uri.parse("tel:" + business.getPhone()));
+
+        detailActivity.makeCall(business);
+
+        assertTrue(shadowOf(detailActivity).getNextStartedActivity().filterEquals(expectedIntent));
     }
 
-    @Test
-    public void onSupportNavigateUp() throws Exception {
-    }
 
     @Test
     public void getOldBusinessFromIntent() throws Exception {
-    }
+        detailActivity.getOldBusinessFromIntent();
 
-    @Test
-    public void getViewActivity() throws Exception {
-    }
+        assertEquals(detailActivity.getBusinessId(), intentBusiness.getId());
 
-    @Test
-    public void setUpBusiness() throws Exception {
     }
-
 }

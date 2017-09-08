@@ -135,15 +135,15 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         setUpHorizontalRecyclerView(business);
 
-        if (business.getHours()!=null){
+        if (business.getHours() != null) {
             boolean isOpenNow = false;
-            for (Hour hour : business.getHours()){
-                if (hour.isIsOpenNow()){
+            for (Hour hour : business.getHours()) {
+                if (hour.isIsOpenNow()) {
                     todayHours.setText(R.string.open_now);
                     isOpenNow = true;
                 }
             }
-            if (!isOpenNow){
+            if (!isOpenNow) {
                 todayHours.setText(R.string.closed_now);
                 todayHours.setTextColor(Color.RED);
             }
@@ -157,7 +157,6 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     public void showReviews(List<Review> reviews) {
         reviewsAdapter.setReviews(reviews);
     }
-
 
 
     private void showBusinessImage(Business business) {
@@ -199,11 +198,13 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         if (business.getPhone() != null) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + business.getPhone()));
-            if (intent.resolveActivity(getViewActivity().getPackageManager()) != null) {
-                getViewActivity().startActivity(intent);
-            }
+
+            getViewActivity().startActivity(intent);
+
         }
     }
+
+
 
     @Override
     public void goToWebsite(Business business) {
@@ -268,5 +269,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     public Business getNewBusiness() {
         return newBusiness;
+    }
+
+    public String getBusinessId() {
+        return businessId;
     }
 }

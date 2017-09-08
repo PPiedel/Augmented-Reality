@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <!-- Thumbnail Image -->
+
     <ImageView
         android:id="@+id/thubnail"
         android:layout_width="80dp"
@@ -14,7 +14,7 @@
         android:src="@drawable/ic_restaurant_black_24dp"
         android:contentDescription="@string/thubnail" />
 
-    <!-- Movie Title -->
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -44,17 +44,6 @@
         android:layout_toEndOf="@+id/thubnail"
         android:textSize="@dimen/genre" />
 
-
-    <!-- Favourite star -->
-    <ImageButton
-        android:id="@+id/favouriteStarButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:contentDescription="@string/star"
-        android:src="@drawable/ic_star_border_black_24dp" />
 
     <TextView
         android:id="@+id/rating"

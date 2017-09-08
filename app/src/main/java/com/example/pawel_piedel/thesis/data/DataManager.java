@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.util.Pair;
 
@@ -33,6 +34,7 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_SECRET;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.GRANT_TYPE;
@@ -75,7 +77,9 @@ public class DataManager {
         }
     }
 
+
     @SuppressLint("MissingPermission")
+    @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
         if (lastLocation != null) {
             return Observable.just(lastLocation);
@@ -84,6 +88,7 @@ public class DataManager {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public Observable<Pair<AccessToken, Location>> loadAccessTokenLocationPair() {
         return Observable
                 .zip(
