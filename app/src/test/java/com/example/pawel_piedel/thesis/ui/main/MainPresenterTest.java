@@ -37,23 +37,6 @@ public class MainPresenterTest {
         mainPresenter.attachView(mainView);
     }
 
-    @Test
-    public void manageLocationPermissionsShouldCallRequestPermissions() throws Exception {
-        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(false);
-
-        mainPresenter.manageLocationPermissions();
-
-        Mockito.verify(mainView).showLocationPermissionsRequest();
-    }
-
-    @Test
-    public void manageLocationPermissionsShouldDoNothing() throws Exception {
-        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(true);
-
-        mainPresenter.manageLocationPermissions();
-
-        Mockito.verify(mainView, Mockito.never()).showLocationPermissionsRequest();
-    }
 
     @Test
     public void checkLocationPermissionsShouldReturnTrue() throws Exception {

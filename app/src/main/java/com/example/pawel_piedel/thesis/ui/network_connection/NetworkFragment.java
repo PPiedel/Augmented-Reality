@@ -33,7 +33,7 @@ public class NetworkFragment extends Fragment {
         return fragment;
     }
 
-    private NetworkFragment() {
+    public NetworkFragment() {
     }
 
     @Override

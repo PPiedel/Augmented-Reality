@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -58,6 +60,15 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         }
 
         setUpRecyclerView();
+        RxPermissions rxPermissions = new RxPermissions(getActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        cafesPresenter.onViewPrepared();
+                    }
+                });
+
         return view;
     }
 
@@ -67,7 +78,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
 
-        cafesPresenter.onViewPrepared();
+
     }
 
     @Override

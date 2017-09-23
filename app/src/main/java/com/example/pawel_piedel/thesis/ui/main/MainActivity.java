@@ -75,9 +75,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
         setUpTabLayout();
 
-        mPresenter.manageLocationPermissions();
-
-
     }
 
     private void init() {
@@ -153,8 +150,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         getViewActivity().startActivity(arIntent);
     }
 
-   @OnClick(R.id.fab)
-    public void fabOnClick() {
+    @OnClick(R.id.fab)
+    public void onFabButtonClicked() {
         mPresenter.onFabClick();
     }
 

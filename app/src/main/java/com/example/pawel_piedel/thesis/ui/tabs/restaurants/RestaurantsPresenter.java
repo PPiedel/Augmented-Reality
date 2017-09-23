@@ -1,6 +1,9 @@
 package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -27,7 +30,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     public final static String RESTAURANTS = "restaurants";
 
     @Inject
-   RestaurantsPresenter(DataManager dataManager) {
+    RestaurantsPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -37,6 +40,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     public void loadRestaurannts() {
+
         getView().showProgressDialog();
         Observable
                 .zip(
@@ -54,7 +58,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                     @Override
                     public void onError(Throwable e) {
                         getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getView().provideContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -93,6 +97,18 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     }
                 });
+    }
+
+    public void manageLocationPermissions() {
+
+    }
+
+    public boolean checkLocationPermissions() {
+        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    public void requestLocationPermissions() {
+        getView().showLocationPermissionsRequest();
     }
 }
 

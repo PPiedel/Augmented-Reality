@@ -30,12 +30,5 @@ public class AzimuthManager {
 
     public void unsubscribe(Subscription subscription) {
         subscription.unsubscribe();
-        if (!reactiveSensors.hasSensor(sensorType)) {
-            return;
-        }
-
-        if (subscription != null && !subscription.isUnsubscribed()) {
-
-        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -60,6 +62,16 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
         }
 
         setUpRecyclerView();
+
+        RxPermissions rxPermissions = new RxPermissions(getActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        deliveriesPresenter.onViewPrepared();
+                    }
+                });
+
         return view;
     }
 
@@ -69,7 +81,7 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(businessAdapter);
 
-        deliveriesPresenter.onViewPrepared();
+
     }
 
 

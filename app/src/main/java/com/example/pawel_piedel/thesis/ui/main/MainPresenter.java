@@ -32,11 +32,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
         super(dataManager);
     }
 
-    public void manageLocationPermissions() {
-        if (!checkLocationPermissions()) {
-            requestLocationPermissions();
-        }
-    }
+
 
     @Override
     public boolean checkLocationPermissions() {

@@ -90,8 +90,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         super.attachView(view);
     }
 
-
-
     @Override
     public void startObservingAzimuth() {
         if (reactiveSensors.hasSensor(sensorType)) {
@@ -99,7 +97,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     .doOnNext(reactiveSensorEvent -> {
                         pointsTo = false;
                         deviceAzimuth = calculateNewDeviceAzimuth(reactiveSensorEvent);
-                        //Log.i(LOG_TAG, "Device azimuth : " + deviceAzimuth);
+
                         for (int i = 0; i < azimuths.length && !pointsTo; i++) {
                             if (newAzimuthPointsTo(azimuths[i])) {
                                 this.pointsTo = true;
@@ -107,7 +105,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                             }
                         }
                     })
-                    //.filter(reactiveSensorEvent -> pointsTo)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -116,7 +113,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable throwable) {
-                            // Log.i(LOG_TAG, throwable.getMessage());
                             throwable.printStackTrace();
                             getView().showToast(throwable.getMessage());
 
@@ -125,7 +121,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             getView().setAzimuthText(deviceAzimuth);
-                            Log.i(LOG_TAG, "" + pointsTo);
+                            Log.d(LOG_TAG,""+deviceAzimuth);
                             if (pointsTo) {
                                 getView().showBusinessOnScreen(getDataManager().getRestaurants().get(i));
                             } else {
@@ -137,7 +133,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     });
         } else {
 
-            Log.e(LOG_TAG, "Device does not has sensor !");
+            Log.e(LOG_TAG, "Device does not has required sensor !");
         }
     }
 
@@ -183,13 +179,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         float[] orientation = new float[3];
         return (int) (Math.toDegrees(SensorManager.getOrientation(remappedRotationMatrix, orientation)[0]) + 360) % 360;
 
-
-        /*output = lowPass(event.values, output);
-        Log.i(LOG_TAG, Arrays.toString(output));
-        float[] orientation = new float[3];
-        float[] rMat = new float[9];
-        SensorManager.getRotationMatrixFromVector(rMat, output);
-        return (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;*/
     }
 
     private float[] lowPass(float[] input, float[] output) {

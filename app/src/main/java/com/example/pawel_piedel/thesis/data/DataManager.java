@@ -1,10 +1,13 @@
 package com.example.pawel_piedel.thesis.data;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Pair;
 
@@ -69,23 +72,32 @@ public class DataManager {
         AccessToken accessToken = preferencesHelper.getAccessToken();
 
         if (accessToken == null) {
-          // Log.d(LOG_TAG, "Returning api service.getAccessToken");
+            // Log.d(LOG_TAG, "Returning api service.getAccessToken");
             return apiService.getAccessToken(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET);
         } else {
-         //   Log.d(LOG_TAG, "Acces token is NOT null");
+            //   Log.d(LOG_TAG, "Acces token is NOT null");
             return Observable.just(accessToken);
         }
     }
 
 
-    @SuppressLint("MissingPermission")
     @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
         if (lastLocation != null) {
+            Log.d(LOG_TAG,lastLocation.toString());
             return Observable.just(lastLocation);
         } else {
             return locationProvider.getLastKnownLocation();
         }
+    }
+
+    @RequiresPermission(ACCESS_FINE_LOCATION)
+    public Observable<Location> getLocationUpdates() {
+        LocationRequest request = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setInterval(5 * 1000)
+                .setFastestInterval(1000);
+        return locationProvider.getUpdatedLocation(request);
     }
 
     @SuppressLint("MissingPermission")
@@ -97,15 +109,7 @@ public class DataManager {
                         Pair::create);
     }
 
-    @SuppressLint("MissingPermission")
-    public Observable<Location> getLocationUpdates() {
-        LocationRequest request = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setInterval(5 * 1000)
-                .setFastestInterval(1000);
 
-        return locationProvider.getUpdatedLocation(request);
-    }
 
     public void safelyUnsubscribe(Subscription subscription) {
         if (subscription != null && !subscription.isUnsubscribed()) {
@@ -158,6 +162,7 @@ public class DataManager {
     }
 
     public void setLastLocation(Location location) {
+        Log.d(LOG_TAG,location.toString());
         this.lastLocation = location;
     }
 

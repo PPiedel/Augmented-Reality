@@ -6,9 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
-import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +17,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowIntent;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -101,7 +93,7 @@ public class MainActivityTest {
 
     @Test
     public void fabOnClick() throws Exception {
-        activity.fabOnClick();
+        activity.onFabButtonClicked();
 
         verify(mainPresenter).onFabClick();
     }

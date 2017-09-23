@@ -27,9 +27,5 @@ public interface ApplicationComponent {
 
     Application application();
 
-    SharedPreferencesManager getSharedPreferenceHelper();
-
-    SharedPreferences sharedPreferences();
-
     DataManager dataManager();
 }

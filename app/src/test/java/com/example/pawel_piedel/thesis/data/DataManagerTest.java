@@ -92,7 +92,7 @@ public class DataManagerTest {
     }
 
     @Test
-    public void loadBusinesses() throws Exception {
+    public void loadBusinessesShouldReturnCorrectResponse() throws Exception {
         //mock objects and api service behaviour
         Location lastLocation = mock(Location.class);
         dataManager.setLastLocation(lastLocation);
@@ -106,7 +106,6 @@ public class DataManagerTest {
         testSubscriber.assertReceivedOnNext(Collections.singletonList(searchResponse));
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
-
     }
 
     @Test
