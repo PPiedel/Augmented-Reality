@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.detail;
 
+import android.Manifest;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
@@ -9,6 +10,7 @@ import com.example.pawel_piedel.thesis.data.model.Review;
 import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
@@ -150,7 +152,15 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void onCallButtonClicked(Business business) {
-        getView().makeCall(business);
+        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        rxPermissions
+                .request(Manifest.permission.CALL_PHONE)
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        getView().makeCall(business);
+                    }
+                });
+
     }
 
     @Override

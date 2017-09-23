@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -56,18 +57,11 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             cafesPresenter.attachView(this);
-            //mBlogAdapter.setCallback(this);
         }
 
         setUpRecyclerView();
-        RxPermissions rxPermissions = new RxPermissions(getActivity());
-        rxPermissions
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(granted -> {
-                    if (granted) { // Always true pre-M
-                        cafesPresenter.onViewPrepared();
-                    }
-                });
+
+        cafesPresenter.managePermissions();
 
         return view;
     }
@@ -109,9 +103,11 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     }
 
     @Override
-    public Context provideContext() {
+    public Activity getViewActivity() {
         return getActivity();
     }
+
+
 
 
 }

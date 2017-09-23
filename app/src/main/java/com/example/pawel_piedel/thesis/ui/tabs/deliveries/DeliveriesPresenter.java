@@ -94,4 +94,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                 });
     }
 
+    public void managePermissions() {
+    }
+
 }

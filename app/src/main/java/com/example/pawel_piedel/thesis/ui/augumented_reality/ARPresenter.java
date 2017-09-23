@@ -137,6 +137,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
+    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
     private boolean newAzimuthPointsTo(double businessAzimuth) {
         double minAngle = businessAzimuth - AZIMUTH_ACCURACY;
         double maxAngle = businessAzimuth + AZIMUTH_ACCURACY;
@@ -164,6 +165,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return false;
     }
 
+    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
     private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
         output = lowPass(event.values,output);

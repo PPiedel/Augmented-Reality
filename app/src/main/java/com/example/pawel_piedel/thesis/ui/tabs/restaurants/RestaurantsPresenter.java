@@ -42,11 +42,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     public void loadRestaurannts() {
 
         getView().showProgressDialog();
-        Observable
-                .zip(
-                        getDataManager().loadAccessToken(),
-                        getDataManager().getLastKnownLocation(),
-                        Pair::create)
+        getDataManager().loadAccessTokenLocationPair()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Pair<AccessToken, Location>>() {

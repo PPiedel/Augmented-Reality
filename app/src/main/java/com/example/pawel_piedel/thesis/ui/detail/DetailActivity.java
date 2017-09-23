@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -198,9 +199,11 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         if (business.getPhone() != null) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + business.getPhone()));
-
             getViewActivity().startActivity(intent);
 
+        }
+        else {
+            Toast.makeText(this,"Phone not provided!",Toast.LENGTH_SHORT).show();
         }
     }
 
