@@ -31,7 +31,11 @@ import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -123,6 +127,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.review_countAR)
     TextView reviewCount;
 
+    @BindView(R.id.priceRangeAR)
+    TextView priceRange;
+
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -197,16 +204,39 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             ratingBar.setVisibility(View.VISIBLE);
             rating.setVisibility(View.VISIBLE);
             reviewCount.setVisibility(View.VISIBLE);
+            priceRange.setVisibility(View.VISIBLE);
 
             businessAddress1.setText((String.valueOf(business.getLocation().getAddress1())));
             businessAddress2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
             ratingBar.setRating((float) business.getRating());
             rating.setText(String.format("%s", business.getRating()));
             reviewCount.setText(String.format("(%s)", business.getReviewCount()));
+            StringBuilder dolars = new StringBuilder();
+            List<String> prices = Arrays.asList(business.getPrice().split(","));
+            for (String price : prices){
+                if (Integer.parseInt(price)==1){
+                    dolars.append("$");
+                }
+                else if (Integer.parseInt(price)==2){
+                    dolars.append("$$");
+                }
+                else if (Integer.parseInt(price)==3){
+                    dolars.append("$$$");
+                }
+                else if (Integer.parseInt(price)==4){
+                    dolars.append("$$$$");
+                }
+            }
+            priceRange.setText(dolars.toString());
+
         }
         else if (business.getDistance() < 5000){
             businessAddress1.setVisibility(View.VISIBLE);
             businessAddress2.setVisibility(View.VISIBLE);
+            ratingBar.setVisibility(View.GONE);
+            rating.setVisibility(View.GONE);
+            reviewCount.setVisibility(View.GONE);
+            priceRange.setVisibility(View.GONE);
             businessAddress1.setText((String.valueOf(business.getLocation().getAddress1())));
             businessAddress2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
         }
@@ -216,6 +246,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             ratingBar.setVisibility(View.GONE);
             rating.setVisibility(View.GONE);
             reviewCount.setVisibility(View.GONE);
+            priceRange.setVisibility(View.GONE);
         }
         businessDistance.setText(String.format("%.1f km", business.getDistance() / 1000));
     }
@@ -223,9 +254,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void hideBusiness() {
         TransitionManager.beginDelayedTransition(businessView);
-        Log.i(LOG_TAG, "Hiding busines...");
+       // Log.i(LOG_TAG, "Hiding busines...");
         businessView.setVisibility(View.GONE);
-        //businessTitle.setVisibility(View.GONE);
     }
 
     @Override

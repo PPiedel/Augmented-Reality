@@ -91,6 +91,13 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/priceRangeAR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"/>
+
+            <TextView
                 android:id="@+id/businessDistanceAR"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
