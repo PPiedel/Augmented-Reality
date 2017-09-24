@@ -198,7 +198,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
         locationSubscription = getDataManager().getLocationUpdates()
                 .subscribeOn(Schedulers.io())
-                .filter(location -> locationsAreDiffrent(location, getDataManager().getLastLocation()))
+                .filter(location -> locationsAreDifferent(location, getDataManager().getLastLocation()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override
@@ -229,7 +229,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         getView().startDetailActivity(getDataManager().getRestaurants().get(i));
     }
 
-    private boolean locationsAreDiffrent(Location first, Location second) {
+    private boolean locationsAreDifferent(Location first, Location second) {
         return first.getLatitude() != second.getLatitude() && first.getLongitude() != second.getLongitude();
     }
 
@@ -255,13 +255,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         czwartak = Math.atan(tangensCzwartaka);
         czwartak = Math.toDegrees(czwartak);
 
-        if (dX > 0 && dY > 0) { // I quater
+        if (dX > 0 && dY > 0) {
             return czwartak;
-        } else if (dX < 0 && dY > 0) { // II
+        } else if (dX < 0 && dY > 0) {
             return 180 - czwartak;
-        } else if (dX < 0 && dY < 0) { // III
+        } else if (dX < 0 && dY < 0) {
             return 180 + czwartak;
-        } else if (dX > 0 && dY < 0) { // IV
+        } else if (dX > 0 && dY < 0) {
             return 360 - czwartak;
         }
 

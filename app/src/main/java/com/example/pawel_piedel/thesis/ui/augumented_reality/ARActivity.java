@@ -20,7 +20,8 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ import butterknife.OnClick;
 import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
 public class ARActivity extends BaseActivity implements ARContract.View {
-    private final String TAG = ARActivity.class.getSimpleName();
+    private final String LOG_TAG = ARActivity.class.getSimpleName();
     private CameraCaptureSession cameraCaptureSessions;
     private CaptureRequest.Builder captureRequestBuilder;
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -97,7 +98,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @BindView(R.id.businessViewAR)
 
-    RelativeLayout businessView;
+    LinearLayout businessView;
 
     @BindView(R.id.businessTitleAR)
 
@@ -106,6 +107,22 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.businessDistanceAR)
 
     TextView businessDistance;
+
+    @BindView(R.id.businessAddress1AR)
+    TextView businessAddress1;
+
+    @BindView(R.id.businessAddress2AR)
+    TextView businessAddress2;
+
+    @BindView(R.id.rating_barAR)
+    RatingBar ratingBar;
+
+    @BindView(R.id.ratingAR)
+    TextView rating;
+
+    @BindView(R.id.review_countAR)
+    TextView reviewCount;
+
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -140,7 +157,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.e(TAG, "onResume");
+        //Log.e(LOG_TAG, "onResume");
         presenter.startCameraBackgroundThread();
         if (textureView.isAvailable()) {
             presenter.openCamera(textureView.getWidth(), textureView.getHeight(),this);
@@ -154,7 +171,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     protected void onPause() {
-       // Log.e(TAG, "onPause");
+       // Log.e(LOG_TAG, "onPause");
         presenter.closeCamera();
         presenter.stopBackgroundThread();
         presenter.unsubscribeAll();
@@ -173,13 +190,40 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         TransitionManager.beginDelayedTransition(businessView);
         businessView.setVisibility(View.VISIBLE);
         businessTitle.setText(String.format("%s", business.getName()));
+        Log.d(LOG_TAG,""+business.getDistance());
+        if (business.getDistance()<1000){
+            businessAddress1.setVisibility(View.VISIBLE);
+            businessAddress2.setVisibility(View.VISIBLE);
+            ratingBar.setVisibility(View.VISIBLE);
+            rating.setVisibility(View.VISIBLE);
+            reviewCount.setVisibility(View.VISIBLE);
+
+            businessAddress1.setText((String.valueOf(business.getLocation().getAddress1())));
+            businessAddress2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
+            ratingBar.setRating((float) business.getRating());
+            rating.setText(String.format("%s", business.getRating()));
+            reviewCount.setText(String.format("(%s)", business.getReviewCount()));
+        }
+        else if (business.getDistance() < 5000){
+            businessAddress1.setVisibility(View.VISIBLE);
+            businessAddress2.setVisibility(View.VISIBLE);
+            businessAddress1.setText((String.valueOf(business.getLocation().getAddress1())));
+            businessAddress2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
+        }
+        else {
+            businessAddress1.setVisibility(View.GONE);
+            businessAddress2.setVisibility(View.GONE);
+            ratingBar.setVisibility(View.GONE);
+            rating.setVisibility(View.GONE);
+            reviewCount.setVisibility(View.GONE);
+        }
         businessDistance.setText(String.format("%.1f km", business.getDistance() / 1000));
     }
 
     @Override
     public void hideBusiness() {
         TransitionManager.beginDelayedTransition(businessView);
-        Log.i(TAG, "Hiding busines...");
+        Log.i(LOG_TAG, "Hiding busines...");
         businessView.setVisibility(View.GONE);
         //businessTitle.setVisibility(View.GONE);
     }
@@ -229,7 +273,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     private void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
         if (null == cameraDevice) {
-            Log.e(TAG, "updatePreview error, return");
+            Log.e(LOG_TAG, "updatePreview error, return");
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
         try {
