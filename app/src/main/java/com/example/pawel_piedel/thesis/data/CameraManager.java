@@ -1,7 +1,6 @@
-package com.example.pawel_piedel.thesis.ui.augumented_reality;
+package com.example.pawel_piedel.thesis.data;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -21,6 +20,7 @@ import android.view.Surface;
 
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
+import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -29,6 +29,8 @@ public interface ARContract {
 
         void showToast(String message);
 
+        void showAlert(String message);
+
         void setAzimuthText(double azimuth);
 
         void setLocationText(Location location);
@@ -42,13 +44,13 @@ public interface ARContract {
 
         void onCameraOpened();
 
-        void startObservingAzimuth();
+        void observeDeviceAzimuth();
 
         void unsubscribeAll();
 
         void setReactiveSensors(Context context);
 
-        void startObservingLocation();
+        void observeDeviceLocation();
 
         void openDetailActivity();
 

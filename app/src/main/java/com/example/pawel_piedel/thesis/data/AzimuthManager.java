@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.augumented_reality;
+package com.example.pawel_piedel.thesis.data;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
@@ -26,6 +26,12 @@ public class AzimuthManager {
         return reactiveSensors.observeSensor(sensorType)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterSensorChanged());
+    }
+
+    public Observable<ReactiveSensorEvent> getReactiveSensorAccuracy(){
+        return reactiveSensors.observeSensor(sensorType)
+                .subscribeOn(Schedulers.computation())
+                .filter(ReactiveSensorFilter.filterAccuracyChanged());
     }
 
     public void unsubscribe(Subscription subscription) {

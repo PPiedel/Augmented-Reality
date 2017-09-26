@@ -5,10 +5,8 @@ import android.content.Context;
 
 import com.example.pawel_piedel.thesis.injection.ActivityContext;
 import com.example.pawel_piedel.thesis.injection.PerActivity;
-import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARContract;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter;
-import com.example.pawel_piedel.thesis.ui.augumented_reality.CameraManager;
 import com.example.pawel_piedel.thesis.ui.detail.DetailContract;
 import com.example.pawel_piedel.thesis.ui.detail.DetailPresenter;
 import com.example.pawel_piedel.thesis.ui.main.MainContract;

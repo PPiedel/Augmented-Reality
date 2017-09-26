@@ -13,10 +13,13 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.AzimuthManager;
+import com.example.pawel_piedel.thesis.data.CameraManager;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -65,16 +68,22 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private ReactiveSensors reactiveSensors;
     private double deviceAzimuth = 0;
     private Subscription azimuthSubscription;
+    private Subscription accuracySubscription;
     private Subscription locationSubscription;
     private double[] azimuths;
     private int i = 0;
     private boolean pointsTo = false;
+
+    public void setShowHighAzimuthAccuracyAlert(boolean showHighAzimuthAccuracyAlert) {
+        this.showHighAzimuthAccuracyAlert = showHighAzimuthAccuracyAlert;
+    }
+
     private float[] output = {0, 0, 0, 0, 0};
+    private AzimuthManager azimuthManager;
+    private boolean showHighAzimuthAccuracyAlert = false;
 
     @Inject
     CameraManager cameraManager;
-
-    private AzimuthManager azimuthManager;
 
 
     @Inject
@@ -91,7 +100,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     @Override
-    public void startObservingAzimuth() {
+    public void observeDeviceAzimuth() {
         if (reactiveSensors.hasSensor(sensorType)) {
             azimuthSubscription = azimuthManager.getReactiveSensorEvents()
                     .doOnNext(reactiveSensorEvent -> {
@@ -121,18 +130,58 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             getView().setAzimuthText(deviceAzimuth);
-                            Log.d(LOG_TAG,""+deviceAzimuth);
+                            Log.d(LOG_TAG, "" + deviceAzimuth);
                             if (pointsTo) {
                                 getView().showBusinessOnScreen(getDataManager().getRestaurants().get(i));
                             } else {
                                 getView().hideBusiness();
                             }
+                        }
+                    });
+        } else {
+            getView().showToast("Device does not has required sensor !");
+            Log.e(LOG_TAG, "Device does not has required sensor !");
+        }
+    }
 
+    public void observeDeviceAzimuthAccuracy() {
+        if (reactiveSensors.hasSensor(sensorType)) {
+            accuracySubscription = azimuthManager.getReactiveSensorAccuracy()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<ReactiveSensorEvent>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
+                            switch (reactiveSensorEvent.getAccuracy()) {
+                                case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
+                                    getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest niska. Wskazania nie będą dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    showHighAzimuthAccuracyAlert=true;
+                                    break;
+                                case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
+                                    getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest średnia. Wskazania mogą nie być dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    showHighAzimuthAccuracyAlert=true;
+                                    break;
+                                case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
+                                    if (showHighAzimuthAccuracyAlert){
+                                        getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest wysoka. Zamknij komunikat i ciesz się rozszerzoną rzeczywistością :) !");
+                                    }
+                                    showHighAzimuthAccuracyAlert=false;
+                                    break;
+                            }
 
                         }
                     });
         } else {
-
+            getView().showToast("Device does not has required sensor !");
             Log.e(LOG_TAG, "Device does not has required sensor !");
         }
     }
@@ -168,7 +217,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
     private int calculateNewDeviceAzimuth(ReactiveSensorEvent reactiveSensorEvent) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
-        output = lowPass(event.values,output);
+        output = lowPass(event.values, output);
         float[] rotationMatrix = new float[16];
         SensorManager.getRotationMatrixFromVector(rotationMatrix, output);
 
@@ -191,7 +240,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return output;
     }
 
-    public void startObservingLocation() {
+    public void observeDeviceLocation() {
         if (getDataManager().getLastLocation() != null) {
             getView().setLocationText(getDataManager().getLastLocation());
             updateBusinessAzimuths(getDataManager().getLastLocation());
@@ -331,7 +380,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
-    public void setCameraDevice(CameraDevice cameraDevice){
+    public void setCameraDevice(CameraDevice cameraDevice) {
         cameraManager.setCameraDevice(cameraDevice);
     }
 
@@ -340,27 +389,27 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         getView().showCameraPreview(cameraManager.getImageDimension(), cameraManager.getmBackgroundHandler(), cameraManager.getCameraDevice());
     }
 
-    public void openCamera(int width, int height,ARActivity activity){
-        cameraManager.openCamera(width,height,activity);
+    public void openCamera(int width, int height, ARActivity activity) {
+        cameraManager.openCamera(width, height, activity);
     }
 
-    public void closeCamera(){
+    public void closeCamera() {
         cameraManager.closeCamera();
     }
 
-    public void configureTransform(int width,int height){
-        cameraManager.configureTransform(width,height,(ARActivity) getView());
+    public void configureTransform(int width, int height) {
+        cameraManager.configureTransform(width, height, (ARActivity) getView());
     }
 
-    public void startCameraBackgroundThread(){
+    public void startCameraBackgroundThread() {
         cameraManager.startBackgroundThread();
     }
 
-    public void stopBackgroundThread(){
+    public void stopBackgroundThread() {
         cameraManager.stopBackgroundThread();
     }
 
-    public void setStateCallback(CameraDevice.StateCallback stateCallback){
+    public void setStateCallback(CameraDevice.StateCallback stateCallback) {
         cameraManager.setStateCallback(stateCallback);
     }
 

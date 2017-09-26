@@ -11,9 +11,11 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.util.Size;
@@ -31,11 +33,9 @@ import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -53,7 +53,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             presenter.setStateCallback(stateCallback);
-            presenter.openCamera(width, height,ARActivity.this);
+            presenter.openCamera(width, height, ARActivity.this);
         }
 
         @Override
@@ -153,10 +153,10 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     private void addNetworkConnectionFragment() {
         NetworkFragment networkFragment = (NetworkFragment) getFragmentManager().findFragmentByTag(NetworkFragment.LOG_TAG);
-        if (networkFragment ==null){
+        if (networkFragment == null) {
             networkFragment = NetworkFragment.newInstance();
             getFragmentManager().beginTransaction()
-                    .add(networkFragment,NetworkFragment.LOG_TAG)
+                    .add(networkFragment, NetworkFragment.LOG_TAG)
                     .commit();
         }
     }
@@ -167,18 +167,19 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         //Log.e(LOG_TAG, "onResume");
         presenter.startCameraBackgroundThread();
         if (textureView.isAvailable()) {
-            presenter.openCamera(textureView.getWidth(), textureView.getHeight(),this);
+            presenter.openCamera(textureView.getWidth(), textureView.getHeight(), this);
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
 
-        presenter.startObservingAzimuth();
-        presenter.startObservingLocation();
+        presenter.observeDeviceAzimuth();
+        presenter.observeDeviceLocation();
+        presenter.observeDeviceAzimuthAccuracy();
     }
 
     @Override
     protected void onPause() {
-       // Log.e(LOG_TAG, "onPause");
+        // Log.e(LOG_TAG, "onPause");
         presenter.closeCamera();
         presenter.stopBackgroundThread();
         presenter.unsubscribeAll();
@@ -197,8 +198,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         TransitionManager.beginDelayedTransition(businessView);
         businessView.setVisibility(View.VISIBLE);
         businessTitle.setText(String.format("%s", business.getName()));
-        Log.d(LOG_TAG,""+business.getDistance());
-        if (business.getDistance()<1000){
+        Log.d(LOG_TAG, "" + business.getDistance());
+        if (business.getDistance() < 1000) {
             businessAddress1.setVisibility(View.VISIBLE);
             businessAddress2.setVisibility(View.VISIBLE);
             ratingBar.setVisibility(View.VISIBLE);
@@ -212,25 +213,24 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             rating.setText(String.format("%s", business.getRating()));
             reviewCount.setText(String.format("(%s)", business.getReviewCount()));
             StringBuilder dolars = new StringBuilder();
-            List<String> prices = Arrays.asList(business.getPrice().split(","));
-            for (String price : prices){
-                if (Integer.parseInt(price)==1){
-                    dolars.append("$");
+            if (business.getPrice()!=null){
+                List<String> prices = Arrays.asList(business.getPrice().split(","));
+                for (String price : prices) {
+                    if (Integer.parseInt(price) == 1) {
+                        dolars.append("$");
+                    } else if (Integer.parseInt(price) == 2) {
+                        dolars.append("$$");
+                    } else if (Integer.parseInt(price) == 3) {
+                        dolars.append("$$$");
+                    } else if (Integer.parseInt(price) == 4) {
+                        dolars.append("$$$$");
+                    }
                 }
-                else if (Integer.parseInt(price)==2){
-                    dolars.append("$$");
-                }
-                else if (Integer.parseInt(price)==3){
-                    dolars.append("$$$");
-                }
-                else if (Integer.parseInt(price)==4){
-                    dolars.append("$$$$");
-                }
+                priceRange.setText(dolars.toString());
             }
-            priceRange.setText(dolars.toString());
 
-        }
-        else if (business.getDistance() < 5000){
+
+        } else if (business.getDistance() < 5000) {
             businessAddress1.setVisibility(View.VISIBLE);
             businessAddress2.setVisibility(View.VISIBLE);
             ratingBar.setVisibility(View.GONE);
@@ -239,8 +239,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             priceRange.setVisibility(View.GONE);
             businessAddress1.setText((String.valueOf(business.getLocation().getAddress1())));
             businessAddress2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
-        }
-        else {
+        } else {
             businessAddress1.setVisibility(View.GONE);
             businessAddress2.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
@@ -254,7 +253,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void hideBusiness() {
         TransitionManager.beginDelayedTransition(businessView);
-       // Log.i(LOG_TAG, "Hiding busines...");
+        // Log.i(LOG_TAG, "Hiding busines...");
         businessView.setVisibility(View.GONE);
     }
 
@@ -322,6 +321,23 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void showAlert(String message) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("Alert")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    // continue with delete
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
     @SuppressLint("DefaultLocale")
     @Override
     public void setAzimuthText(double azimuth) {
@@ -346,10 +362,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     }
 
     @OnClick(R.id.businessViewAR)
-    public void businessViewOnClick(){
+    public void businessViewOnClick() {
         presenter.openDetailActivity();
     }
-
 
 
 }
