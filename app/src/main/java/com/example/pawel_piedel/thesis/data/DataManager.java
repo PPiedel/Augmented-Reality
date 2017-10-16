@@ -49,14 +49,17 @@ import static dagger.internal.Preconditions.checkNotNull;
 @Singleton
 public class DataManager {
     public static final String LOCALE = "pl_PL";
+    public static final int INITIAL_CAPACITY = 60;
     private final String LOG_TAG = DataManager.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
     private SharedPreferencesManager preferencesHelper;
     private ApiService apiService;
-    private List<Business> restaurants;
-    private List<Business> cafes;
-    private List<Business> deliveries;
+    private List<Business> restaurants = new ArrayList<>(20);
+    private List<Business> cafes = new ArrayList<>(20);
+    private List<Business> deliveries = new ArrayList<>(20);
     private Location lastLocation;
+
+    private List<Business> augumentedRealityPlaces;
 
 
     @Inject
@@ -66,16 +69,37 @@ public class DataManager {
         this.preferencesHelper = preferencesHelper;
         this.apiService = apiService;
         locationProvider = new ReactiveLocationProvider(context);
+        this.augumentedRealityPlaces = new ArrayList<>(20);
+    }
+
+    public List<Business> getAugumentedRealityPlaces() {
+        return augumentedRealityPlaces;
+    }
+
+    public void addClosestPlacesToAugumentedRealityPlaces() {
+        List<Business> closestPlaces = new ArrayList<>(INITIAL_CAPACITY);
+        closestPlaces.addAll(restaurants);
+        closestPlaces.addAll(cafes);
+        closestPlaces.addAll(deliveries);
+        Log.d(LOG_TAG, "Size : " + closestPlaces.size());
+
+
+        Collections.sort(closestPlaces, Business::compareTo);
+
+
+        augumentedRealityPlaces.addAll(closestPlaces.subList(0, 20));
+        for (Business business : augumentedRealityPlaces){
+            Log.d(LOG_TAG,""+business.toString());
+        }
+        Log.d(LOG_TAG,"Augumented reality size : "+augumentedRealityPlaces.size());
     }
 
     public Observable<AccessToken> loadAccessToken() {
         AccessToken accessToken = preferencesHelper.getAccessToken();
 
         if (accessToken == null) {
-            // Log.d(LOG_TAG, "Returning api service.getAccessToken");
             return apiService.getAccessToken(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET);
         } else {
-            //   Log.d(LOG_TAG, "Acces token is NOT null");
             return Observable.just(accessToken);
         }
     }
@@ -84,7 +108,7 @@ public class DataManager {
     @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
         if (lastLocation != null) {
-            Log.d(LOG_TAG,lastLocation.toString());
+            Log.d(LOG_TAG, lastLocation.toString());
             return Observable.just(lastLocation);
         } else {
             return locationProvider.getLastKnownLocation();
@@ -108,7 +132,6 @@ public class DataManager {
                         getLastKnownLocation(),
                         Pair::create);
     }
-
 
 
     public void safelyUnsubscribe(Subscription subscription) {
@@ -162,44 +185,25 @@ public class DataManager {
     }
 
     public void setLastLocation(Location location) {
-        Log.d(LOG_TAG,location.toString());
+        Log.d(LOG_TAG, location.toString());
         this.lastLocation = location;
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
         checkNotNull(businesses);
-       // Log.d(LOG_TAG, "Saving : " + Arrays.toString(businesses.toArray()));
-       // Log.d(LOG_TAG, "Kategoria : " + category);
         switch (category) {
             case CafesPresenter.CAFES:
-               // Log.d(LOG_TAG, "Saving cafes...");
-
-                cafes = new ArrayList<>();
                 cafes.addAll(businesses);
                 Collections.sort(cafes, Business::compareTo);
 
-              //  Log.d(LOG_TAG, Arrays.toString(cafes.toArray()));
-              //  Log.d(LOG_TAG, "" + cafes.size());
                 break;
             case RestaurantsPresenter.RESTAURANTS:
-              //  Log.d(LOG_TAG, "Saving restaurants...");
-
-                restaurants = new ArrayList<>();
                 restaurants.addAll(businesses);
                 Collections.sort(restaurants, Business::compareTo);
-
-                //Log.d(LOG_TAG, Arrays.toString(restaurants.toArray()));
-                //Log.d(LOG_TAG, "" + restaurants.size());
                 break;
             case DeliveriesPresenter.DELIVERIES:
-               // Log.d(LOG_TAG, "Saving deliveries...");
-
-                deliveries = new ArrayList<>();
                 deliveries.addAll(businesses);
                 Collections.sort(deliveries, Business::compareTo);
-
-                //Log.d(LOG_TAG, Arrays.toString(deliveries.toArray()));
-               // Log.d(LOG_TAG, "" + deliveries.size());
                 break;
             default:
                 Log.d(LOG_TAG, "Kategoria nierozpoznana");

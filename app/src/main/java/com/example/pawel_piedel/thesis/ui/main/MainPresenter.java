@@ -52,6 +52,8 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                 .request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
+                        getDataManager().addClosestPlacesToAugumentedRealityPlaces();
+                       // Log.d(LOG_TAG,getDataManager().getAugumentedRealityPlaces().toString());
                         getView().startArActivity();
                     }
                 });

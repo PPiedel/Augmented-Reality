@@ -74,10 +74,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private int i = 0;
     private boolean pointsTo = false;
 
-    public void setShowHighAzimuthAccuracyAlert(boolean showHighAzimuthAccuracyAlert) {
-        this.showHighAzimuthAccuracyAlert = showHighAzimuthAccuracyAlert;
-    }
-
     private float[] output = {0, 0, 0, 0, 0};
     private AzimuthManager azimuthManager;
     private boolean showHighAzimuthAccuracyAlert = false;
@@ -90,7 +86,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
         //lastLocation = Util.lastLocation;
-        azimuths = new double[getDataManager().getRestaurants().size()];
+        azimuths = new double[getDataManager().getAugumentedRealityPlaces().size()];
 
     }
 
@@ -130,9 +126,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             getView().setAzimuthText(deviceAzimuth);
-                            Log.d(LOG_TAG, "" + deviceAzimuth);
                             if (pointsTo) {
-                                getView().showBusinessOnScreen(getDataManager().getRestaurants().get(i));
+                                getView().showBusinessOnScreen(getDataManager().getAugumentedRealityPlaces().get(i));
                             } else {
                                 getView().hideBusiness();
                             }
@@ -275,7 +270,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void openDetailActivity() {
 
-        getView().startDetailActivity(getDataManager().getRestaurants().get(i));
+        getView().startDetailActivity(getDataManager().getAugumentedRealityPlaces().get(i));
     }
 
     private boolean locationsAreDifferent(Location first, Location second) {
@@ -283,9 +278,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     private void updateBusinessAzimuths(Location currentLocation) {
-        if (!getDataManager().getRestaurants().isEmpty()) {
+        if (!getDataManager().getAugumentedRealityPlaces().isEmpty()) {
             for (int i = 0; i < azimuths.length; i++) {
-                azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getRestaurants().get(i).getCoordinates(), currentLocation);
+                azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
             }
             Log.i(LOG_TAG, Arrays.toString(azimuths));
         }
