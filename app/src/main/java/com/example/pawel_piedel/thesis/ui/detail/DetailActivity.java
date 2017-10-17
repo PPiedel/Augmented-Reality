@@ -136,6 +136,11 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         address.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
 
+        Log.d(LOG_TAG,""+business.getDistance());
+
+        double oldDistance = getBusinessFromIntent().getDistance();
+        business.setDistance(oldDistance);
+
         distance.setText(String.format("%.1f km", business.getDistance() / 1000));
 
         setUpHorizontalRecyclerView(business);
@@ -187,9 +192,13 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     @Override
     public void showOldBusiness() {
-        Business business = (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
+        Business business = getBusinessFromIntent();
         Log.d(LOG_TAG, business.toString());
         showBusinessDetails(business);
+    }
+
+    private Business getBusinessFromIntent(){
+        return (Business) getIntent().getSerializableExtra(BusinessAdapter.BUSINESS);
     }
 
     @Override
