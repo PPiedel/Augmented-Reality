@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -78,6 +79,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
     @BindView(R.id.reviews_recycler_view)
     RecyclerView reviewsRecyclerView;
+
+    @BindView(R.id.favourite_action)
+    ImageButton favouriteButton;
 
     private ReviewsAdapter reviewsAdapter;
 
@@ -151,7 +155,19 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
 
         }
 
+       presenter.showFavouriteIcon(business);
 
+
+    }
+
+    @Override
+    public void fillFavouriteIcon() {
+        favouriteButton.setImageResource(R.drawable.ic_favorite_black_24dp);
+    }
+
+    @Override
+    public void showBorderIcon() {
+        favouriteButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
     }
 
     @Override
@@ -191,7 +207,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     @OnClick(R.id.favourite_action)
     public void onFavouriteButtonClicked() {
-        presenter.addToFavourite(newBusiness);
+        presenter.addOrRemoveFromFavourites(newBusiness);
     }
 
     @Override

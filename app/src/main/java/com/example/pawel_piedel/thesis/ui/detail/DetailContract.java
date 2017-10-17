@@ -37,6 +37,10 @@ public interface DetailContract {
 
         void goToWebsite(Business business);
 
+        void fillFavouriteIcon();
+
+        void showBorderIcon();
+
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
@@ -50,7 +54,8 @@ public interface DetailContract {
 
         void onWebsiteButtonClicked(Business business);
 
-        void addToFavourite(Business business);
+        void addOrRemoveFromFavourites(Business business);
+
 
     }
 }

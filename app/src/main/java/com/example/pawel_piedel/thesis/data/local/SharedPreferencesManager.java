@@ -17,12 +17,13 @@ import static com.example.pawel_piedel.thesis.util.Util.gson;
 @Singleton
 public class SharedPreferencesManager {
     private static final String ACCESS_TOKEN = "access_token";
+    public static final String DEFAULT_STRING_IF_NOT_FOUND = "Not found";
     private final String LOG_TAG = SharedPreferencesManager.class.getSimpleName();
 
     private final SharedPreferences sharedPreferences;
 
     @Inject
-     SharedPreferencesManager(SharedPreferences sharedPreferences) {
+    SharedPreferencesManager(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 
@@ -43,6 +44,18 @@ public class SharedPreferencesManager {
                 .putString("access_token", gson.toJson(accessToken))
                 .apply();
 
+    }
+
+    public void saveString(String stringToSave, String label) {
+        sharedPreferences.edit().putString(label, stringToSave).apply();
+    }
+
+    public String getString(String label) {
+        return sharedPreferences.getString(label, DEFAULT_STRING_IF_NOT_FOUND);
+    }
+
+    public void removeFromSharedPreferences(String label){
+        sharedPreferences.edit().remove(label).commit();
     }
 
 }

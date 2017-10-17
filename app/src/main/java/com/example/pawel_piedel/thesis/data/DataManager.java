@@ -65,8 +65,8 @@ public class DataManager {
     @Inject
     DataManager(@ApplicationContext Context context,
                 ApiService apiService,
-                SharedPreferencesManager preferencesHelper) {
-        this.preferencesHelper = preferencesHelper;
+                SharedPreferencesManager sharedPreferencesManager) {
+        this.preferencesHelper = sharedPreferencesManager;
         this.apiService = apiService;
         locationProvider = new ReactiveLocationProvider(context);
         this.augumentedRealityPlaces = new ArrayList<>(20);
@@ -88,10 +88,10 @@ public class DataManager {
 
 
         augumentedRealityPlaces.addAll(closestPlaces.subList(0, 20));
-        for (Business business : augumentedRealityPlaces){
-            Log.d(LOG_TAG,""+business.toString());
+        for (Business business : augumentedRealityPlaces) {
+            Log.d(LOG_TAG, "" + business.toString());
         }
-        Log.d(LOG_TAG,"Augumented reality size : "+augumentedRealityPlaces.size());
+        Log.d(LOG_TAG, "Augumented reality size : " + augumentedRealityPlaces.size());
     }
 
     public Observable<AccessToken> loadAccessToken() {
@@ -210,6 +210,18 @@ public class DataManager {
                 break;
 
         }
+    }
+
+    public void saveInSharedPreferences(String stringToSave, String label){
+        preferencesHelper.saveString(stringToSave,label);
+    }
+
+    public String getFromSharedPreferences(String label){
+        return preferencesHelper.getString(label);
+    }
+
+    public void removeFromSharedPreferences(String label){
+        preferencesHelper.removeFromSharedPreferences(label);
     }
 
     public List<Business> getRestaurants() {

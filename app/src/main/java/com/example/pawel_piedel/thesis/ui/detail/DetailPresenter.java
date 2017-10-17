@@ -4,6 +4,7 @@ import android.Manifest;
 import android.util.Log;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Review;
@@ -11,6 +12,8 @@ import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.tbruyelle.rxpermissions.RxPermissions;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -25,7 +28,6 @@ import rx.schedulers.Schedulers;
 @ConfigPersistent
 public class DetailPresenter<V extends DetailContract.View> extends BasePresenter<V> implements DetailContract.Presenter<V> {
     private final static String LOG_TAG = DetailPresenter.class.getSimpleName();
-    private Business business;
 
     @Inject
     DetailPresenter(DataManager dataManager) {
@@ -169,8 +171,40 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     }
 
-    @Override
-    public void addToFavourite(Business business) {
 
+    public void showFavouriteIcon(Business business) {
+        if (isSaved(business)) {
+            getView().fillFavouriteIcon();
+        } else {
+            getView().showBorderIcon();
+        }
     }
+
+    private boolean isSaved(Business business) {
+        boolean isSaved = false;
+        if (!Objects.equals(getDataManager().getFromSharedPreferences(business.getId()), SharedPreferencesManager.DEFAULT_STRING_IF_NOT_FOUND)) {
+            isSaved = true;
+        }
+        return isSaved;
+    }
+
+    @Override
+    public void addOrRemoveFromFavourites(Business business) {
+        if (isSaved(business)) {
+            removeFromFavourite(business);
+        } else {
+            addToFavourites(business);
+        }
+        showFavouriteIcon(business);
+    }
+
+    public void addToFavourites(Business business) {
+        getDataManager().saveInSharedPreferences(business.getId(), business.getId());
+    }
+
+    private void removeFromFavourite(Business business) {
+        getDataManager().removeFromSharedPreferences(business.getId());
+    }
+
+
 }
