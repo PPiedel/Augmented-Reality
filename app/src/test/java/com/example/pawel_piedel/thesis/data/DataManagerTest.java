@@ -91,22 +91,6 @@ public class DataManagerTest {
     public void getLocationUpdates() throws Exception {
     }
 
-    @Test
-    public void loadBusinessesShouldReturnCorrectResponse() throws Exception {
-        //mock objects and api service behaviour
-        Location lastLocation = mock(Location.class);
-        dataManager.setLastLocation(lastLocation);
-        SearchResponse searchResponse = Mockito.mock(SearchResponse.class);
-        when(apiService.getBusinessesList(anyString(),anyDouble(),anyDouble())).thenReturn(Observable.just(searchResponse));
-
-        //load businesses
-        TestSubscriber<SearchResponse> testSubscriber = TestSubscriber.create();
-        dataManager.loadBusinesses("example_term","example_category").subscribe(testSubscriber);
-
-        testSubscriber.assertReceivedOnNext(Collections.singletonList(searchResponse));
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-    }
 
     @Test
     public void loadBusinessDetails() throws Exception {

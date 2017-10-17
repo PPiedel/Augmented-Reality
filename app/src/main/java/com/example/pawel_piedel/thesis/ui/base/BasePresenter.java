@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 
 public class BasePresenter<V extends BaseView> implements Presenter<V> {
     private DataManager dataManager;
+    private RxPermissions rxPermissions;
     private V view;
 
     protected BasePresenter() {

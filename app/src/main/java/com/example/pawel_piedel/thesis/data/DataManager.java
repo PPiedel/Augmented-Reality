@@ -68,6 +68,10 @@ public class DataManager {
         locationProvider = new ReactiveLocationProvider(context);
     }
 
+    public void setApiService(ApiService apiService) {
+        this.apiService = apiService;
+    }
+
     public List<Business> getAugumentedRealityPlaces() {
         return augumentedRealityPlaces;
     }
@@ -110,7 +114,7 @@ public class DataManager {
     @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
         if (lastLocation != null) {
-            Log.d(LOG_TAG, lastLocation.toString());
+           // Log.d(LOG_TAG, lastLocation.toString());
             return Observable.just(lastLocation);
         } else {
             return locationProvider.getLastKnownLocation();
@@ -181,13 +185,13 @@ public class DataManager {
     }
 
     public void saveAccessToken(AccessToken accessToken) {
-        Log.d(LOG_TAG, "Saving access token : " + accessToken.getAccessToken());
+        //Log.d(LOG_TAG, "Saving access token : " + accessToken.getAccessToken());
         ServiceFactory.accessToken = accessToken;
         preferencesHelper.saveAccessToken(accessToken);
     }
 
     public void setLastLocation(Location location) {
-        Log.d(LOG_TAG, location.toString());
+       // Log.d(LOG_TAG, location.toString());
         this.lastLocation = location;
     }
 

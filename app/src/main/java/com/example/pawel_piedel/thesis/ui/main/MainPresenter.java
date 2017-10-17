@@ -28,9 +28,12 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
     private static final String LOG_TAG = MainPresenter.class.getName();
 
+    private RxPermissions rxPermissions;
+
     @Inject
     public MainPresenter(DataManager dataManager) {
         super(dataManager);
+
     }
 
 
@@ -47,7 +50,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public void onFabClick() {
-        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        rxPermissions = new RxPermissions(getView().getViewActivity());
         rxPermissions
                 .request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
