@@ -1,13 +1,10 @@
 package com.example.pawel_piedel.thesis.data;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Pair;
 
@@ -25,7 +22,6 @@ import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
 import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,14 +45,15 @@ import static dagger.internal.Preconditions.checkNotNull;
 @Singleton
 public class DataManager {
     public static final String LOCALE = "pl_PL";
-    public static final int INITIAL_CAPACITY = 60;
+    public static final int MAX_CAPACITY = 60;
+    public static final int AUGUMENTED_LIST_MAX_CAPACITY = 20;
     private final String LOG_TAG = DataManager.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
     private SharedPreferencesManager preferencesHelper;
     private ApiService apiService;
-    private List<Business> restaurants = new ArrayList<>(20);
-    private List<Business> cafes = new ArrayList<>(20);
-    private List<Business> deliveries = new ArrayList<>(20);
+    private List<Business> restaurants ;
+    private List<Business> cafes;
+    private List<Business> deliveries;
     private Location lastLocation;
 
     private List<Business> augumentedRealityPlaces;
@@ -69,7 +66,6 @@ public class DataManager {
         this.preferencesHelper = sharedPreferencesManager;
         this.apiService = apiService;
         locationProvider = new ReactiveLocationProvider(context);
-        this.augumentedRealityPlaces = new ArrayList<>(20);
     }
 
     public List<Business> getAugumentedRealityPlaces() {
@@ -77,13 +73,19 @@ public class DataManager {
     }
 
     public void addClosestPlacesToAugumentedRealityPlaces() {
-        List<Business> closestPlaces = new ArrayList<>(INITIAL_CAPACITY);
-        closestPlaces.addAll(restaurants);
-        closestPlaces.addAll(cafes);
-        closestPlaces.addAll(deliveries);
-        Log.d(LOG_TAG, "Size : " + closestPlaces.size());
+        List<Business> closestPlaces = new ArrayList<>(MAX_CAPACITY);
+        augumentedRealityPlaces = new ArrayList<>(AUGUMENTED_LIST_MAX_CAPACITY);
+        if (restaurants!=null){
+            closestPlaces.addAll(restaurants);
+        }
+        if (cafes!=null){
+            closestPlaces.addAll(cafes);
+        }
+        if (deliveries!=null){
+            closestPlaces.addAll(deliveries);
+        }
 
-
+        Log.d(LOG_TAG, "Closest places size : " + closestPlaces.size());
         Collections.sort(closestPlaces, Business::compareTo);
 
 
@@ -190,18 +192,22 @@ public class DataManager {
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
+        Log.d(LOG_TAG,"Save business");
         checkNotNull(businesses);
         switch (category) {
             case CafesPresenter.CAFES:
+                cafes = new ArrayList<>(businesses.size());
                 cafes.addAll(businesses);
                 Collections.sort(cafes, Business::compareTo);
 
                 break;
             case RestaurantsPresenter.RESTAURANTS:
+                restaurants = new ArrayList<>(businesses.size());
                 restaurants.addAll(businesses);
                 Collections.sort(restaurants, Business::compareTo);
                 break;
             case DeliveriesPresenter.DELIVERIES:
+                deliveries = new ArrayList<>(businesses.size());
                 deliveries.addAll(businesses);
                 Collections.sort(deliveries, Business::compareTo);
                 break;
