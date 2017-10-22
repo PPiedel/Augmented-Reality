@@ -98,19 +98,6 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
 
     @Override
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
-
-    }
-
-
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return false;
-    }
-
-
-    @Override
     public void showDeliveries(List<Business> deliveries) {
         businessAdapter.setBusinessList(deliveries);
     }

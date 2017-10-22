@@ -93,16 +93,6 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         businessAdapter.setBusinessList(list);
     }
 
-    @Override
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
-
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return false;
-    }
-
 
     @Override
     public Context provideContext(){

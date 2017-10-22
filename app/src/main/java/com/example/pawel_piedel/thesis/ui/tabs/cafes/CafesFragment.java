@@ -87,15 +87,6 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         super.onDestroyView();
     }
 
-    @Override
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
-
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return false;
-    }
 
     @Override
     public void showCafes(List<Business> cafes) {

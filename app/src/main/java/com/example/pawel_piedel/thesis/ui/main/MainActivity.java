@@ -159,8 +159,4 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         this.mPresenter = mPresenter;
         init();
     }
-
-    public MainPresenter<MainContract.View> getmPresenter() {
-        return mPresenter;
-    }
 }

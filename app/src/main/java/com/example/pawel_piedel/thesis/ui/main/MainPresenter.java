@@ -33,19 +33,6 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     @Inject
     public MainPresenter(DataManager dataManager) {
         super(dataManager);
-
-    }
-
-
-
-    @Override
-    public boolean checkLocationPermissions() {
-        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-
-    @Override
-    public void requestLocationPermissions() {
-        getView().showLocationPermissionsRequest();
     }
 
     @Override

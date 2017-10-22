@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 public class BasePresenter<V extends BaseView> implements Presenter<V> {
     private DataManager dataManager;
-    private RxPermissions rxPermissions;
     private V view;
 
     protected BasePresenter() {

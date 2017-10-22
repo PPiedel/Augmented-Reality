@@ -11,6 +11,7 @@ import com.example.pawel_piedel.thesis.ui.main.MainActivity;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
+import com.example.pawel_piedel.thesis.ui.welcome.WelcomeActivity;
 
 import dagger.Subcomponent;
 
@@ -27,6 +28,7 @@ public interface ActivityComponent {
     void inject(DeliveriesFragment deliveriesFragment);
     void inject(RestaurantsFragment restaurantsFragment);
     void inject(DetailActivity detailActivity);
+    void inject(WelcomeActivity welcomeActivity);
 
     @ActivityContext
     Context context();

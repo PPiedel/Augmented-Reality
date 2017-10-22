@@ -33,4 +33,10 @@
     <string name="bussiness_thubnail">Miniaturka loga</string>
     <string name="slideshow_image">Pokaz slajdów</string>
     <string name="augumented_reality">Rozszerzona rzeczywistość</string>
+    <string name="slide_1_title">Restauracje</string>
+    <string name="slide_1_desc">Znajdź najlepsze restauracje wokół Ciebie !</string>
+    <string name="slide_2_title">Rozszerzona rzeczywistość</string>
+    <string name="slide_2_desc">Odkrywaj miejsca za pomocą rozszerzonej rzeczywistości !</string>
+    <string name="slide_3_title">Detale</string>
+    <string name="slide_3_desc">Poznaj szczegóły każdego miejsca !</string>
 </resources>

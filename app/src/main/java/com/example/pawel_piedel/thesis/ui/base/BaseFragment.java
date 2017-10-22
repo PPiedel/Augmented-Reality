@@ -93,26 +93,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         }
     }
 
-    @Override
-    public void showLocationPermissionsRequest() {
-        if (baseActivity !=null){
-            baseActivity.showLocationPermissionsRequest();
-        }
-    }
-
-    @Override
-    public void showCameraPermissionRequest() {
-        if (baseActivity !=null){
-            baseActivity.showCameraPermissionRequest();
-        }
-    }
-
-    @Override
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
-        if (baseActivity !=null){
-            baseActivity.requestRequiredPermissions(permissions,requestCode);
-        }
-    }
 
     @Override
     public boolean hasPermission(String permission) {

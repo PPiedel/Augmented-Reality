@@ -1,6 +1,5 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.example.pawel_piedel.thesis.R;
@@ -22,9 +20,6 @@ import com.example.pawel_piedel.thesis.injection.components.DaggerConfigPersiste
 import com.example.pawel_piedel.thesis.injection.modules.ActivityModule;
 
 import butterknife.Unbinder;
-
-import static com.example.pawel_piedel.thesis.ui.augumented_reality.ARPresenter.REQUEST_CAMERA_PERMISSION;
-import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
 /**
  * Created by Pawel_Piedel on 21.07.2017.
@@ -67,50 +62,6 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
             unbinder.unbind();
         }
         super.onDestroy();
-    }
-
-
-    public void showLocationPermissionsRequest() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
-
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
-            Log.i(LOG_TAG, "Displaying permission rationale to provide additional context.");
-
-            showSnackbar(R.string.permission_rationale, android.R.string.ok,
-                    view -> {
-                        //request location permissions
-                        requestRequiredPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
-                    });
-
-        } else {
-            Log.i(LOG_TAG, "Requesting permission");
-            requestRequiredPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void showCameraPermissionRequest() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.CAMERA);
-
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
-            showSnackbar(R.string.permission_rationale, android.R.string.ok,
-                    view -> {
-                        //request camera permission
-                        requestRequiredPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                    });
-
-        } else {
-            //request camera permission
-            requestRequiredPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
     }
 
     public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {

@@ -143,7 +143,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
         addNetworkConnectionFragment();
         presenter.attachView(this);
-        presenter.managePermissions();
+       // presenter.managePermissions();
         presenter.setReactiveSensors(this);
 
 
@@ -164,7 +164,11 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.e(LOG_TAG, "onResume");
+        presenter.managePermissions();
+        //startObserving();
+    }
+
+    public void startObserving() {
         presenter.startCameraBackgroundThread();
         if (textureView.isAvailable()) {
             presenter.openCamera(textureView.getWidth(), textureView.getHeight(), this);

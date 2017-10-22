@@ -95,16 +95,5 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                 });
     }
 
-    public void manageLocationPermissions() {
-
-    }
-
-    public boolean checkLocationPermissions() {
-        return getView().hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-
-    public void requestLocationPermissions() {
-        getView().showLocationPermissionsRequest();
-    }
 }
 

@@ -26,6 +26,7 @@ import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.Arrays;
 
@@ -85,14 +86,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Inject
     public ARPresenter(DataManager dataManager) {
         super(dataManager);
-        //lastLocation = Util.lastLocation;
-        azimuths = new double[getDataManager().getAugumentedRealityPlaces().size()];
 
     }
 
     @Override
     public void attachView(V view) {
         super.attachView(view);
+        azimuths = new double[getDataManager().getAugumentedRealityPlaces().size()];
     }
 
     @Override
@@ -326,19 +326,16 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     public void managePermissions() {
-        if (checkPermissions()) {
-            requestPermissions();
-        }
+        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA)
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        getView().startObserving();
+                    }
+                });
     }
 
-    private boolean checkPermissions() {
-        return !getView().hasPermission(Manifest.permission.CAMERA);
-    }
-
-
-    private void requestPermissions() {
-        getView().showCameraPermissionRequest();
-    }
 
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.i(LOG_TAG, "onRequestPermissionResult");

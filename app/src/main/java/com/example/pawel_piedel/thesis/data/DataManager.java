@@ -73,7 +73,12 @@ public class DataManager {
     }
 
     public List<Business> getAugumentedRealityPlaces() {
+        addClosestPlacesToAugumentedRealityPlaces();
         return augumentedRealityPlaces;
+    }
+
+    public void loadAugumentedRealityPlaces(){
+        addClosestPlacesToAugumentedRealityPlaces();
     }
 
     public void addClosestPlacesToAugumentedRealityPlaces() {
@@ -93,7 +98,9 @@ public class DataManager {
         Collections.sort(closestPlaces, Business::compareTo);
 
 
-        augumentedRealityPlaces.addAll(closestPlaces.subList(0, 20));
+        if (!closestPlaces.isEmpty()){
+            augumentedRealityPlaces.addAll(closestPlaces.subList(0, 20));
+        }
         for (Business business : augumentedRealityPlaces) {
             Log.d(LOG_TAG, "" + business.toString());
         }

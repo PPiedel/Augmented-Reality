@@ -15,8 +15,6 @@ public interface MainContract {
         void onFabButtonClicked();
     }
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
-        boolean checkLocationPermissions();
-        void requestLocationPermissions();
         void onFabClick();
     }
 }
