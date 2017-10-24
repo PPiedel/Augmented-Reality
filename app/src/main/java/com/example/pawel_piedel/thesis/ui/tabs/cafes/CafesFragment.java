@@ -92,7 +92,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     }
 
     @Override
-    public Activity getViewActivity() {
+    public Activity getParentActivity() {
         return getActivity();
     }
 

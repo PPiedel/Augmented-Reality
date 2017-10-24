@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
@@ -17,7 +18,7 @@ public interface DeliveriesContract {
 
         void showDeliveries(List<Business> deliveries);
 
-        Context provideContext();
+        Activity getParentActivity();
     }
 
 

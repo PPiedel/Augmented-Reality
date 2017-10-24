@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -103,7 +104,7 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
     }
 
     @Override
-    public Context provideContext(){
+    public Activity getParentActivity(){
         return getActivity();
     }
 

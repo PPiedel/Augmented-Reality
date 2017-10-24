@@ -28,6 +28,8 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     private final static String LOG_TAG = CafesPresenter.class.getName();
     public final static String CAFES = "cafes";
 
+    private RxPermissions rxPermissions;
+
     @Inject
     CafesPresenter(DataManager dataManager) {
         super(dataManager);
@@ -39,35 +41,39 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     }
 
     public void load() {
-        getView().showProgressDialog();
-        getDataManager().loadAccessTokenLocationPair()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
-                    @Override
-                    public void onCompleted() {
-                        loadCafes();
-                    }
+        rxPermissions = new RxPermissions(getView().getParentActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
+                .subscribe(granted -> {
+                    getView().showProgressDialog();
+                    getDataManager().loadAccessTokenLocationPair()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
+                                @Override
+                                public void onCompleted() {
+                                    loadCafes();
+                                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(LOG_TAG, e.getMessage());
-                        getView().hideProgressDialog();
-                        Toast.makeText(getView().getViewActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.e(LOG_TAG, e.getMessage());
+                                    getView().hideProgressDialog();
+                                    Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
 
-                    }
+                                }
 
-                    @Override
-                    public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
-                        if (accessTokenLocationPair.second ==null){
-                            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
-                        }
-                        getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                        //Log.d(LOG_TAG,accessTokenLocationPair.second.toString());
-                        getDataManager().setLastLocation(accessTokenLocationPair.second);
-                    }
+                                @Override
+                                public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                                    if (accessTokenLocationPair.second == null){
+                                        getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+                                    }
+                                    getDataManager().saveAccessToken(accessTokenLocationPair.first);
+                                    //Log.d(LOG_TAG,accessTokenLocationPair.second.toString());
+                                    getDataManager().setLastLocation(accessTokenLocationPair.second);
+                                }
+                            });
                 });
-
     }
 
     public void loadCafes() {
@@ -85,7 +91,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                         public void onError(Throwable e) {
                             Log.e(LOG_TAG, e.getMessage());
                             getView().hideProgressDialog();
-                            Toast.makeText(getView().getViewActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
                         @Override
@@ -102,7 +108,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
     @Override
     public void managePermissions() {
-        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        RxPermissions rxPermissions = new RxPermissions(getView().getParentActivity());
         rxPermissions
                 .request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(granted -> {

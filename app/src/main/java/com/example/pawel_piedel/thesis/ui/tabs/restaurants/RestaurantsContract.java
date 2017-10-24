@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
@@ -16,7 +17,7 @@ public interface RestaurantsContract {
 
         void showRestaurants(List<Business> list);
 
-        Context provideContext();
+        Activity getParentActivity();
     }
 
 

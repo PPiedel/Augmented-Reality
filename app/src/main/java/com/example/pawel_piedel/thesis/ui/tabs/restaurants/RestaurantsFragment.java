@@ -1,6 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -95,7 +96,7 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
 
 
     @Override
-    public Context provideContext(){
+    public Activity getParentActivity(){
         return getActivity();
     }
 

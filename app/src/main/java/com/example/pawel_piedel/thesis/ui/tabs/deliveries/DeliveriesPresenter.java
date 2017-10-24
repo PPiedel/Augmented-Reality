@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
+import android.Manifest;
 import android.location.Location;
 import android.util.Pair;
 import android.widget.Toast;
@@ -9,6 +10,7 @@ import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
@@ -25,10 +27,12 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     private final static String LOG_TAG = DeliveriesPresenter.class.getName();
     public final static String DELIVERIES = "deliveries";
 
+    private RxPermissions rxPermissions;
 
     @Inject
     DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
+
     }
 
 
@@ -38,40 +42,44 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     public void loadDeliveries() {
-        getView().showProgressDialog();
-        Observable
-                .zip(
-                        getDataManager().loadAccessToken(),
-                        getDataManager().getLastKnownLocation(),
-                        Pair::create)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
-                    @Override
-                    public void onCompleted() {
-                        loadFromApi();
-                    }
+        rxPermissions = new RxPermissions(getView().getParentActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
+                .subscribe(granted -> {
+                    getView().showProgressDialog();
+                    Observable
+                            .zip(
+                                    getDataManager().loadAccessToken(),
+                                    getDataManager().getLastKnownLocation(),
+                                    Pair::create)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
+                                @Override
+                                public void onCompleted() {
+                                    loadFromApi();
+                                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
+                                @Override
+                                public void onError(Throwable e) {
+                                    getView().hideProgressDialog();
+                                    Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
 
-                    @Override
-                    public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
-                        if (accessTokenLocationPair.second ==null){
-                            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
-                        }
-                        getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                        getDataManager().setLastLocation(accessTokenLocationPair.second);
-                    }
+                                @Override
+                                public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                                    if (accessTokenLocationPair.second == null) {
+                                        getView().showAlert("Lokalizacja", "Twoja lokalizacja nie mogła zostać ustalona.");
+                                    }
+                                    getDataManager().saveAccessToken(accessTokenLocationPair.first);
+                                    getDataManager().setLastLocation(accessTokenLocationPair.second);
+                                }
+                            });
                 });
-
     }
 
     private void loadFromApi() {
-        if (getDataManager().getLastLocation()!=null){
+        if (getDataManager().getLastLocation() != null) {
             getDataManager().loadBusinesses("delivery", DELIVERIES)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -84,12 +92,12 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                         @Override
                         public void onError(Throwable e) {
                             getView().hideProgressDialog();
-                            Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onNext(SearchResponse searchResponse) {
-                            if (!searchResponse.getBusinesses().isEmpty()){
+                            if (!searchResponse.getBusinesses().isEmpty()) {
                                 getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
                             }
                             getView().hideProgressDialog();
