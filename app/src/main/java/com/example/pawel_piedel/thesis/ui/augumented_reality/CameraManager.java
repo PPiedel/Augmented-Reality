@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.data;
+package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,7 +20,6 @@ import android.view.Surface;
 
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
-import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,6 +187,7 @@ public class CameraManager {
 
 
     }
+
 
     public void configureTransform(int viewWidth, int viewHeight, ARActivity activity) {
 

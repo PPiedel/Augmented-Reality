@@ -3,7 +3,9 @@ package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -59,6 +61,9 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
 
                     @Override
                     public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                        if (accessTokenLocationPair.second == null){
+                            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+                        }
                         getDataManager().saveAccessToken(accessTokenLocationPair.first);
                         getDataManager().setLastLocation(accessTokenLocationPair.second);
                     }
@@ -67,32 +72,35 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     private void loadFromApi() {
-        getDataManager().loadBusinesses("restaurant", RESTAURANTS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<SearchResponse>() {
-                    @Override
-                    public void onCompleted() {
+        if (getDataManager().getLastLocation()!=null){
+            getDataManager().loadBusinesses("restaurant", RESTAURANTS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<SearchResponse>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onNext(SearchResponse searchResponse) {
-                        if (!searchResponse.getBusinesses().isEmpty()) {
-                            getDataManager().saveBusinesses(searchResponse.getBusinesses(),RESTAURANTS);
                         }
 
-                        getView().hideProgressDialog();
-                        getView().showRestaurants(searchResponse.getBusinesses());
+                        @Override
+                        public void onError(Throwable e) {
+                            getView().hideProgressDialog();
+                            Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onNext(SearchResponse searchResponse) {
+                            if (!searchResponse.getBusinesses().isEmpty()) {
+                                getDataManager().saveBusinesses(searchResponse.getBusinesses(),RESTAURANTS);
+                            }
+
+                            getView().hideProgressDialog();
+                            getView().showRestaurants(searchResponse.getBusinesses());
+
+                        }
+                    });
+        }
+
     }
 
 }

@@ -107,23 +107,7 @@
                 android:paddingTop="4dp" />
 
         </LinearLayout>
-
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/azimuth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cameraLayout"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/azimuth"
-        android:layout_centerHorizontal="true" />
-
 
 </RelativeLayout>
 

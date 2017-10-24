@@ -52,7 +52,7 @@ public class DataManager {
     private ReactiveLocationProvider locationProvider;
     private SharedPreferencesManager preferencesHelper;
     private ApiService apiService;
-    private List<Business> restaurants ;
+    private List<Business> restaurants;
     private List<Business> cafes;
     private List<Business> deliveries;
     private Location lastLocation;
@@ -78,20 +78,20 @@ public class DataManager {
         return augumentedRealityPlaces;
     }
 
-    public void loadAugumentedRealityPlaces(){
+    public void loadAugumentedRealityPlaces() {
         addClosestPlacesToAugumentedRealityPlaces();
     }
 
     public void addClosestPlacesToAugumentedRealityPlaces() {
         List<Business> closestPlaces = new ArrayList<>(MAX_CAPACITY);
         augumentedRealityPlaces = new ArrayList<>(AUGUMENTED_LIST_MAX_CAPACITY);
-        if (restaurants!=null){
+        if (restaurants != null) {
             closestPlaces.addAll(restaurants);
         }
-        if (cafes!=null){
+        if (cafes != null) {
             closestPlaces.addAll(cafes);
         }
-        if (deliveries!=null){
+        if (deliveries != null) {
             closestPlaces.addAll(deliveries);
         }
 
@@ -99,7 +99,7 @@ public class DataManager {
         Collections.sort(closestPlaces, Business::compareTo);
 
 
-        if (!closestPlaces.isEmpty()){
+        if (!closestPlaces.isEmpty()) {
             augumentedRealityPlaces.addAll(closestPlaces.subList(0, 20));
         }
         for (Business business : augumentedRealityPlaces) {
@@ -122,7 +122,7 @@ public class DataManager {
     @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
         if (lastLocation != null) {
-           // Log.d(LOG_TAG, lastLocation.toString());
+            // Log.d(LOG_TAG, lastLocation.toString());
             return Observable.just(lastLocation);
         } else {
             return locationProvider.getLastKnownLocation();
@@ -175,6 +175,7 @@ public class DataManager {
                     lastLocation.getLatitude(),
                     lastLocation.getLongitude()
             );
+
         }
         return observable;
     }
@@ -199,12 +200,12 @@ public class DataManager {
     }
 
     public void setLastLocation(Location location) {
-       // Log.d(LOG_TAG, location.toString());
+        // Log.d(LOG_TAG, location.toString());
         this.lastLocation = location;
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
-        Log.d(LOG_TAG,"Save business");
+        Log.d(LOG_TAG, "Save business");
         checkNotNull(businesses);
         switch (category) {
             case CafesPresenter.CAFES:
@@ -229,28 +230,28 @@ public class DataManager {
         }
     }
 
-    public void saveInSharedPreferences(String label, boolean value){
-        preferencesHelper.putBoolean(label,value);
+    public void saveInSharedPreferences(String label, boolean value) {
+        preferencesHelper.putBoolean(label, value);
     }
 
-    public boolean getFromSharedPreferences(String label, boolean value){
-        return preferencesHelper.getBoolean(label,value);
+    public boolean getFromSharedPreferences(String label, boolean value) {
+        return preferencesHelper.getBoolean(label, value);
     }
 
-    public void saveInSharedPreferences(String stringToSave, String label){
-        preferencesHelper.saveString(stringToSave,label);
+    public void saveInSharedPreferences(String stringToSave, String label) {
+        preferencesHelper.saveString(stringToSave, label);
     }
 
-    public String getFromSharedPreferences(String label){
+    public String getFromSharedPreferences(String label) {
         return preferencesHelper.getString(label);
     }
 
-    public void removeFromSharedPreferences(String label){
+    public void removeFromSharedPreferences(String label) {
         preferencesHelper.removeFromSharedPreferences(label);
     }
 
-    public boolean isFirstTimeLunched(){
-        return getFromSharedPreferences(FIRST_TIME_LUNCHED,true);
+    public boolean isFirstTimeLunched() {
+        return getFromSharedPreferences(FIRST_TIME_LUNCHED, true);
     }
 
     public List<Business> getRestaurants() {

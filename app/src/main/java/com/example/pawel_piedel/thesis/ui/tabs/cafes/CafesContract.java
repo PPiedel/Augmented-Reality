@@ -18,6 +18,7 @@ public interface CafesContract {
         void showCafes(List<Business> cafes);
 
         Activity getViewActivity();
+
     }
 
 

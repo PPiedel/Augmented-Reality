@@ -31,10 +31,6 @@ public interface ARContract {
 
         void showAlert(String message);
 
-        void setAzimuthText(double azimuth);
-
-        void setLocationText(Location location);
-
         void setAspectRatio(int x, int y);
 
         void startDetailActivity(Business business);

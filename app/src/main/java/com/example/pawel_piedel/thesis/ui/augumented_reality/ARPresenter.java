@@ -13,13 +13,10 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.data.AzimuthManager;
-import com.example.pawel_piedel.thesis.data.CameraManager;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -125,7 +122,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
-                            getView().setAzimuthText(deviceAzimuth);
+                           // getView().setAzimuthText(deviceAzimuth);
                             if (pointsTo) {
                                 getView().showBusinessOnScreen(getDataManager().getAugumentedRealityPlaces().get(i));
                             } else {
@@ -237,7 +234,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     public void observeDeviceLocation() {
         if (getDataManager().getLastLocation() != null) {
-            getView().setLocationText(getDataManager().getLastLocation());
+           // getView().setLocationText(getDataManager().getLastLocation());
             updateBusinessAzimuths(getDataManager().getLastLocation());
         }
         locationSubscription = getDataManager().getLocationUpdates()
@@ -261,7 +258,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         Log.i(LOG_TAG, location.toString());
 
                         getDataManager().setLastLocation(location);
-                        getView().setLocationText(location);
+                     //   getView().setLocationText(location);
                         updateBusinessAzimuths(location);
                     }
                 });

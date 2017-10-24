@@ -52,6 +52,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            Log.d(LOG_TAG,"Heigth : "+height+" width "+height);
             presenter.setStateCallback(stateCallback);
             presenter.openCamera(width, height, ARActivity.this);
         }
@@ -92,13 +93,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @BindView(R.id.textureaAR)
     AutoFitTextureView textureView;
-
-    @BindView(R.id.azimuth)
-    TextView azimuthTextView;
-
-    @BindView(R.id.location)
-
-    TextView locationTextView;
 
     @BindView(R.id.businessViewAR)
 
@@ -145,7 +139,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         presenter.attachView(this);
        // presenter.managePermissions();
         presenter.setReactiveSensors(this);
-
 
         textureView.setSurfaceTextureListener(textureListener);
 
@@ -340,17 +333,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-    }
-
-    @SuppressLint("DefaultLocale")
-    @Override
-    public void setAzimuthText(double azimuth) {
-        azimuthTextView.setText(String.format("%.2f", azimuth));
-    }
-
-    @Override
-    public void setLocationText(Location location) {
-        locationTextView.setText(String.format("Lat %s Long %s", location.getLatitude(), location.getLongitude()));
     }
 
     @Override

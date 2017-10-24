@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.data;
+package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;

@@ -59,8 +59,11 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
                     @Override
                     public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                        if (accessTokenLocationPair.second ==null){
+                            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+                        }
                         getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                        Log.d(LOG_TAG,accessTokenLocationPair.second.toString());
+                        //Log.d(LOG_TAG,accessTokenLocationPair.second.toString());
                         getDataManager().setLastLocation(accessTokenLocationPair.second);
                     }
                 });
@@ -68,32 +71,33 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     }
 
     public void loadCafes() {
-        getDataManager().loadBusinesses("coffee", CAFES)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<SearchResponse>() {
-                    @Override
-                    public void onCompleted() {
-                        getView().hideProgressDialog();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(LOG_TAG, e.getMessage());
-                        getView().hideProgressDialog();
-                        Toast.makeText(getView().getViewActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onNext(SearchResponse searchResponse) {
-                        if (!searchResponse.getBusinesses().isEmpty()) {
-                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
+        if (getDataManager().getLastLocation()!=null){
+            getDataManager().loadBusinesses("coffee", CAFES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<SearchResponse>() {
+                        @Override
+                        public void onCompleted() {
+                            getView().hideProgressDialog();
                         }
-                        getView().hideProgressDialog();
-                        getView().showCafes(searchResponse.getBusinesses());
-                    }
-                });
 
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(LOG_TAG, e.getMessage());
+                            getView().hideProgressDialog();
+                            Toast.makeText(getView().getViewActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onNext(SearchResponse searchResponse) {
+                            if (!searchResponse.getBusinesses().isEmpty()) {
+                                getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
+                            }
+                            getView().hideProgressDialog();
+                            getView().showCafes(searchResponse.getBusinesses());
+                        }
+                    });
+        }
     }
 
     @Override

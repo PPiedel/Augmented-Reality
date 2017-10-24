@@ -60,6 +60,9 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
 
                     @Override
                     public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
+                        if (accessTokenLocationPair.second ==null){
+                            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+                        }
                         getDataManager().saveAccessToken(accessTokenLocationPair.first);
                         getDataManager().setLastLocation(accessTokenLocationPair.second);
                     }
@@ -68,33 +71,33 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     private void loadFromApi() {
-        getDataManager().loadBusinesses("delivery", DELIVERIES)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<SearchResponse>() {
-                    @Override
-                    public void onCompleted() {
+        if (getDataManager().getLastLocation()!=null){
+            getDataManager().loadBusinesses("delivery", DELIVERIES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<SearchResponse>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        getView().hideProgressDialog();
-                        Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onNext(SearchResponse searchResponse) {
-                        if (!searchResponse.getBusinesses().isEmpty()){
-                            getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
                         }
-                        getView().hideProgressDialog();
-                        getView().showDeliveries(searchResponse.getBusinesses());
-                    }
-                });
-    }
 
-    public void managePermissions() {
+                        @Override
+                        public void onError(Throwable e) {
+                            getView().hideProgressDialog();
+                            Toast.makeText(getView().provideContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onNext(SearchResponse searchResponse) {
+                            if (!searchResponse.getBusinesses().isEmpty()){
+                                getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
+                            }
+                            getView().hideProgressDialog();
+                            getView().showDeliveries(searchResponse.getBusinesses());
+                        }
+                    });
+        }
+
     }
 
 }

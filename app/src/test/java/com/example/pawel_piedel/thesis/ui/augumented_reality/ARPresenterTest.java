@@ -1,7 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.AzimuthManager;
 
 import junit.framework.Assert;
 
