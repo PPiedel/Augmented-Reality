@@ -105,6 +105,11 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                         }
                     });
         }
+        else {
+            getView().hideProgressDialog();
+            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+
+        }
 
     }
 

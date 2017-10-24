@@ -104,6 +104,11 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                         }
                     });
         }
+        else {
+            getView().hideProgressDialog();
+            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+
+        }
 
     }
 

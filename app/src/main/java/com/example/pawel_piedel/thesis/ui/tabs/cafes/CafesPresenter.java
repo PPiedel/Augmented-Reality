@@ -104,6 +104,11 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                         }
                     });
         }
+        else {
+            getView().hideProgressDialog();
+            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+
+        }
     }
 
     @Override
