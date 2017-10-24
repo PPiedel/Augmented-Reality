@@ -52,12 +52,21 @@ public class SharedPreferencesManager {
         sharedPreferences.edit().putString(label, stringToSave).apply();
     }
 
+    public void putBoolean(String label, boolean value) {
+        sharedPreferences.edit().putBoolean(label, value).apply();
+    }
+
+    public boolean getBoolean(String label, boolean forValue) {
+        return sharedPreferences.getBoolean(label, forValue);
+    }
+
+
     public String getString(String label) {
         return sharedPreferences.getString(label, DEFAULT_STRING_IF_NOT_FOUND);
     }
 
-    public void removeFromSharedPreferences(String label){
-        sharedPreferences.edit().remove(label).commit();
+    public void removeFromSharedPreferences(String label) {
+        sharedPreferences.edit().remove(label).apply();
     }
 
 }

@@ -45,6 +45,7 @@ import static dagger.internal.Preconditions.checkNotNull;
 @Singleton
 public class DataManager {
     public static final String LOCALE = "pl_PL";
+    public static final String FIRST_TIME_LUNCHED = "first_time_lunched";
     public static final int MAX_CAPACITY = 60;
     public static final int AUGUMENTED_LIST_MAX_CAPACITY = 20;
     private final String LOG_TAG = DataManager.class.getSimpleName();
@@ -210,7 +211,6 @@ public class DataManager {
                 cafes = new ArrayList<>(businesses.size());
                 cafes.addAll(businesses);
                 Collections.sort(cafes, Business::compareTo);
-
                 break;
             case RestaurantsPresenter.RESTAURANTS:
                 restaurants = new ArrayList<>(businesses.size());
@@ -229,6 +229,14 @@ public class DataManager {
         }
     }
 
+    public void saveInSharedPreferences(String label, boolean value){
+        preferencesHelper.putBoolean(label,value);
+    }
+
+    public boolean getFromSharedPreferences(String label, boolean value){
+        return preferencesHelper.getBoolean(label,value);
+    }
+
     public void saveInSharedPreferences(String stringToSave, String label){
         preferencesHelper.saveString(stringToSave,label);
     }
@@ -239,6 +247,10 @@ public class DataManager {
 
     public void removeFromSharedPreferences(String label){
         preferencesHelper.removeFromSharedPreferences(label);
+    }
+
+    public boolean isFirstTimeLunched(){
+        return getFromSharedPreferences(FIRST_TIME_LUNCHED,true);
     }
 
     public List<Business> getRestaurants() {

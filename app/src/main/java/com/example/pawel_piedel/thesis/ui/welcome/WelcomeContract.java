@@ -9,10 +9,20 @@ import com.example.pawel_piedel.thesis.ui.base.BaseView;
 
 public interface WelcomeContract {
     interface View extends BaseView {
-
+        void startMainActivity();
+        void initLayout();
+        void moveToNextScreen();
+        int getLayoutsLength();
+        void addBottomDots(int position);
+        void setSkipButtonVisibility(int visibility);
+        void setNextButtonText(String text);
     }
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V>{
+        void onViewDuringCreation();
+        void onSkipButtonClicked();
+        void onNextButtonClicked(int currentPage);
+        void onPageSelected(int position);
 
     }
 }

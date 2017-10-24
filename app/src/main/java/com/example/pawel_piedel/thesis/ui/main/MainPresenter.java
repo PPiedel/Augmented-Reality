@@ -49,41 +49,4 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                 });
     }
 
-
-    public void onPermissionResult(int requestCode, @NonNull int[] grantResults) {
-        Log.i(LOG_TAG, "onRequestPermissionResult");
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults.length <= 0) {
-                Log.i(LOG_TAG, "User interaction was cancelled.");
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-
-            } else {
-                // Permission denied.
-                getView().showSnackbar(R.string.permission_denied_explanation, R.string.settings,
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // Build intent that displays the App settings screen.
-                                Intent settingsIntent = createSettingsIntent();
-                                getView().getViewActivity().startActivity(settingsIntent);
-                            }
-
-                            @NonNull
-                            private Intent createSettingsIntent() {
-                                Intent intent = new Intent();
-                                intent.setAction(
-                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package",
-                                        BuildConfig.APPLICATION_ID, null);
-                                intent.setData(uri);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                return intent;
-                            }
-                        });
-            }
-        }
-    }
-
-
 }

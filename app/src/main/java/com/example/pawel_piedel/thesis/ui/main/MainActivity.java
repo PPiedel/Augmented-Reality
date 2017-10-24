@@ -125,6 +125,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         checkNotNull(adapter);
 
         viewPager.setAdapter(adapter);
+
     }
 
     private void setUpTabLayout() {
@@ -132,12 +133,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        mPresenter.onPermissionResult(requestCode, grantResults);
-
-    }
 
     @Override
     public Activity getViewActivity() {

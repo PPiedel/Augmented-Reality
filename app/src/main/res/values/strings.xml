@@ -37,6 +37,9 @@
     <string name="slide_1_desc">Znajdź najlepsze restauracje wokół Ciebie !</string>
     <string name="slide_2_title">Rozszerzona rzeczywistość</string>
     <string name="slide_2_desc">Odkrywaj miejsca za pomocą rozszerzonej rzeczywistości !</string>
-    <string name="slide_3_title">Detale</string>
+    <string name="slide_3_title">Informacje</string>
     <string name="slide_3_desc">Poznaj szczegóły każdego miejsca !</string>
+    <string name="next">Następny</string>
+    <string name="skip">Pomiń</string>
+    <string name="start">Zacznijmy</string>
 </resources>
