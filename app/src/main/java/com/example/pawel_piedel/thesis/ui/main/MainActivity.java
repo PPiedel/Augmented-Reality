@@ -33,6 +33,7 @@ import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
+import com.google.android.gms.location.LocationSettingsStates;
 
 import javax.inject.Inject;
 
@@ -148,5 +149,18 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     public void setmPresenter(MainPresenter<MainContract.View> mPresenter) {
         this.mPresenter = mPresenter;
         init();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case MainPresenter.REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case RESULT_OK:
+                        mPresenter.onLocationPermissionsGranted();
+                        break;
+                }
+                break;
+        }
     }
 }

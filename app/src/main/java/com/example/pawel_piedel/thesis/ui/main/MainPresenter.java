@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -22,9 +23,11 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.Observer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -39,7 +42,7 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 @ConfigPersistent
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
     private final static String LOG_TAG = MainPresenter.class.getName();
-    private final static int REQUEST_CHECK_SETTINGS = 0;
+    public final static int REQUEST_CHECK_SETTINGS = 0;
 
     private RxPermissions rxPermissions;
 
@@ -56,7 +59,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
                         getDataManager().addClosestPlacesToAugumentedRealityPlaces();
-                       // Log.d(LOG_TAG,getDataManager().getAugumentedRealityPlaces().toString());
+                        // Log.d(LOG_TAG,getDataManager().getAugumentedRealityPlaces().toString());
                         getView().startArActivity();
                     }
                 });
@@ -65,35 +68,40 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     @Override
     public void manageLocationSettings() {
         getDataManager().getLocationSettingsResult()
-             .subscribe(new Subscriber<LocationSettingsResult>() {
-                 @Override
-                 public void onCompleted() {
-                     Log.d(LOG_TAG,"Complete");
-                 }
+                .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(new Subscriber<LocationSettingsResult>() {
+                   @Override
+                   public void onCompleted() {
 
-                 @Override
-                 public void onError(Throwable e) {
-                     Log.d(LOG_TAG,e.getMessage());
-                 }
+                   }
 
-                 @Override
-                 public void onNext(LocationSettingsResult locationSettingsResult) {
-                     Status status = locationSettingsResult.getStatus();
-                     Log.d(LOG_TAG,"status code : "+status.getStatusCode());
-                     if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                         try {
-                             status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
-                         } catch (IntentSender.SendIntentException th) {
-                             Log.e("MainActivity", "Error opening settings activity.", th);
-                         }
-                     }
-                     else if (status.getStatusCode() == LocationSettingsStatusCodes.SUCCESS){
-                         Log.d(LOG_TAG,"status code : "+status.getStatusCode());
-                         Log.d(LOG_TAG,"Jestem w status code success");
-                         getView().init();
-                     }
-                 }
-             });
+                   @Override
+                   public void onError(Throwable e) {
+
+                   }
+
+                   @Override
+                   public void onNext(LocationSettingsResult locationSettingsResult) {
+                       Status status = locationSettingsResult.getStatus();
+                       switch (status.getStatusCode()) {
+                           case LocationSettingsStatusCodes.RESOLUTION_REQUIRED :
+                               try {
+                                   status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
+                               } catch (IntentSender.SendIntentException th) {
+                                   Log.e("MainActivity", "Error opening settings activity.", th);
+                               }
+                               break;
+                           case LocationSettingsStatusCodes.SUCCESS :
+                               onLocationPermissionsGranted();
+
+                       }
+                   }
+               });
+    }
+
+    @Override
+    public void onLocationPermissionsGranted() {
+        getView().init();
     }
 
 }

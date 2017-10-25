@@ -68,7 +68,7 @@ public class DataManager {
     private Location lastLocation;
 
     private List<Business> augumentedRealityPlaces;
-
+    private LocationRequest lastLocationRequest;
 
     @Inject
     DataManager(@ApplicationContext Context context,
@@ -135,21 +135,26 @@ public class DataManager {
         if (lastLocation != null) {
             return Observable.just(lastLocation);
         } else {
-            LocationRequest request = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setNumUpdates(1)
-                    .setExpirationDuration(10000); //according to https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setNumUpdates(int)
-
-            return locationProvider.getUpdatedLocation(request);
+            return locationProvider.getUpdatedLocation(lastLocationRequest);
         }
+    }
+
+    @NonNull
+    private LocationRequest buildLastLocationRequest() {
+        return LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setNumUpdates(1)
+                .setExpirationDuration(10000); //according to https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setNumUpdates(int)
 
     }
 
     public Observable<LocationSettingsResult> getLocationSettingsResult() {
+        lastLocationRequest = buildLastLocationRequest();
         return locationProvider
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)
+                                .addLocationRequest(lastLocationRequest)//Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
                                 .build()
                 );
     }

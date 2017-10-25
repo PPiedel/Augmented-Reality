@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 26
@@ -123,5 +122,3 @@ dependencies {
 repositories {
     mavenCentral()
 }
-
-apply plugin: 'kotlin-android-extensions'
