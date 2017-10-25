@@ -60,30 +60,25 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
 
         getActivityComponent().inject(this);
-
-        init();
-
-
+        mPresenter.attachView(this);
+        ButterKnife.setDebug(true);
+        setUnBinder(ButterKnife.bind(this));
         setUpLayout();
 
         addNetworkConnectionFragment();
 
-        setupViewPager();
-
-        setUpTabLayout();
+        mPresenter.manageLocationSettings();
 
     }
 
-    private void init() {
-        setContentView(R.layout.activity_main);
+    public void init() {
 
-        ButterKnife.setDebug(true);
-        setUnBinder(ButterKnife.bind(this));
+        setupViewPager();
 
-        mPresenter.attachView(this);
+        setUpTabLayout();
     }
 
 

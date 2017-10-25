@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.main;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
@@ -14,9 +15,20 @@ import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.data.DataManager;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
+import java.util.Observer;
+import java.util.function.Consumer;
+
 import javax.inject.Inject;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
@@ -26,7 +38,8 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 
 @ConfigPersistent
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
-    private static final String LOG_TAG = MainPresenter.class.getName();
+    private final static String LOG_TAG = MainPresenter.class.getName();
+    private final static int REQUEST_CHECK_SETTINGS = 0;
 
     private RxPermissions rxPermissions;
 
@@ -47,6 +60,40 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                         getView().startArActivity();
                     }
                 });
+    }
+
+    @Override
+    public void manageLocationSettings() {
+        getDataManager().getLocationSettingsResult()
+             .subscribe(new Subscriber<LocationSettingsResult>() {
+                 @Override
+                 public void onCompleted() {
+                     Log.d(LOG_TAG,"Complete");
+                 }
+
+                 @Override
+                 public void onError(Throwable e) {
+                     Log.d(LOG_TAG,e.getMessage());
+                 }
+
+                 @Override
+                 public void onNext(LocationSettingsResult locationSettingsResult) {
+                     Status status = locationSettingsResult.getStatus();
+                     Log.d(LOG_TAG,"status code : "+status.getStatusCode());
+                     if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                         try {
+                             status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
+                         } catch (IntentSender.SendIntentException th) {
+                             Log.e("MainActivity", "Error opening settings activity.", th);
+                         }
+                     }
+                     else if (status.getStatusCode() == LocationSettingsStatusCodes.SUCCESS){
+                         Log.d(LOG_TAG,"status code : "+status.getStatusCode());
+                         Log.d(LOG_TAG,"Jestem w status code success");
+                         getView().init();
+                     }
+                 }
+             });
     }
 
 }

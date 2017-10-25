@@ -13,8 +13,10 @@ public interface MainContract {
         Activity getViewActivity();
         void startArActivity();
         void onFabButtonClicked();
+        void init();
     }
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
         void onFabClick();
+        void manageLocationSettings();
     }
 }
