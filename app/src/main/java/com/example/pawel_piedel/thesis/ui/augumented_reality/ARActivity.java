@@ -22,6 +22,8 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -124,6 +126,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @BindView(R.id.priceRangeAR)
     TextView priceRange;
 
+    @BindView(R.id.touch_ar)
+    ImageView touchIcon;
 
     @Inject
     ARPresenter<ARContract.View> presenter;
@@ -131,13 +135,13 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_ar);
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
-
         addNetworkConnectionFragment();
         presenter.attachView(this);
-       // presenter.managePermissions();
+
         presenter.setReactiveSensors(this);
 
         textureView.setSurfaceTextureListener(textureListener);
@@ -158,7 +162,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     protected void onResume() {
         super.onResume();
         presenter.managePermissions();
-        //startObserving();
     }
 
     public void startObserving() {
@@ -244,6 +247,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             reviewCount.setVisibility(View.GONE);
             priceRange.setVisibility(View.GONE);
         }
+        touchIcon.setVisibility(View.VISIBLE);
         businessDistance.setText(String.format("%.1f km", business.getDistance() / 1000));
     }
 
