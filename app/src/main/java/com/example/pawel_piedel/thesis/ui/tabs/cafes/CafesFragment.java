@@ -1,8 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,11 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 
 import java.util.List;
 
@@ -30,7 +27,7 @@ import butterknife.ButterKnife;
 public class CafesFragment extends BaseFragment implements CafesContract.View {
     private String LOG_TAG = CafesFragment.class.getName();
 
-    private final BusinessAdapter businessAdapter = new BusinessAdapter();
+    private final BusinessAdapter businessAdapter =new  BusinessAdapter();
 
     @Inject
     CafesContract.Presenter<CafesContract.View> cafesPresenter;

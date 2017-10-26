@@ -104,4 +104,9 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
         getView().init();
     }
 
+    @Override
+    public boolean isPlaceSaved(String id) {
+        return getDataManager().getFromSharedPreferences(id,true);
+    }
+
 }

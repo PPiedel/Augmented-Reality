@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +13,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.pawel_piedel.thesis.R;
+import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +37,10 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     private final List<Business> businessList = new ArrayList<>();
     private Context context;
 
+
     public BusinessAdapter() {
     }
+
 
     public void setBusinessList(List<Business> businessList) {
         this.businessList.clear();
@@ -69,6 +76,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         holder.address2.setText(String.format("%s %s", business.getLocation().getZipCode(), business.getLocation().getCity()));
         holder.rating.setText(String.valueOf(business.getRating()));
         holder.distance.setText(String.format("%.1f km", business.getDistance() / 1000));
+       /* if (sharedPreferences.getBoolean(business.getId(),true)){
+            holder.favouriteImage.setVisibility(View.VISIBLE);
+        }*/
 
     }
 
@@ -95,6 +105,8 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
         TextView rating;
         @BindView(R.id.distance)
         TextView distance;
+        @BindView(R.id.favourite)
+        ImageView favouriteImage;
 
         ViewHolder(View view) {
             super(view);
@@ -111,8 +123,6 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(BUSINESS, businessList.get(position));
                 context.startActivity(intent);
-
-
             });
         }
 

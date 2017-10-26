@@ -19,5 +19,6 @@ public interface MainContract {
         void onFabClick();
         void manageLocationSettings();
         void onLocationPermissionsGranted();
+        boolean isPlaceSaved(String id);
     }
 }

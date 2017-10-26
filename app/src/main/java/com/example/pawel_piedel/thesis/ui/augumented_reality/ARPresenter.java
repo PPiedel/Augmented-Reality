@@ -59,8 +59,8 @@ import rx.schedulers.Schedulers;
 public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> implements ARContract.Presenter<V> {
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
     public static final int REQUEST_CAMERA_PERMISSION = 200;
-    private static final float ALPHA = 0.4f;
-    private static final int AZIMUTH_ACCURACY = 10;
+    private static final float ALPHA = 0.3f;
+    private static final int AZIMUTH_ACCURACY = 8;
 
     private final int sensorType = Sensor.TYPE_ROTATION_VECTOR;
     private ReactiveSensors reactiveSensors;
@@ -122,9 +122,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
-                           // getView().setAzimuthText(deviceAzimuth);
                             if (pointsTo) {
                                 getView().showBusinessOnScreen(getDataManager().getAugumentedRealityPlaces().get(i));
+                                Log.d(LOG_TAG,getDataManager().getAugumentedRealityPlaces().get(i).getName());
                             } else {
                                 getView().hideBusiness();
                             }
@@ -279,7 +279,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
             for (int i = 0; i < azimuths.length; i++) {
                 azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
             }
-            Log.i(LOG_TAG, Arrays.toString(azimuths));
+            Log.d(LOG_TAG, Arrays.toString(azimuths));
         }
 
     }

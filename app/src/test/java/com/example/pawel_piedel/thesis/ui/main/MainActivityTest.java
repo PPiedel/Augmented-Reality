@@ -74,12 +74,6 @@ public class MainActivityTest {
     public void onDestroy() throws Exception {
     }
 
-    @Test
-    public void onRequestPermissionsResult() throws Exception {
-        activity.onRequestPermissionsResult(TEST_CODE, TEST_PERMISSIONS, TEST_GRANT_RESULTS);
-        verify(mainPresenter).onPermissionResult(TEST_CODE, TEST_GRANT_RESULTS);
-    }
-
 
     @Test
     public void startArActivity() throws Exception {

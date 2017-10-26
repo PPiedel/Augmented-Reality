@@ -10,7 +10,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +21,6 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -47,6 +45,7 @@ import butterknife.OnClick;
 
 import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
+
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String LOG_TAG = ARActivity.class.getSimpleName();
     private CameraCaptureSession cameraCaptureSessions;
@@ -54,7 +53,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            Log.d(LOG_TAG,"Heigth : "+height+" width "+height);
+            //Log.d(LOG_TAG, "Heigth : " + height + " width " + height);
             presenter.setStateCallback(stateCallback);
             presenter.openCamera(width, height, ARActivity.this);
         }
@@ -198,7 +197,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         TransitionManager.beginDelayedTransition(businessView);
         businessView.setVisibility(View.VISIBLE);
         businessTitle.setText(String.format("%s", business.getName()));
-        Log.d(LOG_TAG, "" + business.getDistance());
+        Log.d(LOG_TAG, "Distance " + business.getDistance());
         if (business.getDistance() < 1000) {
             businessAddress1.setVisibility(View.VISIBLE);
             businessAddress2.setVisibility(View.VISIBLE);
@@ -213,7 +212,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             rating.setText(String.format("%s", business.getRating()));
             reviewCount.setText(String.format("(%s)", business.getReviewCount()));
             StringBuilder dolars = new StringBuilder();
-            if (business.getPrice()!=null){
+            if (business.getPrice() != null) {
                 List<String> prices = Arrays.asList(business.getPrice().split(","));
                 for (String price : prices) {
                     if (Integer.parseInt(price) == 1) {
