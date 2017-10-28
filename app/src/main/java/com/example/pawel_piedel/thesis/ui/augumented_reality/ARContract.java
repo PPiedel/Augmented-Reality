@@ -44,7 +44,9 @@ public interface ARContract {
 
         void observeDeviceAzimuth();
 
-        void unsubscribeAll();
+        void unsubscribeThreeSensors();
+
+        void unsubGravity();
 
         void setReactiveSensors(Context context);
 
@@ -52,6 +54,7 @@ public interface ARContract {
 
         void openDetailActivity();
 
+        void startObservingSensors();
 
     }
 }

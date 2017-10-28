@@ -30,7 +30,7 @@ public class ARPresenterTest {
     DataManager dataManager;
 
     @Mock
-    AzimuthManager azimuthManager;
+    ReactiveSensorManager reactiveSensorManager;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();

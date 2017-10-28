@@ -171,17 +171,17 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             textureView.setSurfaceTextureListener(textureListener);
         }
 
-        presenter.observeDeviceAzimuth();
-        presenter.observeDeviceLocation();
-        presenter.observeDeviceAzimuthAccuracy();
+        presenter.observeGravitySensor();
+        presenter.startObservingSensors();
+
     }
 
     @Override
     protected void onPause() {
-        // Log.e(LOG_TAG, "onPause");
         presenter.closeCamera();
         presenter.stopBackgroundThread();
-        presenter.unsubscribeAll();
+        presenter.unsubscribeThreeSensors();
+        presenter.unsubGravity();
         super.onPause();
     }
 
@@ -262,12 +262,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         return this;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        presenter.onPermissionResult(requestCode, permissions, grantResults);
-
-    }
 
     public void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice) {
         try {
@@ -291,7 +285,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(ARActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ARActivity.this, "Configuration change", Toast.LENGTH_LONG).show();
                 }
             }, null);
         } catch (CameraAccessException e) {
@@ -318,7 +312,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     @Override
     public void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

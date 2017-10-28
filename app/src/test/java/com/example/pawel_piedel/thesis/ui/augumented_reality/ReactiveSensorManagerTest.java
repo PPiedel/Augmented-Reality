@@ -1,5 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
@@ -21,10 +22,10 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Pawel_Piedel on 31.08.2017.
  */
-public class AzimuthManagerTest {
+public class ReactiveSensorManagerTest {
 
     @Mock
-    AzimuthManager azimuthManager;
+    ReactiveSensorManager reactiveSensorManager;
 
 
     @Before
@@ -36,10 +37,10 @@ public class AzimuthManagerTest {
     public void getReactiveSensorEventsShouldReturnValue() throws Exception {
         SensorEvent sensorEvent = Mockito.mock(SensorEvent.class);
         ReactiveSensorEvent reactiveSensorEvent = new ReactiveSensorEvent(sensorEvent);
-        when(azimuthManager.getReactiveSensorEvents()).thenReturn(rx.Observable.just(reactiveSensorEvent));
+        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR)).thenReturn(rx.Observable.just(reactiveSensorEvent));
 
         TestSubscriber<ReactiveSensorEvent> subscriber = new TestSubscriber<>();
-        azimuthManager.getReactiveSensorEvents().subscribe(subscriber);
+        reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR).subscribe(subscriber);
 
         subscriber.assertNoErrors();
         subscriber.assertReceivedOnNext(Collections.singletonList(reactiveSensorEvent));
@@ -50,11 +51,11 @@ public class AzimuthManagerTest {
     public void unsubscribe() throws Exception {
         SensorEvent sensorEvent = Mockito.mock(SensorEvent.class);
         ReactiveSensorEvent reactiveSensorEvent = new ReactiveSensorEvent(sensorEvent);
-        when(azimuthManager.getReactiveSensorEvents()).thenReturn(rx.Observable.just(reactiveSensorEvent));
+        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR)).thenReturn(rx.Observable.just(reactiveSensorEvent));
 
-        Subscription subscription = azimuthManager.getReactiveSensorEvents().subscribe();
+        Subscription subscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR).subscribe();
 
-        azimuthManager.unsubscribe(subscription);
+        reactiveSensorManager.unsubscribe(subscription);
 
         assertNotNull(subscription);
         assertTrue(subscription.isUnsubscribed());

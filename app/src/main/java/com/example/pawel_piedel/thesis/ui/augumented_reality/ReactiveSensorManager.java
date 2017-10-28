@@ -12,23 +12,21 @@ import rx.schedulers.Schedulers;
  * Created by Pawel_Piedel on 25.07.2017.
  */
 
-public class AzimuthManager {
+public class ReactiveSensorManager {
     private final ReactiveSensors reactiveSensors;
-    private final int sensorType;
 
 
-    public AzimuthManager(ReactiveSensors reactiveSensors, int sensorType) {
+    public ReactiveSensorManager(ReactiveSensors reactiveSensors) {
         this.reactiveSensors = reactiveSensors;
-        this.sensorType = sensorType;
     }
 
-    public Observable<ReactiveSensorEvent> getReactiveSensorEvents() {
+    public Observable<ReactiveSensorEvent> getReactiveSensorEvents(int sensorType) {
         return reactiveSensors.observeSensor(sensorType)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterSensorChanged());
     }
 
-    public Observable<ReactiveSensorEvent> getReactiveSensorAccuracy(){
+    public Observable<ReactiveSensorEvent> getReactiveSensorAccuracy(int sensorType){
         return reactiveSensors.observeSensor(sensorType)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterAccuracyChanged());
