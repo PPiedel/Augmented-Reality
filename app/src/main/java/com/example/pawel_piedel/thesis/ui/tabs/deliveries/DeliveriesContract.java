@@ -24,7 +24,7 @@ public interface DeliveriesContract {
 
     interface Presenter<V extends BaseView> extends com.example.pawel_piedel.thesis.ui.base.Presenter<V> {
 
-        void onViewPrepared();
+        void managePermissions();
 
         void loadDeliveries();
     }

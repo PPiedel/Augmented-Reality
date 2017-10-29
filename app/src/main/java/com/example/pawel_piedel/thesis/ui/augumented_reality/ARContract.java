@@ -29,8 +29,6 @@ public interface ARContract {
 
         void showToast(String message);
 
-        void showAlert(String message);
-
         void setAspectRatio(int x, int y);
 
         void startDetailActivity(Business business);
@@ -44,9 +42,7 @@ public interface ARContract {
 
         void observeDeviceAzimuth();
 
-        void unsubscribeThreeSensors();
-
-        void unsubGravity();
+        void unsubscribeThreeSensors(boolean azimuth, boolean accuracy, boolean location, boolean gravity);
 
         void setReactiveSensors(Context context);
 

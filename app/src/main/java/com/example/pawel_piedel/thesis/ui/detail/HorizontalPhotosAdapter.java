@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.ui.slideshow.SlideShowDialogFragment;
 
 import java.util.ArrayList;
 

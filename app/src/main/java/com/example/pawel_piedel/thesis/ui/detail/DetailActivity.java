@@ -103,9 +103,9 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         setUpToolbar();
 
         reviewsAdapter = new ReviewsAdapter(this);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        reviewsRecyclerView.setLayoutManager(llm);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        reviewsRecyclerView.setLayoutManager(linearLayoutManager);
         reviewsRecyclerView.setAdapter(reviewsAdapter);
         reviewsRecyclerView.setNestedScrollingEnabled(false);
 
@@ -193,7 +193,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     public void showOldBusiness() {
         Business business = getBusinessFromIntent();
-        Log.d(LOG_TAG, business.toString());
+
         showBusinessDetails(business);
     }
 
@@ -222,9 +222,7 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
     @Override
     public void makeCall(Business business) {
         if (business.getPhone() != null) {
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:" + business.getPhone()));
-            getViewActivity().startActivity(intent);
+            startPhoneIntent(business);
 
         }
         else {
@@ -232,6 +230,11 @@ public class DetailActivity extends BaseActivity implements DetailContract.View 
         }
     }
 
+    private void startPhoneIntent(Business business) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + business.getPhone()));
+        getViewActivity().startActivity(intent);
+    }
 
 
     @Override

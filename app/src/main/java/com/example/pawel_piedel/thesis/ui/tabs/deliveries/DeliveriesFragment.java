@@ -64,14 +64,7 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
         setUpRecyclerView();
 
-        RxPermissions rxPermissions = new RxPermissions(getActivity());
-        rxPermissions
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(granted -> {
-                    if (granted) { // Always true pre-M
-                        deliveriesPresenter.onViewPrepared();
-                    }
-                });
+        deliveriesPresenter.managePermissions();
 
         return view;
     }

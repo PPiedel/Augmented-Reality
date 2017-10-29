@@ -10,11 +10,9 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.util.Size;
@@ -53,7 +51,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            //Log.d(LOG_TAG, "Heigth : " + height + " width " + height);
             presenter.setStateCallback(stateCallback);
             presenter.openCamera(width, height, ARActivity.this);
         }
@@ -180,8 +177,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     protected void onPause() {
         presenter.closeCamera();
         presenter.stopBackgroundThread();
-        presenter.unsubscribeThreeSensors();
-        presenter.unsubGravity();
+        presenter.unsubscribeThreeSensors(true,true,true,true);
         super.onPause();
     }
 
@@ -313,23 +309,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showAlert(String message) {
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-        builder.setTitle("Alert")
-                .setMessage(message)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                    // continue with delete
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
     }
 
     @Override

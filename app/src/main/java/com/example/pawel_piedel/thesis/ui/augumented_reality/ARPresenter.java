@@ -14,6 +14,7 @@ import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
+import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -48,8 +49,8 @@ import rx.schedulers.Schedulers;
 @ConfigPersistent
 public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> implements ARContract.Presenter<V> {
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
-    private static final float ALPHA = 0.3f;
-    private static final int AZIMUTH_ACCURACY = 15;
+    private static final float ALPHA_PARAM = 0.3f;
+    private static final int AZIMUTH_ACCURACY = 12;
     private static final double PITCH_ACCURACY = 0.7;
     private static final double PI_DIVIDED_BY_TWO = Math.PI / 2;
     private static final int Z_AXIS = 0;
@@ -57,7 +58,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private ReactiveSensors reactiveSensors;
     private int deviceAzimuth = 0;
     private float gravity = 0;
-    private float[] gravityVector;
+    private float[] gravityVector = new float[3];
     private float groundDeviation;
     private boolean turnedOn = true;
 
@@ -69,6 +70,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private int i = 0;
     private boolean pointsTo = false;
     private float[] rotationMatrix = new float[16];
+    private float[] remappedRotationMatrix = new float[16];
+    private float[] zOrientation = new float[3];
 
     private float[] output = {0, 0, 0, 0, 0};
     private ReactiveSensorManager reactiveSensorManager;
@@ -99,17 +102,11 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void observeDeviceAzimuth() {
         if (reactiveSensors.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
-            azimuthSubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR)
+            azimuthSubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_NORMAL)
                     .doOnNext(reactiveSensorEvent -> {
                         pointsTo = false;
                         deviceAzimuth = calculateDevicePosition(reactiveSensorEvent, Z_AXIS);
-                        Log.d(LOG_TAG, "" + deviceAzimuth);
-                        for (int i = 0; i < azimuths.length && !pointsTo; i++) {
-                            if (newAzimuthPointsTo(azimuths[i])) {
-                                this.pointsTo = true;
-                                this.i = i;
-                            }
-                        }
+                        checkPlacesAgainstNewAzimuth();
                     })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
@@ -139,9 +136,19 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
+    private void checkPlacesAgainstNewAzimuth() {
+        for (int i = 0; i < azimuths.length && !pointsTo; i++) {
+            if (newAzimuthPointsTo(azimuths[i])) {
+                this.pointsTo = true;
+                this.i = i;
+            }
+        }
+    }
+
     public void observeDeviceAzimuthAccuracy() {
         if (reactiveSensors.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
             accuracySubscription = reactiveSensorManager.getReactiveSensorAccuracy(Sensor.TYPE_ROTATION_VECTOR)
+                    .filter(ReactiveSensorFilter.filterSensorChanged())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -158,16 +165,16 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             switch (reactiveSensorEvent.getAccuracy()) {
                                 case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
-                                    getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest niska. Wskazania nie będą dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    getView().showAlert("Niski stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest niska. Wskazania nie będą dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
                                     showHighAzimuthAccuracyAlert = true;
                                     break;
                                 case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
-                                    getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest średnia. Wskazania mogą nie być dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    getView().showAlert("Sredni stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest średnia. Wskazania mogą nie być dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
                                     showHighAzimuthAccuracyAlert = true;
                                     break;
                                 case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
                                     if (showHighAzimuthAccuracyAlert) {
-                                        getView().showAlert("Dokładność wskazań kierunku Twojego urządzenia jest wysoka. Zamknij komunikat i ciesz się rozszerzoną rzeczywistością :) !");
+                                        getView().showAlert("Wysoki stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest wysoka. Zamknij komunikat i ciesz się rozszerzoną rzeczywistością :) !");
                                     }
                                     showHighAzimuthAccuracyAlert = false;
                                     break;
@@ -183,7 +190,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     public void observeGravitySensor() {
         if (reactiveSensors.hasSensor(Sensor.TYPE_GRAVITY)) {
-            gravitySubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_GRAVITY)
+            gravitySubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_GRAVITY, SensorManager.SENSOR_DELAY_NORMAL)
+                    .filter(ReactiveSensorFilter.filterSensorChanged())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -193,26 +201,42 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable e) {
-
+                            getView().showToast(e.getMessage());
                         }
 
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             groundDeviation = calculateGravity(reactiveSensorEvent);
-                            if (turnedOn && (groundDeviation < PI_DIVIDED_BY_TWO - PITCH_ACCURACY || groundDeviation > PI_DIVIDED_BY_TWO + PITCH_ACCURACY)) {
-                                unsubscribeThreeSensors();
-                                getView().hideBusiness();
-                                turnedOn = false;
-                                getView().showToast("Umieść swoje urządzenie pionowo, aby znów zacząć korzystać z trybu rozszerzonej rzeczywistości.");
-                            } else if (!turnedOn && groundDeviation > PI_DIVIDED_BY_TWO - PITCH_ACCURACY && groundDeviation < PI_DIVIDED_BY_TWO + PITCH_ACCURACY) {
-                                startObservingSensors();
-                                turnedOn = true;
-                                getView().showToast("Znów korzystasz z trybu rozszerzonej rzeczywistości.");
+                            if (deviceIsFlat()) {
+                                onDeviceIsFlat();
+                            } else if (deviceIsVertical()) {
+                                onDeviceIsVertical();
                             }
                         }
                     });
 
         }
+    }
+
+    private boolean deviceIsVertical() {
+        return !turnedOn && groundDeviation > PI_DIVIDED_BY_TWO - PITCH_ACCURACY && groundDeviation < PI_DIVIDED_BY_TWO + PITCH_ACCURACY;
+    }
+
+    private boolean deviceIsFlat() {
+        return turnedOn && (groundDeviation < PI_DIVIDED_BY_TWO - PITCH_ACCURACY || groundDeviation > PI_DIVIDED_BY_TWO + PITCH_ACCURACY);
+    }
+
+    private void onDeviceIsFlat() {
+        unsubscribeThreeSensors(true, true, true, false);
+        getView().hideBusiness();
+        turnedOn = false;
+        getView().showToast("Umieść swoje urządzenie pionowo, aby znów zacząć korzystać z trybu rozszerzonej rzeczywistości.");
+    }
+
+    private void onDeviceIsVertical() {
+        startObservingSensors();
+        turnedOn = true;
+        getView().showToast("Znów korzystasz z trybu rozszerzonej rzeczywistości.");
     }
 
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
@@ -243,7 +267,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     private float calculateGravity(ReactiveSensorEvent reactiveSensorEvent) {
-        gravityVector = new float[3];
         System.arraycopy(reactiveSensorEvent.getSensorEvent().values, 0, gravityVector, 0, gravityVector.length);
         gravity = (float) Math.sqrt(gravityVector[0] * gravityVector[0] + gravityVector[1] * gravityVector[1] + gravityVector[2] * gravityVector[2]);
 
@@ -258,25 +281,24 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
     private int calculateDevicePosition(ReactiveSensorEvent reactiveSensorEvent, int axis) {
         SensorEvent event = reactiveSensorEvent.getSensorEvent();
-        output = lowPass(event.values, output);
-        //float[] rotationMatrix = new float[16];
+        output = lowPassFilter(event.values, output);
         SensorManager.getRotationMatrixFromVector(rotationMatrix, output);
 
-        float[] remappedRotationMatrix = new float[16];
+
         SensorManager.remapCoordinateSystem(rotationMatrix,
                 SensorManager.AXIS_X,
                 SensorManager.AXIS_Z,
                 remappedRotationMatrix);
 
-        float[] zOrientation = new float[3];
+
         return (int) (Math.toDegrees(SensorManager.getOrientation(remappedRotationMatrix, zOrientation)[axis]) + 360) % 360;
 
     }
 
-    private float[] lowPass(float[] input, float[] output) {
+    private float[] lowPassFilter(float[] input, float[] output) {
         if (output == null) return input;
         for (int i = 0; i < input.length; i++) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+            output[i] = output[i] + ALPHA_PARAM * (input[i] - output[i]);
         }
         return output;
     }
@@ -304,10 +326,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                     @Override
                     public void onNext(Location location) {
-                        Log.i(LOG_TAG, location.toString());
-
                         getDataManager().setLastLocation(location);
-                        //   getView().setLocationText(location);
                         updateBusinessAzimuths(location);
                     }
                 });
@@ -315,7 +334,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void openDetailActivity() {
-
         getView().startDetailActivity(getDataManager().getAugumentedRealityPlaces().get(i));
     }
 
@@ -358,17 +376,16 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     @Override
-    public void unsubscribeThreeSensors() {
-        //Log.d(LOG_TAG, "Unsub 3");
+    public void unsubscribeThreeSensors(boolean azimuth, boolean accuracy, boolean location, boolean gravity) {
         reactiveSensorManager.unsubscribe(azimuthSubscription);
         reactiveSensorManager.unsubscribe(accuracySubscription);
         getDataManager().safelyUnsubscribe(locationSubscription);
+
+        if (gravity) {
+            reactiveSensorManager.unsubscribe(gravitySubscription);
+        }
     }
 
-    @Override
-    public void unsubGravity() {
-        reactiveSensorManager.unsubscribe(gravitySubscription);
-    }
 
     @Override
     public void setReactiveSensors(Context context) {
@@ -422,7 +439,4 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         cameraManager.setStateCallback(stateCallback);
     }
 
-    public void setI(int i) {
-        this.i = i;
-    }
 }

@@ -35,7 +35,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         super.onAttach(context);
         if (context instanceof BaseActivity) {
             this.baseActivity = (BaseActivity) context;
-           // activity.onFragmentAttached();
         }
     }
 
@@ -68,10 +67,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         return null;
     }
 
-    @Override
-    public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
-
-    }
 
     @Override
     public void showProgressDialog() {
@@ -93,16 +88,6 @@ public class BaseFragment extends android.support.v4.app.Fragment implements Bas
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.cancel();
         }
-    }
-
-
-    @Override
-    public boolean hasPermission(String permission) {
-        boolean has = false;
-        if (baseActivity !=null){
-            has = baseActivity.hasPermission(permission);
-        }
-        return has;
     }
 
     @Override

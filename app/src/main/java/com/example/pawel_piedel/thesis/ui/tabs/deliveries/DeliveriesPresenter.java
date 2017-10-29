@@ -32,13 +32,19 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     @Inject
     DeliveriesPresenter(DataManager dataManager) {
         super(dataManager);
-
     }
 
 
     @Override
-    public void onViewPrepared() {
-        loadDeliveries();
+    public void managePermissions() {
+        rxPermissions = new RxPermissions(getView().getParentActivity());
+        rxPermissions
+                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        loadDeliveries();
+                    }
+                });
     }
 
     public void loadDeliveries() {

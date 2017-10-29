@@ -97,8 +97,8 @@ public class NetworkFragment extends Fragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        builder.setMessage("Please check your Internet connection")
-                .setTitle("Network not available");
+        builder.setMessage("Sprawdź swoje połączenie z Interetem !")
+                .setTitle("Sieć niedostępna");
 
         builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss());
         //builder.setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());

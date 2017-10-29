@@ -66,19 +66,6 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         super.onDestroy();
     }
 
-    public void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener) {
-        Snackbar.make(findViewById(android.R.id.content),
-                getString(mainTextStringId),
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(actionStringId), listener).show();
-    }
-
-    public void requestRequiredPermissions(String[] permissions, int requestCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, requestCode);
-        }
-    }
-
     @Override
     public void showProgressDialog() {
         hideProgressDialog();
@@ -99,10 +86,6 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.cancel();
         }
-    }
-
-    public boolean hasPermission(String permission) {
-        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override

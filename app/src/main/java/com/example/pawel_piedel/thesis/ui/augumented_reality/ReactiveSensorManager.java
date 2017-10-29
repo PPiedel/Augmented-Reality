@@ -20,8 +20,8 @@ public class ReactiveSensorManager {
         this.reactiveSensors = reactiveSensors;
     }
 
-    public Observable<ReactiveSensorEvent> getReactiveSensorEvents(int sensorType) {
-        return reactiveSensors.observeSensor(sensorType)
+    public Observable<ReactiveSensorEvent> getReactiveSensorEvents(int sensorType, int delay) {
+        return reactiveSensors.observeSensor(sensorType,delay)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterSensorChanged());
     }

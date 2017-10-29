@@ -52,7 +52,6 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                             .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
                                 @Override
                                 public void onCompleted() {
-                                    Log.d(LOG_TAG,"onCompleted");
                                     loadCafes();
                                 }
 
@@ -70,7 +69,6 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                                         getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
                                     }
                                     getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                                    Log.d(LOG_TAG,accessTokenLocationPair.second.toString());
                                     getDataManager().setLastLocation(accessTokenLocationPair.second);
                                 }
                             });

@@ -2,6 +2,7 @@ package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 
@@ -37,10 +38,10 @@ public class ReactiveSensorManagerTest {
     public void getReactiveSensorEventsShouldReturnValue() throws Exception {
         SensorEvent sensorEvent = Mockito.mock(SensorEvent.class);
         ReactiveSensorEvent reactiveSensorEvent = new ReactiveSensorEvent(sensorEvent);
-        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR)).thenReturn(rx.Observable.just(reactiveSensorEvent));
+        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_NORMAL)).thenReturn(rx.Observable.just(reactiveSensorEvent));
 
         TestSubscriber<ReactiveSensorEvent> subscriber = new TestSubscriber<>();
-        reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR).subscribe(subscriber);
+        reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR,SensorManager.SENSOR_DELAY_NORMAL).subscribe(subscriber);
 
         subscriber.assertNoErrors();
         subscriber.assertReceivedOnNext(Collections.singletonList(reactiveSensorEvent));
@@ -51,9 +52,9 @@ public class ReactiveSensorManagerTest {
     public void unsubscribe() throws Exception {
         SensorEvent sensorEvent = Mockito.mock(SensorEvent.class);
         ReactiveSensorEvent reactiveSensorEvent = new ReactiveSensorEvent(sensorEvent);
-        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR)).thenReturn(rx.Observable.just(reactiveSensorEvent));
+        when(reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR,SensorManager.SENSOR_DELAY_NORMAL)).thenReturn(rx.Observable.just(reactiveSensorEvent));
 
-        Subscription subscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR).subscribe();
+        Subscription subscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR,SensorManager.SENSOR_DELAY_NORMAL).subscribe();
 
         reactiveSensorManager.unsubscribe(subscription);
 

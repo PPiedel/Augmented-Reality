@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.data;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.IntentSender;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
@@ -17,22 +16,17 @@ import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
 import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
-import com.example.pawel_piedel.thesis.ui.main.MainActivity;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -40,7 +34,6 @@ import javax.inject.Singleton;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Action1;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
@@ -53,11 +46,13 @@ import static dagger.internal.Preconditions.checkNotNull;
  */
 @Singleton
 public class DataManager {
-    public static final String LOCALE = "pl_PL";
+    private static final String LOCALE = "pl_PL";
     public static final String FIRST_TIME_LUNCHED = "first_time_lunched";
-    public static final int MAX_CAPACITY = 60;
-    public static final int AUGUMENTED_LIST_MAX_CAPACITY = 20;
-    public static final float SMALLEST_DISPLACEMENT = 5;
+    private static final int MAX_CAPACITY = 60;
+    private static final int AUGUMENTED_LIST_MAX_CAPACITY = 20;
+    private static final float SMALLEST_DISPLACEMENT = 2;
+    private static final int EXPIRATION_DURATION = 10000;
+    private static final int INTERVAL = 5000;
     private final String LOG_TAG = DataManager.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
     private SharedPreferencesManager preferencesHelper;
@@ -84,12 +79,7 @@ public class DataManager {
     }
 
     public List<Business> getAugumentedRealityPlaces() {
-        //addClosestPlacesToAugumentedRealityPlaces();
         return augumentedRealityPlaces;
-    }
-
-    public void loadAugumentedRealityPlaces() {
-        addClosestPlacesToAugumentedRealityPlaces();
     }
 
     public void addClosestPlacesToAugumentedRealityPlaces() {
@@ -140,7 +130,7 @@ public class DataManager {
         return LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setNumUpdates(1)
-                .setExpirationDuration(10000); //according to https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setNumUpdates(int)
+                .setExpirationDuration(EXPIRATION_DURATION); //according to https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setNumUpdates(int)
 
     }
 
@@ -159,7 +149,7 @@ public class DataManager {
     public Observable<Location> getLocationUpdates() {
         LocationRequest request = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setInterval(5 * 1000)
+                .setInterval(INTERVAL)
                 .setFastestInterval(1000)
                 .setSmallestDisplacement(SMALLEST_DISPLACEMENT);
 
@@ -217,19 +207,16 @@ public class DataManager {
 
     public Observable<ReviewsResponse> loadReviews(String id) {
         Observable<ReviewsResponse> observable;
-        //apiService = ServiceFactory.createService(ApiService.class);
         observable = apiService.getBusinessReviews(id, LOCALE);
         return observable;
     }
 
     public void saveAccessToken(AccessToken accessToken) {
-        //Log.d(LOG_TAG, "Saving access token : " + accessToken.getAccessToken());
         ServiceFactory.accessToken = accessToken;
         preferencesHelper.saveAccessToken(accessToken);
     }
 
     public void setLastLocation(Location location) {
-        // Log.d(LOG_TAG, location.toString());
         this.lastLocation = location;
     }
 

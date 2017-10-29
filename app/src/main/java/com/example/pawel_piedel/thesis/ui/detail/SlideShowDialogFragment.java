@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.ui.slideshow;
+package com.example.pawel_piedel.thesis.ui.detail;
 
 import android.app.Dialog;
 import android.content.Context;

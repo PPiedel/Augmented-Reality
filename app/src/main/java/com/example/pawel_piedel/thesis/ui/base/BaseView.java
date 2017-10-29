@@ -8,13 +8,9 @@ import android.view.View;
 
 public interface BaseView {
 
-    void showSnackbar(int mainTextStringId, int actionStringId, View.OnClickListener listener);
-
     void showProgressDialog();
 
     void hideProgressDialog();
-
-    boolean hasPermission(String permission);
 
     void showAlert(String title, String message);
 

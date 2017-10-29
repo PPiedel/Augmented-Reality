@@ -69,34 +69,34 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     public void manageLocationSettings() {
         getDataManager().getLocationSettingsResult()
                 .observeOn(AndroidSchedulers.mainThread())
-               .subscribe(new Subscriber<LocationSettingsResult>() {
-                   @Override
-                   public void onCompleted() {
+                .subscribe(new Subscriber<LocationSettingsResult>() {
+                    @Override
+                    public void onCompleted() {
 
-                   }
+                    }
 
-                   @Override
-                   public void onError(Throwable e) {
+                    @Override
+                    public void onError(Throwable e) {
 
-                   }
+                    }
 
-                   @Override
-                   public void onNext(LocationSettingsResult locationSettingsResult) {
-                       Status status = locationSettingsResult.getStatus();
-                       switch (status.getStatusCode()) {
-                           case LocationSettingsStatusCodes.RESOLUTION_REQUIRED :
-                               try {
-                                   status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
-                               } catch (IntentSender.SendIntentException th) {
-                                   Log.e("MainActivity", "Error opening settings activity.", th);
-                               }
-                               break;
-                           case LocationSettingsStatusCodes.SUCCESS :
-                               onLocationPermissionsGranted();
+                    @Override
+                    public void onNext(LocationSettingsResult locationSettingsResult) {
+                        Status status = locationSettingsResult.getStatus();
+                        switch (status.getStatusCode()) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                try {
+                                    status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException th) {
+                                    Log.e("MainActivity", "Error opening settings activity.", th);
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SUCCESS:
+                                onLocationPermissionsGranted();
 
-                       }
-                   }
-               });
+                        }
+                    }
+                });
     }
 
     @Override
@@ -106,7 +106,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public boolean isPlaceSaved(String id) {
-        return getDataManager().getFromSharedPreferences(id,true);
+        return getDataManager().getFromSharedPreferences(id, true);
     }
 
 }
