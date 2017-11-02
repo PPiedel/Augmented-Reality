@@ -3,10 +3,13 @@ package com.example.pawel_piedel.thesis.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Generated;
+
 /**
  * Created by Pawel_Piedel on 17.07.2017.
  */
 
+@Generated("org.jsonschema2pojo")
 public class AccessToken {
     @SerializedName("access_token")
     @Expose

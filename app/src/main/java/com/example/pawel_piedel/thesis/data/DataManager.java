@@ -200,9 +200,7 @@ public class DataManager {
     }
 
     public Observable<Business> loadBusinessDetails(String id) {
-
         return apiService.getBusinessDetails(id);
-
     }
 
     public Observable<ReviewsResponse> loadReviews(String id) {
@@ -213,7 +211,7 @@ public class DataManager {
 
     public void saveAccessToken(AccessToken accessToken) {
         ServiceFactory.accessToken = accessToken;
-        preferencesHelper.saveAccessToken(accessToken);
+        preferencesHelper.saveObject(accessToken);
     }
 
     public void setLastLocation(Location location) {
@@ -221,7 +219,6 @@ public class DataManager {
     }
 
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
-        Log.d(LOG_TAG, "Save business");
         checkNotNull(businesses);
         switch (category) {
             case CafesPresenter.CAFES:

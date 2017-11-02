@@ -8,7 +8,6 @@ import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
-import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.data.remote.ApiService;
 
 import org.junit.Before;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -125,7 +123,7 @@ public class DataManagerTest {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
         dataManager.saveAccessToken(accessToken);
 
-        verify(preferenceHelper).saveAccessToken(accessToken);
+        verify(preferenceHelper).saveObject(accessToken);
 
     }
 

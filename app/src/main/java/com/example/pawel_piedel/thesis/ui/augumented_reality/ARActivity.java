@@ -207,23 +207,9 @@ public class ARActivity extends BaseActivity implements ARContract.View {
             ratingBar.setRating((float) business.getRating());
             rating.setText(String.format("%s", business.getRating()));
             reviewCount.setText(String.format("(%s)", business.getReviewCount()));
-            StringBuilder dolars = new StringBuilder();
             if (business.getPrice() != null) {
-                List<String> prices = Arrays.asList(business.getPrice().split(","));
-                for (String price : prices) {
-                    if (Integer.parseInt(price) == 1) {
-                        dolars.append("$");
-                    } else if (Integer.parseInt(price) == 2) {
-                        dolars.append("$$");
-                    } else if (Integer.parseInt(price) == 3) {
-                        dolars.append("$$$");
-                    } else if (Integer.parseInt(price) == 4) {
-                        dolars.append("$$$$");
-                    }
-                }
-                priceRange.setText(dolars.toString());
+                priceRange.setText(business.getPrice());
             }
-
 
         } else if (business.getDistance() < 5000) {
             businessAddress1.setVisibility(View.VISIBLE);
