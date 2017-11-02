@@ -54,32 +54,28 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private static final double PITCH_ACCURACY = 0.7;
     private static final double PI_DIVIDED_BY_TWO = Math.PI / 2;
     private static final int Z_AXIS = 0;
-
+    @Inject
+    CameraManager cameraManager;
     private ReactiveSensors reactiveSensors;
     private int deviceAzimuth = 0;
     private float gravity = 0;
     private float[] gravityVector = new float[3];
     private float groundDeviation;
     private boolean turnedOn = true;
-
     private Subscription azimuthSubscription;
     private Subscription accuracySubscription;
     private Subscription locationSubscription;
     private Subscription gravitySubscription;
     private double[] azimuths; //this array is matching augumented reality places, which are sorted in ascending order by distance
-    private double[] azimuthsDelta;
+    private double azimuthDelta;
     private int bestMatchedPlaceIndex = 0;
     private boolean pointsTo = false;
     private float[] rotationMatrix = new float[16];
     private float[] remappedRotationMatrix = new float[16];
     private float[] zOrientation = new float[3];
-
     private float[] output = {0, 0, 0, 0, 0};
     private ReactiveSensorManager reactiveSensorManager;
     private boolean showHighAzimuthAccuracyAlert = false;
-
-    @Inject
-    CameraManager cameraManager;
 
 
     @Inject
@@ -91,7 +87,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void attachView(V view) {
         super.attachView(view);
         azimuths = new double[getDataManager().getAugumentedRealityPlaces().size()];
-        azimuthsDelta = new double[getDataManager().getAugumentedRealityPlaces().size()];
     }
 
     @Override
@@ -105,11 +100,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void observeDeviceAzimuth() {
         if (reactiveSensors.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
             azimuthSubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_NORMAL)
-                    .doOnNext(reactiveSensorEvent -> {
-                        deviceAzimuth = calculateDevicePosition(reactiveSensorEvent, Z_AXIS);
-                        pointsTo = false;
-                        checkPlacesAzimuthsAgainstNewAzimuth();
-                    })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -125,6 +115,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
+                            deviceAzimuth = calculateDevicePosition(reactiveSensorEvent, Z_AXIS);
+                            pointsTo = false;
+                            checkPlacesAzimuthsAgainstNewAzimuth();
                             if (pointsTo) {
                                 getView().showBusinessOnScreen(getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
                             } else {
@@ -140,23 +133,19 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private void checkPlacesAzimuthsAgainstNewAzimuth() {
         for (int placeIndex = 0; placeIndex < azimuths.length; placeIndex++) {
-            azimuthsDelta[placeIndex] = Math.abs(azimuths[placeIndex] - deviceAzimuth);
-        }
-
-        for (int placeIndex = 0; placeIndex < azimuths.length; placeIndex++) {
             if (newAzimuthPointsTo(azimuths[placeIndex])) {
+                azimuthDelta = Math.abs(azimuths[placeIndex] - deviceAzimuth);
                 if (!pointsTo) {
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
-                } else if (pointsTo && getDataManager().getAugumentedRealityPlaces().get(placeIndex).getDistance() <= getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
-                        && azimuthsDelta[placeIndex] < azimuthsDelta[bestMatchedPlaceIndex]) {
-                    Log.d(LOG_TAG, "The businnes is in the same direction, has not worse distance, but it's azimuth is better.");
-
+                } else if (pointsTo
+                        && getDataManager().getAugumentedRealityPlaces().get(placeIndex).getDistance() <= getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
+                        && azimuthDelta < Math.abs(azimuths[bestMatchedPlaceIndex] - deviceAzimuth)) {
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
-                } else
-
+                }
             }
+
         }
     }
 
