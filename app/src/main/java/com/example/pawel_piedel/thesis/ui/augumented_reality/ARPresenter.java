@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /*
  * Based on https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
@@ -56,7 +55,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     private static final int Z_AXIS = 0;
     @Inject
     CameraManager cameraManager;
-    private ReactiveSensors reactiveSensors;
     private int deviceAzimuth = 0;
     private float gravity = 0;
     private float[] gravityVector = new float[3];
@@ -87,13 +85,16 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void onViewCreated(V view) {
         attachView(view);
 
-        setReactiveSensors((Context) view);
+        setUpReactiveSensorManager((Context) view);
     }
 
     @Override
     public void attachView(V view) {
         super.attachView(view);
-        azimuths = new double[getBusinessDataSource().getAugumentedRealityPlaces().size()];
+        if (getBusinessDataSource().getAugumentedRealityPlaces() != null) {
+            azimuths = new double[getBusinessDataSource().getAugumentedRealityPlaces().size()];
+        }
+
     }
 
     @Override
@@ -105,7 +106,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void observeDeviceAzimuth() {
-        if (reactiveSensors.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
+        if (reactiveSensorManager.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
             azimuthSubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_NORMAL)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
@@ -134,7 +135,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     });
         } else {
             getView().showToast("Device does not has required sensor !");
-            Log.e(LOG_TAG, "Device does not has required sensor !");
         }
     }
 
@@ -157,7 +157,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void observeDeviceAzimuthAccuracy() {
-        if (reactiveSensors.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
+        if (reactiveSensorManager.hasSensor(Sensor.TYPE_ROTATION_VECTOR)) {
             accuracySubscription = reactiveSensorManager.getReactiveSensorAccuracy(Sensor.TYPE_ROTATION_VECTOR)
                     .filter(ReactiveSensorFilter.filterSensorChanged())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -200,9 +200,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void observeGravitySensor() {
-        if (reactiveSensors.hasSensor(Sensor.TYPE_GRAVITY)) {
+        if (reactiveSensorManager.hasSensor(Sensor.TYPE_GRAVITY)) {
             gravitySubscription = reactiveSensorManager.getReactiveSensorEvents(Sensor.TYPE_GRAVITY, SensorManager.SENSOR_DELAY_NORMAL)
-                    .filter(ReactiveSensorFilter.filterSensorChanged())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReactiveSensorEvent>() {
                         @Override
@@ -319,7 +318,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
             updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
         }
         locationSubscription = getBusinessDataSource().getLocationUpdates()
-                .subscribeOn(Schedulers.io())
                 .filter(location -> locationsAreDifferent(location, getBusinessDataSource().getLastLocation()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
@@ -398,8 +396,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     @Override
-    public void setReactiveSensors(Context context) {
-        reactiveSensors = new ReactiveSensors(context);
+    public void setUpReactiveSensorManager(Context context) {
+        ReactiveSensors reactiveSensors = new ReactiveSensors(context);
         reactiveSensorManager = new ReactiveSensorManager(reactiveSensors);
     }
 
@@ -450,4 +448,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         cameraManager.setStateCallback(stateCallback);
     }
 
+    public void setReactiveSensorManager(ReactiveSensorManager reactiveSensorManager) {
+        this.reactiveSensorManager = reactiveSensorManager;
+    }
 }

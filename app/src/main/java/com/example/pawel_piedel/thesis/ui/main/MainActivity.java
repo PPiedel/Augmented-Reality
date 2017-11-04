@@ -21,7 +21,6 @@ package com.example.pawel_piedel.thesis.ui.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -29,19 +28,16 @@ import android.support.v7.widget.Toolbar;
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ui.augumented_reality.ARActivity;
 import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
+import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.cafes.CafesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesFragment;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsFragment;
-import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
-import com.google.android.gms.location.LocationSettingsStates;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -117,8 +113,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         DeliveriesFragment deliveriesFragment = DeliveriesFragment.newInstance();
         adapter.addFragment(deliveriesFragment, getString(R.string.delivery));
 
-        checkNotNull(viewPager);
-        checkNotNull(adapter);
 
         viewPager.setAdapter(adapter);
 

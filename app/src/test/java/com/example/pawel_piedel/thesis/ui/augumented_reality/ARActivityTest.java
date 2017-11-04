@@ -1,12 +1,15 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -22,20 +25,25 @@ import static org.mockito.Mockito.verify;
 @Config(constants = BuildConfig.class)
 public class ARActivityTest {
 
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
     @Mock
-    ARPresenter<ARContract.View> arPresenter;
+    ARPresenter<ARContract.View> presenter;
+
+    @Mock
+    BusinessDataSource businessDataSource;
+
 
     private ActivityController<ARActivity> controller;
     private ARActivity activity;
 
     @Before
     public void setUp() {
+
         controller = Robolectric.buildActivity(ARActivity.class);
-
-        MockitoAnnotations.initMocks(this);
-
         activity = controller.get();
-        activity.setPresenter(arPresenter);
+        activity.setPresenter(presenter);
 
     }
 
@@ -43,59 +51,6 @@ public class ARActivityTest {
     public void onCreate() throws Exception {
         controller.create();
 
-        verify(arPresenter).onViewCreated(activity);
+        verify(presenter).onViewCreated(activity);
     }
-
-    @Test
-    public void onResume() throws Exception {
-    }
-
-    @Test
-    public void startObserving() throws Exception {
-    }
-
-    @Test
-    public void onPause() throws Exception {
-    }
-
-    @Test
-    public void onDestroy() throws Exception {
-    }
-
-    @Test
-    public void showBusinessOnScreen() throws Exception {
-    }
-
-    @Test
-    public void hideBusiness() throws Exception {
-    }
-
-    @Test
-    public void getViewActivity() throws Exception {
-    }
-
-    @Test
-    public void showCameraPreview() throws Exception {
-    }
-
-    @Test
-    public void setTransform() throws Exception {
-    }
-
-    @Test
-    public void showToast() throws Exception {
-    }
-
-    @Test
-    public void setAspectRatio() throws Exception {
-    }
-
-    @Test
-    public void startDetailActivity() throws Exception {
-    }
-
-    @Test
-    public void businessViewOnClick() throws Exception {
-    }
-
 }

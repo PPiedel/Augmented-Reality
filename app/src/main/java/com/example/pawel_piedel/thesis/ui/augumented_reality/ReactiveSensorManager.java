@@ -13,11 +13,19 @@ import rx.schedulers.Schedulers;
  */
 
 public class ReactiveSensorManager {
-    private final ReactiveSensors reactiveSensors;
+    private ReactiveSensors reactiveSensors;
 
 
     public ReactiveSensorManager(ReactiveSensors reactiveSensors) {
         this.reactiveSensors = reactiveSensors;
+    }
+
+    public ReactiveSensors getReactiveSensors() {
+        return reactiveSensors;
+    }
+
+    public boolean hasSensor(int sensor) {
+        return reactiveSensors.hasSensor(sensor);
     }
 
     public Observable<ReactiveSensorEvent> getReactiveSensorEvents(int sensorType, int delay) {

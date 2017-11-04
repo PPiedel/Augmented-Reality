@@ -283,6 +283,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
 
     public void setPresenter(ARPresenter<ARContract.View> presenter) {
         this.presenter = presenter;
+        //presenter.attachView(this);
     }
 
     @Override

@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.example.pawel_piedel.thesis.data.remote.ServiceFactory.CLIENT_ID;
@@ -155,7 +156,9 @@ public class BusinessRepository implements BusinessDataSource {
                 .setSmallestDisplacement(SMALLEST_DISPLACEMENT);
 
 
-        return locationProvider.getUpdatedLocation(request);
+        return locationProvider
+                .getUpdatedLocation(request)
+                .subscribeOn(Schedulers.io());
     }
 
     @SuppressLint("MissingPermission")

@@ -43,7 +43,7 @@ public interface ARContract {
 
         void unsubscribeThreeSensors(boolean azimuth, boolean accuracy, boolean location, boolean gravity);
 
-        void setReactiveSensors(Context context);
+        void setUpReactiveSensorManager(Context context);
 
         void observeDeviceLocation();
 

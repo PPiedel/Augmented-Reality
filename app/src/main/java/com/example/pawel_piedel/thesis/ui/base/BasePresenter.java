@@ -39,4 +39,7 @@ public class BasePresenter<V extends BaseView> implements Presenter<V> {
         return businessDataSource;
     }
 
+    public void setBusinessDataSource(BusinessDataSource businessDataSource) {
+        this.businessDataSource = businessDataSource;
+    }
 }
