@@ -3,7 +3,7 @@ package com.example.pawel_piedel.thesis.ui.detail;
 import android.Manifest;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
@@ -30,24 +30,14 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     private final static String LOG_TAG = DetailPresenter.class.getSimpleName();
 
     @Inject
-    DetailPresenter(DataManager dataManager) {
-        super(dataManager);
-    }
-
-    @Override
-    public void attachView(V view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
+    DetailPresenter(BusinessDataSource businessDataSource) {
+        super(businessDataSource);
     }
 
     @Override
     public void loadBusinessDetails(String id) {
         getView().showProgressDialog();
-        getDataManager().loadAccessToken()
+        getBusinessDataSource().loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -70,7 +60,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void manageToLoadReviews(String id) {
-        getDataManager().loadAccessToken()
+        getBusinessDataSource().loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -93,7 +83,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     private void loadReviews(String id) {
-        getDataManager().loadReviews(id)
+        getBusinessDataSource().loadReviews(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ReviewsResponse>() {
@@ -119,7 +109,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
 
     private void loadBusiness(String id) {
-        getDataManager().loadBusinessDetails(id)
+        getBusinessDataSource().loadBusinessDetails(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Business>() {
@@ -182,7 +172,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     private boolean isSaved(Business business) {
         boolean isSaved = false;
-        if (!Objects.equals(getDataManager().getFromSharedPreferences(business.getId()), SharedPreferencesManager.DEFAULT_STRING_IF_NOT_FOUND)) {
+        if (!Objects.equals(getBusinessDataSource().getFromSharedPreferences(business.getId()), SharedPreferencesManager.DEFAULT_STRING_IF_NOT_FOUND)) {
             isSaved = true;
         }
         return isSaved;
@@ -199,11 +189,11 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     public void addToFavourites(Business business) {
-        getDataManager().saveInSharedPreferences(business.getId(), business.getId());
+        getBusinessDataSource().saveInSharedPreferences(business.getId(), business.getId());
     }
 
     private void removeFromFavourite(Business business) {
-        getDataManager().removeFromSharedPreferences(business.getId());
+        getBusinessDataSource().removeFromSharedPreferences(business.getId());
     }
 
 

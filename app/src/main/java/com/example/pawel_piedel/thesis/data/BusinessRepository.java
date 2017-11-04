@@ -8,7 +8,7 @@ import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
+import com.example.pawel_piedel.thesis.data.local.LocalDataSource;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
@@ -44,18 +43,17 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by Pawel_Piedel on 21.07.2017.
  */
-@Singleton
-public class DataManager {
-    private static final String LOCALE = "pl_PL";
+public class BusinessRepository implements BusinessDataSource {
     public static final String FIRST_TIME_LUNCHED = "first_time_lunched";
+    private static final String LOCALE = "pl_PL";
     private static final int MAX_CAPACITY = 60;
     private static final int AUGUMENTED_LIST_MAX_CAPACITY = 20;
     private static final float SMALLEST_DISPLACEMENT = 2;
     private static final int EXPIRATION_DURATION = 10000;
     private static final int INTERVAL = 5000;
-    private final String LOG_TAG = DataManager.class.getSimpleName();
+    private final String LOG_TAG = BusinessRepository.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
-    private SharedPreferencesManager preferencesHelper;
+    private LocalDataSource localDataSource;
     private ApiService apiService;
     private List<Business> restaurants;
     private List<Business> cafes;
@@ -66,10 +64,10 @@ public class DataManager {
     private LocationRequest lastLocationRequest;
 
     @Inject
-    DataManager(@ApplicationContext Context context,
-                ApiService apiService,
-                SharedPreferencesManager sharedPreferencesManager) {
-        this.preferencesHelper = sharedPreferencesManager;
+    public BusinessRepository(@ApplicationContext Context context,
+                              ApiService apiService,
+                              LocalDataSource localDataSource) {
+        this.localDataSource = localDataSource;
         this.apiService = apiService;
         locationProvider = new ReactiveLocationProvider(context);
     }
@@ -78,6 +76,7 @@ public class DataManager {
         this.apiService = apiService;
     }
 
+    @Override
     public List<Business> getAugumentedRealityPlaces() {
         return augumentedRealityPlaces;
     }
@@ -104,8 +103,9 @@ public class DataManager {
         Log.d(LOG_TAG, "Augumented reality size : " + augumentedRealityPlaces.size());
     }
 
+    @Override
     public Observable<AccessToken> loadAccessToken() {
-        AccessToken accessToken = preferencesHelper.getAccessToken();
+        AccessToken accessToken = localDataSource.getAccessToken();
 
         if (accessToken == null) {
             return apiService.getAccessToken(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET);
@@ -115,6 +115,7 @@ public class DataManager {
     }
 
 
+    @Override
     @SuppressLint("MissingPermission")
     @RequiresPermission(ACCESS_FINE_LOCATION)
     public Observable<Location> getLastKnownLocation() {
@@ -173,6 +174,7 @@ public class DataManager {
         }
     }
 
+    @Override
     public Observable<SearchResponse> loadBusinesses(String term, String category) {
         Observable<SearchResponse> observable;
         if (Objects.equals(category, CafesPresenter.CAFES) && cafes != null && !cafes.isEmpty()) {
@@ -199,25 +201,25 @@ public class DataManager {
         return observable;
     }
 
+    @Override
     public Observable<Business> loadBusinessDetails(String id) {
         return apiService.getBusinessDetails(id);
     }
 
+    @Override
     public Observable<ReviewsResponse> loadReviews(String id) {
         Observable<ReviewsResponse> observable;
         observable = apiService.getBusinessReviews(id, LOCALE);
         return observable;
     }
 
+    @Override
     public void saveAccessToken(AccessToken accessToken) {
         ServiceFactory.accessToken = accessToken;
-        preferencesHelper.saveObject(accessToken);
+        localDataSource.saveObject(accessToken);
     }
 
-    public void setLastLocation(Location location) {
-        this.lastLocation = location;
-    }
-
+    @Override
     public synchronized void saveBusinesses(@NonNull List<Business> businesses, String category) {
         checkNotNull(businesses);
         switch (category) {
@@ -244,23 +246,26 @@ public class DataManager {
     }
 
     public void saveInSharedPreferences(String label, boolean value) {
-        preferencesHelper.putBoolean(label, value);
+        localDataSource.putBoolean(label, value);
     }
 
+    @Override
     public boolean getFromSharedPreferences(String label, boolean value) {
-        return preferencesHelper.getBoolean(label, value);
+        return localDataSource.getBoolean(label, value);
     }
 
+    @Override
     public void saveInSharedPreferences(String stringToSave, String label) {
-        preferencesHelper.saveString(stringToSave, label);
+        localDataSource.saveString(stringToSave, label);
     }
 
+    @Override
     public String getFromSharedPreferences(String label) {
-        return preferencesHelper.getString(label);
+        return localDataSource.getString(label);
     }
 
     public void removeFromSharedPreferences(String label) {
-        preferencesHelper.removeFromSharedPreferences(label);
+        localDataSource.removeFromSharedPreferences(label);
     }
 
     public boolean isFirstTimeLunched() {
@@ -271,20 +276,20 @@ public class DataManager {
         return restaurants;
     }
 
-    public List<Business> getCafes() {
-        return cafes;
-    }
-
-    public List<Business> getDeliveries() {
-        return deliveries;
-    }
-
     public void setRestaurants(List<Business> restaurants) {
         this.restaurants = restaurants;
     }
 
+    public List<Business> getCafes() {
+        return cafes;
+    }
+
     public void setCafes(List<Business> cafes) {
         this.cafes = cafes;
+    }
+
+    public List<Business> getDeliveries() {
+        return deliveries;
     }
 
     public void setDeliveries(List<Business> deliveries) {
@@ -293,6 +298,11 @@ public class DataManager {
 
     public Location getLastLocation() {
         return lastLocation;
+    }
+
+    @Override
+    public void setLastLocation(Location location) {
+        this.lastLocation = location;
     }
 
 }

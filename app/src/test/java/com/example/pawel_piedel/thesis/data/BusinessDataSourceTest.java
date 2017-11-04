@@ -24,7 +24,6 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
  * Created by Pawel_Piedel on 01.09.2017.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DataManagerTest {
+public class BusinessDataSourceTest {
 
     @Mock
     SharedPreferencesManager preferenceHelper;
@@ -40,12 +39,12 @@ public class DataManagerTest {
     @Mock
     ApiService apiService;
 
-    DataManager dataManager;
+    BusinessRepository businessRepository;
 
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        dataManager = new DataManager(new MockContext(),apiService, preferenceHelper);
+        businessRepository = new BusinessRepository(new MockContext(), apiService, preferenceHelper);
     }
 
 
@@ -59,7 +58,7 @@ public class DataManagerTest {
 
         //then load access token from Internet
         TestSubscriber<AccessToken> testSubscriber = TestSubscriber.create();
-        dataManager.loadAccessToken().subscribe(testSubscriber);
+        businessRepository.loadAccessToken().subscribe(testSubscriber);
 
         //assert everything is ok
         testSubscriber.assertReceivedOnNext(Collections.singletonList(accessToken));
@@ -71,11 +70,11 @@ public class DataManagerTest {
     @Test
     public void getLastKnownLocationFromDatamanagerField() throws Exception {
         Location lastlocation = Mockito.mock(Location.class);
-        dataManager.setLastLocation(lastlocation);
+        businessRepository.setLastLocation(lastlocation);
 
         TestSubscriber<Location> locationTestSubscriber = TestSubscriber.create();
 
-        dataManager.getLastKnownLocation().subscribe(locationTestSubscriber);
+        businessRepository.getLastKnownLocation().subscribe(locationTestSubscriber);
 
         locationTestSubscriber.assertNoErrors();
         locationTestSubscriber.assertCompleted();
@@ -97,7 +96,7 @@ public class DataManagerTest {
         when(apiService.getBusinessDetails(anyString())).thenReturn(Observable.just(business));
 
         TestSubscriber<Business> testSubscriber = TestSubscriber.create();
-        dataManager.loadBusinessDetails("example_id").subscribe(testSubscriber);
+        businessRepository.loadBusinessDetails("example_id").subscribe(testSubscriber);
 
         testSubscriber.assertReceivedOnNext(Collections.singletonList(business));
         testSubscriber.assertNoErrors();
@@ -111,7 +110,7 @@ public class DataManagerTest {
         when(apiService.getBusinessReviews(anyString(),anyString())).thenReturn(Observable.just(reviewsResponse));
 
         TestSubscriber<ReviewsResponse> testSubscriber = TestSubscriber.create();
-        dataManager.loadReviews("example_id").subscribe(testSubscriber);
+        businessRepository.loadReviews("example_id").subscribe(testSubscriber);
 
         testSubscriber.assertReceivedOnNext(Collections.singletonList(reviewsResponse));
         testSubscriber.assertNoErrors();
@@ -121,7 +120,7 @@ public class DataManagerTest {
     @Test
     public void saveAccessToken() throws Exception {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
-        dataManager.saveAccessToken(accessToken);
+        businessRepository.saveAccessToken(accessToken);
 
         verify(preferenceHelper).saveObject(accessToken);
 

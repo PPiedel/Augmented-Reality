@@ -31,9 +31,7 @@ import com.example.pawel_piedel.thesis.ui.base.BaseActivity;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 import com.example.pawel_piedel.thesis.ui.network_connection.NetworkFragment;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,8 +44,51 @@ import static com.example.pawel_piedel.thesis.ui.main.BusinessAdapter.BUSINESS;
 
 public class ARActivity extends BaseActivity implements ARContract.View {
     private final String LOG_TAG = ARActivity.class.getSimpleName();
-    private CameraCaptureSession cameraCaptureSessions;
-    private CaptureRequest.Builder captureRequestBuilder;
+    @BindView(R.id.textureaAR)
+    AutoFitTextureView textureView;
+    @BindView(R.id.businessViewAR)
+
+    LinearLayout businessView;
+    @BindView(R.id.businessTitleAR)
+
+    TextView businessTitle;
+    @BindView(R.id.businessDistanceAR)
+
+    TextView businessDistance;
+    @BindView(R.id.businessAddress1AR)
+    TextView businessAddress1;
+    @BindView(R.id.businessAddress2AR)
+    TextView businessAddress2;
+    @BindView(R.id.rating_barAR)
+    RatingBar ratingBar;
+    @BindView(R.id.ratingAR)
+    TextView rating;
+    @BindView(R.id.review_countAR)
+    TextView reviewCount;
+    @BindView(R.id.priceRangeAR)
+    TextView priceRange;
+    @BindView(R.id.touch_ar)
+    ImageView touchIcon;
+    @Inject
+    ARPresenter<ARContract.View> presenter;
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(CameraDevice camera) {
+            presenter.setCameraDevice(camera);
+            presenter.onCameraOpened();
+        }
+
+        @Override
+        public void onDisconnected(CameraDevice camera) {
+            presenter.closeCamera();
+        }
+
+        @Override
+        public void onError(CameraDevice camera, int error) {
+            presenter.closeCamera();
+            presenter.setCameraDevice(null);
+        }
+    };
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -69,64 +110,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
-
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice camera) {
-            presenter.setCameraDevice(camera);
-            presenter.onCameraOpened();
-        }
-
-        @Override
-        public void onDisconnected(CameraDevice camera) {
-            presenter.closeCamera();
-        }
-
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            presenter.closeCamera();
-            presenter.setCameraDevice(null);
-        }
-    };
-
-    @BindView(R.id.textureaAR)
-    AutoFitTextureView textureView;
-
-    @BindView(R.id.businessViewAR)
-
-    LinearLayout businessView;
-
-    @BindView(R.id.businessTitleAR)
-
-    TextView businessTitle;
-
-    @BindView(R.id.businessDistanceAR)
-
-    TextView businessDistance;
-
-    @BindView(R.id.businessAddress1AR)
-    TextView businessAddress1;
-
-    @BindView(R.id.businessAddress2AR)
-    TextView businessAddress2;
-
-    @BindView(R.id.rating_barAR)
-    RatingBar ratingBar;
-
-    @BindView(R.id.ratingAR)
-    TextView rating;
-
-    @BindView(R.id.review_countAR)
-    TextView reviewCount;
-
-    @BindView(R.id.priceRangeAR)
-    TextView priceRange;
-
-    @BindView(R.id.touch_ar)
-    ImageView touchIcon;
-
-    @Inject
-    ARPresenter<ARContract.View> presenter;
+    private CameraCaptureSession cameraCaptureSessions;
+    private CaptureRequest.Builder captureRequestBuilder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -136,9 +121,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
         addNetworkConnectionFragment();
-        presenter.attachView(this);
 
-        presenter.setReactiveSensors(this);
+        presenter.onViewCreated(this);
 
         textureView.setSurfaceTextureListener(textureListener);
 
@@ -295,6 +279,10 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setPresenter(ARPresenter<ARContract.View> presenter) {
+        this.presenter = presenter;
     }
 
     @Override

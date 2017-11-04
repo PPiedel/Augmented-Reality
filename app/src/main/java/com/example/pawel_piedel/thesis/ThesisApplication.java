@@ -3,7 +3,7 @@ package com.example.pawel_piedel.thesis;
 import android.app.Application;
 import android.content.Context;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessRepository;
 import com.example.pawel_piedel.thesis.injection.components.ApplicationComponent;
 import com.example.pawel_piedel.thesis.injection.components.DaggerApplicationComponent;
 import com.example.pawel_piedel.thesis.injection.modules.ApplicationModule;
@@ -15,10 +15,13 @@ import javax.inject.Inject;
  */
 
 public class ThesisApplication extends Application {
+    @Inject
+    BusinessRepository businessRepository;
     private ApplicationComponent mApplicationComponent;
 
-    @Inject
-    DataManager dataManager;
+    public static ThesisApplication get(Context context) {
+        return (ThesisApplication) context.getApplicationContext();
+    }
 
     @Override
     public void onCreate() {
@@ -28,11 +31,6 @@ public class ThesisApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .build();
         mApplicationComponent.inject(this);
-    }
-
-
-    public static ThesisApplication get(Context context) {
-        return (ThesisApplication) context.getApplicationContext();
     }
 
     public ApplicationComponent getComponent() {

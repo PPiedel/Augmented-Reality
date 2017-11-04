@@ -1,6 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessRepository;
 
 import junit.framework.Assert;
 
@@ -14,8 +14,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 
-import static org.mockito.Mockito.verify;
-
 
 /**
  * Created by Pawel_Piedel on 30.08.2017.
@@ -23,24 +21,20 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class ARPresenterTest {
 
-    @Mock
-    ARContract.View view;
-
-    @Mock
-    DataManager dataManager;
-
-    @Mock
-    ReactiveSensorManager reactiveSensorManager;
-
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-
+    @Mock
+    ARContract.View view;
+    @Mock
+    BusinessRepository businessRepository;
+    @Mock
+    ReactiveSensorManager reactiveSensorManager;
     private ARPresenter<ARContract.View> presenter;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        presenter = new ARPresenter<>(dataManager);
+        presenter = new ARPresenter<>(businessRepository);
 
     }
 

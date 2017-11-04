@@ -6,7 +6,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -25,14 +25,13 @@ import rx.schedulers.Schedulers;
  */
 @ConfigPersistent
 public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
-    private final static String LOG_TAG = CafesPresenter.class.getName();
     public final static String CAFES = "cafes";
-
+    private final static String LOG_TAG = CafesPresenter.class.getName();
     private RxPermissions rxPermissions;
 
     @Inject
-    CafesPresenter(DataManager dataManager) {
-        super(dataManager);
+    CafesPresenter(BusinessDataSource businessDataSource) {
+        super(businessDataSource);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
                 .subscribe(granted -> {
                     getView().showProgressDialog();
-                    getDataManager().loadAccessTokenLocationPair()
+                    getBusinessDataSource().loadAccessTokenLocationPair()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
@@ -68,16 +67,16 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                                     if (accessTokenLocationPair.second == null){
                                         getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
                                     }
-                                    getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                                    getDataManager().setLastLocation(accessTokenLocationPair.second);
+                                    getBusinessDataSource().saveAccessToken(accessTokenLocationPair.first);
+                                    getBusinessDataSource().setLastLocation(accessTokenLocationPair.second);
                                 }
                             });
                 });
     }
 
     public void loadCafes() {
-        if (getDataManager().getLastLocation()!=null){
-            getDataManager().loadBusinesses("coffee", CAFES)
+        if (getBusinessDataSource().getLastLocation() != null) {
+            getBusinessDataSource().loadBusinesses("coffee", CAFES)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<SearchResponse>() {
@@ -96,7 +95,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
                         @Override
                         public void onNext(SearchResponse searchResponse) {
                             if (!searchResponse.getBusinesses().isEmpty()) {
-                                getDataManager().saveBusinesses(searchResponse.getBusinesses(), CAFES);
+                                getBusinessDataSource().saveBusinesses(searchResponse.getBusinesses(), CAFES);
                             }
                             getView().hideProgressDialog();
                             getView().showCafes(searchResponse.getBusinesses());

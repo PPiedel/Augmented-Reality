@@ -9,7 +9,7 @@ import android.hardware.camera2.CameraDevice;
 import android.location.Location;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
@@ -79,14 +79,21 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     @Inject
-    public ARPresenter(DataManager dataManager) {
-        super(dataManager);
+    public ARPresenter(BusinessDataSource businessDataSource) {
+        super(businessDataSource);
+    }
+
+    @Override
+    public void onViewCreated(V view) {
+        attachView(view);
+
+        setReactiveSensors((Context) view);
     }
 
     @Override
     public void attachView(V view) {
         super.attachView(view);
-        azimuths = new double[getDataManager().getAugumentedRealityPlaces().size()];
+        azimuths = new double[getBusinessDataSource().getAugumentedRealityPlaces().size()];
     }
 
     @Override
@@ -119,7 +126,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                             pointsTo = false;
                             checkPlacesAzimuthsAgainstNewAzimuth();
                             if (pointsTo) {
-                                getView().showBusinessOnScreen(getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
+                                getView().showBusinessOnScreen(getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
                             } else {
                                 getView().hideBusiness();
                             }
@@ -139,7 +146,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
                 } else if (pointsTo
-                        && getDataManager().getAugumentedRealityPlaces().get(placeIndex).getDistance() <= getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
+                        && getBusinessDataSource().getAugumentedRealityPlaces().get(placeIndex).getDistance() <= getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
                         && azimuthDelta < Math.abs(azimuths[bestMatchedPlaceIndex] - deviceAzimuth)) {
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
@@ -308,12 +315,12 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void observeDeviceLocation() {
-        if (getDataManager().getLastLocation() != null) {
-            updateBusinessAzimuths(getDataManager().getLastLocation());
+        if (getBusinessDataSource().getLastLocation() != null) {
+            updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
         }
-        locationSubscription = getDataManager().getLocationUpdates()
+        locationSubscription = getBusinessDataSource().getLocationUpdates()
                 .subscribeOn(Schedulers.io())
-                .filter(location -> locationsAreDifferent(location, getDataManager().getLastLocation()))
+                .filter(location -> locationsAreDifferent(location, getBusinessDataSource().getLastLocation()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override
@@ -329,7 +336,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                     @Override
                     public void onNext(Location location) {
-                        getDataManager().setLastLocation(location);
+                        getBusinessDataSource().setLastLocation(location);
                         updateBusinessAzimuths(location);
                     }
                 });
@@ -337,7 +344,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void openDetailActivity() {
-        getView().startDetailActivity(getDataManager().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
+        getView().startDetailActivity(getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
     }
 
     private boolean locationsAreDifferent(Location first, Location second) {
@@ -345,9 +352,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     private void updateBusinessAzimuths(Location currentLocation) {
-        if (!getDataManager().getAugumentedRealityPlaces().isEmpty()) {
+        if (!getBusinessDataSource().getAugumentedRealityPlaces().isEmpty()) {
             for (int i = 0; i < azimuths.length; i++) {
-                azimuths[i] = calculateTeoreticalAzimuth(getDataManager().getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
+                azimuths[i] = calculateTeoreticalAzimuth(getBusinessDataSource().getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
             }
         }
 
@@ -382,7 +389,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void unsubscribeThreeSensors(boolean azimuth, boolean accuracy, boolean location, boolean gravity) {
         reactiveSensorManager.unsubscribe(azimuthSubscription);
         reactiveSensorManager.unsubscribe(accuracySubscription);
-        getDataManager().safelyUnsubscribe(locationSubscription);
+        getBusinessDataSource().safelyUnsubscribe(locationSubscription);
 
         if (gravity) {
             reactiveSensorManager.unsubscribe(gravitySubscription);
@@ -437,6 +444,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void stopBackgroundThread() {
         cameraManager.stopBackgroundThread();
     }
+
 
     public void setStateCallback(CameraDevice.StateCallback stateCallback) {
         cameraManager.setStateCallback(stateCallback);

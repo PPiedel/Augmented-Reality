@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,16 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.detail.DetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

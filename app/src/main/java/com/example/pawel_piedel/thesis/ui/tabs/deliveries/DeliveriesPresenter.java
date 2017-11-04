@@ -5,7 +5,7 @@ import android.location.Location;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -24,14 +24,13 @@ import rx.schedulers.Schedulers;
  */
 @ConfigPersistent
 public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
-    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
     public final static String DELIVERIES = "deliveries";
-
+    private final static String LOG_TAG = DeliveriesPresenter.class.getName();
     private RxPermissions rxPermissions;
 
     @Inject
-    DeliveriesPresenter(DataManager dataManager) {
-        super(dataManager);
+    DeliveriesPresenter(BusinessDataSource businessDataSource) {
+        super(businessDataSource);
     }
 
 
@@ -55,8 +54,8 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                     getView().showProgressDialog();
                     Observable
                             .zip(
-                                    getDataManager().loadAccessToken(),
-                                    getDataManager().getLastKnownLocation(),
+                                    getBusinessDataSource().loadAccessToken(),
+                                    getBusinessDataSource().getLastKnownLocation(),
                                     Pair::create)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -77,16 +76,16 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                                     if (accessTokenLocationPair.second == null) {
                                         getView().showAlert("Lokalizacja", "Twoja lokalizacja nie mogła zostać ustalona.");
                                     }
-                                    getDataManager().saveAccessToken(accessTokenLocationPair.first);
-                                    getDataManager().setLastLocation(accessTokenLocationPair.second);
+                                    getBusinessDataSource().saveAccessToken(accessTokenLocationPair.first);
+                                    getBusinessDataSource().setLastLocation(accessTokenLocationPair.second);
                                 }
                             });
                 });
     }
 
     private void loadFromApi() {
-        if (getDataManager().getLastLocation() != null) {
-            getDataManager().loadBusinesses("delivery", DELIVERIES)
+        if (getBusinessDataSource().getLastLocation() != null) {
+            getBusinessDataSource().loadBusinesses("delivery", DELIVERIES)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<SearchResponse>() {
@@ -104,7 +103,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                         @Override
                         public void onNext(SearchResponse searchResponse) {
                             if (!searchResponse.getBusinesses().isEmpty()) {
-                                getDataManager().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
+                                getBusinessDataSource().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
                             }
                             getView().hideProgressDialog();
                             getView().showDeliveries(searchResponse.getBusinesses());

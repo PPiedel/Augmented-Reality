@@ -1,28 +1,24 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
-import android.app.Activity;
-import android.support.v4.app.ActivityCompat;
-import android.view.View;
+import android.app.AlertDialog;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
-import com.example.pawel_piedel.thesis.ui.main.MainActivity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
 /**
  * Created by Pawel_Piedel on 02.09.2017.
@@ -38,36 +34,45 @@ public class BaseActivityTest {
     public void setUp() {
         baseActivity = Robolectric.setupActivity(BaseActivity.class);
 
-
         assertNotNull(baseActivity);
 
     }
 
     @Test
-    public void showLocationPermissionsRequest() throws Exception {
-
-    }
-
-    @Test
-    public void showCameraPermissionRequest() throws Exception {
-
-    }
-
-
-    @Test
-    public void requestRequiredPermissions() throws Exception {
-    }
-
-    @Test
     public void showProgressDialog() throws Exception {
+        baseActivity.showProgressDialog();
+
+        assertNotNull(baseActivity.getProgressDialog());
+
+        assertTrue(baseActivity.getProgressDialog().isShowing());
     }
 
     @Test
-    public void hideProgressDialog() throws Exception {
+    public void hideProgressDialogWithoutShowingIt() throws Exception {
+        baseActivity.hideProgressDialog();
+
+        assertNull(baseActivity.getProgressDialog());
     }
 
     @Test
-    public void hasPermission() throws Exception {
+    public void hideProgressDialogAfterShowingIt() throws Exception {
+        baseActivity.showProgressDialog();
+        baseActivity.hideProgressDialog();
+
+        assertFalse(baseActivity.getProgressDialog().isShowing());
     }
+
+    @Test
+    public void showAlert() throws Exception {
+        baseActivity.showAlert("test", "test");
+        AlertDialog alert = ShadowAlertDialog.getLatestAlertDialog();
+
+        assertNotNull(alert);
+
+        ShadowAlertDialog sAlert = shadowOf(alert);
+        assertThat(sAlert.getTitle().toString(), is("test"));
+
+    }
+
 
 }

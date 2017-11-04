@@ -1,19 +1,10 @@
 package com.example.pawel_piedel.thesis.ui.main;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.net.Uri;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
 
-import com.example.pawel_piedel.thesis.BuildConfig;
-import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.google.android.gms.common.api.Status;
@@ -21,19 +12,10 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
-import java.util.Observer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import javax.inject.Inject;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
-import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQUEST_CODE;
 
 /**
  * Created by Pawel_Piedel on 18.07.2017.
@@ -41,14 +23,13 @@ import static com.example.pawel_piedel.thesis.util.Util.REQUEST_PERMISSIONS_REQU
 
 @ConfigPersistent
 public class MainPresenter<V extends MainContract.View> extends BasePresenter<V> implements MainContract.Presenter<V> {
-    private final static String LOG_TAG = MainPresenter.class.getName();
     public final static int REQUEST_CHECK_SETTINGS = 0;
-
+    private final static String LOG_TAG = MainPresenter.class.getName();
     private RxPermissions rxPermissions;
 
     @Inject
-    public MainPresenter(DataManager dataManager) {
-        super(dataManager);
+    public MainPresenter(BusinessDataSource businessDataSource) {
+        super(businessDataSource);
     }
 
     @Override
@@ -58,8 +39,8 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                 .request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
-                        getDataManager().addClosestPlacesToAugumentedRealityPlaces();
-                        // Log.d(LOG_TAG,getDataManager().getAugumentedRealityPlaces().toString());
+                        getBusinessDataSource().addClosestPlacesToAugumentedRealityPlaces();
+                        // Log.d(LOG_TAG,getBusinessDataSource().getAugumentedRealityPlaces().toString());
                         getView().startArActivity();
                     }
                 });
@@ -67,7 +48,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public void manageLocationSettings() {
-        getDataManager().getLocationSettingsResult()
+        getBusinessDataSource().getLocationSettingsResult()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<LocationSettingsResult>() {
                     @Override
@@ -106,7 +87,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public boolean isPlaceSaved(String id) {
-        return getDataManager().getFromSharedPreferences(id, true);
+        return getBusinessDataSource().getFromSharedPreferences(id, true);
     }
 
 }

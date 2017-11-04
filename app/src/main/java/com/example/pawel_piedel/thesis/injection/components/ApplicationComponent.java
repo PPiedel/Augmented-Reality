@@ -2,11 +2,11 @@ package com.example.pawel_piedel.thesis.injection.components;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.example.pawel_piedel.thesis.ThesisApplication;
-import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
+import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.local.LocalDataSource;
+import com.example.pawel_piedel.thesis.data.remote.ApiService;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.injection.modules.ApplicationModule;
 
@@ -27,5 +27,10 @@ public interface ApplicationComponent {
 
     Application application();
 
-    DataManager dataManager();
+    BusinessDataSource businessDataSource();
+
+    LocalDataSource localDataSource();
+
+    ApiService apiService();
+
 }

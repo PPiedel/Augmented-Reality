@@ -4,10 +4,9 @@ import android.location.Location;
 import android.util.Pair;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
-import com.example.pawel_piedel.thesis.data.remote.ServiceFactory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,7 +43,7 @@ public class CafesPresenterTest {
 
 
     @Mock
-    DataManager dataManager;
+    BusinessRepository businessRepository;
 
     @Before
     public void setUpSchedulers() throws Exception {
@@ -59,7 +58,7 @@ public class CafesPresenterTest {
     @Before
     public void initMocks(){
         MockitoAnnotations.initMocks(this);
-        presenter = new CafesPresenter<>(dataManager);
+        presenter = new CafesPresenter<>(businessRepository);
         presenter.attachView(view);
     }
 
@@ -75,7 +74,7 @@ public class CafesPresenterTest {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
         Location location = Mockito.mock(Location.class);
         Pair<AccessToken,Location> pair = new Pair<>(accessToken,location);
-        when(dataManager.loadAccessTokenLocationPair()).thenReturn(rx.Observable.just(pair));
+        when(businessRepository.loadAccessTokenLocationPair()).thenReturn(rx.Observable.just(pair));
 
         presenter.load();
 
@@ -87,10 +86,10 @@ public class CafesPresenterTest {
     @Test
     public void loadCafes() throws Exception {
         SearchResponse searchResponse = Mockito.mock(SearchResponse.class);
-        when(dataManager.loadBusinesses(anyString(),anyString())).thenReturn(rx.Observable.just(searchResponse));
+        when(businessRepository.loadBusinesses(anyString(), anyString())).thenReturn(rx.Observable.just(searchResponse));
 
         TestSubscriber<SearchResponse> testSubscriber = TestSubscriber.create();
-        dataManager.loadBusinesses("example_term","example_category").subscribe(testSubscriber);
+        businessRepository.loadBusinesses("example_term", "example_category").subscribe(testSubscriber);
 
         testSubscriber.assertReceivedOnNext(Collections.singletonList(searchResponse));
         testSubscriber.onCompleted();

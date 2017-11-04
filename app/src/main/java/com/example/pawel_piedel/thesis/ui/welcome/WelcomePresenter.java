@@ -3,14 +3,11 @@ package com.example.pawel_piedel.thesis.ui.welcome;
 import android.util.Log;
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.data.DataManager;
+import com.example.pawel_piedel.thesis.data.BusinessRepository;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
-
-import static android.support.v4.content.res.TypedArrayUtils.getString;
 
 /**
  * Created by Pawel_Piedel on 22.10.2017.
@@ -20,15 +17,15 @@ public class WelcomePresenter <V extends WelcomeContract.View> extends BasePrese
     private static final String lOG_TAG = WelcomePresenter.class.getSimpleName();
 
     @Inject
-    public WelcomePresenter(DataManager dataManager){
-        super(dataManager);
+    public WelcomePresenter(BusinessRepository businessRepository) {
+        super(businessRepository);
     }
 
     @Override
     public void onViewDuringCreation() {
-        if (getDataManager().isFirstTimeLunched()){
+        if (getBusinessDataSource().isFirstTimeLunched()) {
             getView().initLayout();
-            getDataManager().saveInSharedPreferences(DataManager.FIRST_TIME_LUNCHED,false);
+            getBusinessDataSource().saveInSharedPreferences(BusinessRepository.FIRST_TIME_LUNCHED, false);
         }
         else {
             getView().startMainActivity();

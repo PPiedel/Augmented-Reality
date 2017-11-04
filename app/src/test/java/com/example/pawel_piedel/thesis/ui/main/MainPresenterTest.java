@@ -1,27 +1,12 @@
 package com.example.pawel_piedel.thesis.ui.main;
 
-import com.example.pawel_piedel.thesis.data.DataManager;
-import com.example.pawel_piedel.thesis.ui.main.MainContract;
-import com.example.pawel_piedel.thesis.ui.main.MainPresenter;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.example.pawel_piedel.thesis.data.BusinessRepository;
 
-import org.apache.tools.ant.Main;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by Pawel_Piedel on 30.08.2017.
@@ -33,14 +18,14 @@ public class MainPresenterTest {
     MainContract.View mainView;
 
     @Mock
-    DataManager dataManager;
+    BusinessRepository businessRepository;
 
     private MainPresenter<MainContract.View> mainPresenter;
 
     @Before
     public void setUp() throws Exception{
         MockitoAnnotations.initMocks(this);
-        mainPresenter = new MainPresenter<>(dataManager);
+        mainPresenter = new MainPresenter<>(businessRepository);
         mainPresenter.attachView(mainView);
 
     }

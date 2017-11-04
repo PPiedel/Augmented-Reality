@@ -1,18 +1,13 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.example.pawel_piedel.thesis.R;
 import com.example.pawel_piedel.thesis.ThesisApplication;
@@ -56,6 +51,10 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
 
     protected void setUnBinder(Unbinder unBinder) {
         this.unbinder = unBinder;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
     }
 
     @Override
