@@ -1,12 +1,16 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import android.hardware.SensorEvent;
+import android.hardware.camera2.CameraDevice;
 import android.location.Location;
+import android.os.Handler;
+import android.util.Size;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.ThesisApplication;
 import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 
 import junit.framework.Assert;
@@ -31,7 +35,9 @@ import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.plugins.RxJavaTestRunner;
 import rx.schedulers.Schedulers;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -62,9 +68,14 @@ public class ARPresenterTest {
     Business business;
     @Mock
     Subscription subscription;
-
+    @Mock
+    Size size;
     @Mock
     CameraManager cameraManager;
+    @Mock
+    Handler handler;
+    @Mock
+    CameraDevice cameraDevice;
 
     private ARPresenter<ARContract.View> presenter;
 
@@ -88,6 +99,21 @@ public class ARPresenterTest {
         RxAndroidPlugins.getInstance().reset();
     }
 
+
+    @Test
+    public void detachView() throws Exception {
+        presenter.detachView();
+
+        assertNull(presenter.getView());
+    }
+
+    @Test
+    public void attachView() throws Exception {
+        presenter.detachView();
+
+        presenter.attachView(view);
+        Assert.assertNotNull(presenter.getView());
+    }
 
     @Test
     public void observeDeviceAzimuthShouldCallToast() throws Exception {
@@ -155,11 +181,51 @@ public class ARPresenterTest {
     public void onDeviceIsFlat() {
         presenter.onDeviceIsFlat();
 
-
         verify(view).hideBusiness();
         verify(view).showToast(anyString());
         assert !presenter.isTurnedOn();
     }
+
+    @Test
+    public void deviceIsFlatWhileTurnedOnShouldReturnTrue() throws Exception {
+        presenter.setTurnedOn(true);
+        presenter.setGroundDeviation(0.5f);
+        ARPresenter.PITCH_ACCURACY = 0.7;
+
+
+        assertTrue(presenter.deviceIsFlatWhileTurnedOn());
+
+    }
+
+    @Test
+    public void deviceIsFlatWhileTurnedOnShouldReturnFalse() throws Exception {
+        presenter.setTurnedOn(false);
+        presenter.setGroundDeviation(1.2f);
+        ARPresenter.PITCH_ACCURACY = 0.7;
+
+
+        assertFalse(presenter.deviceIsFlatWhileTurnedOn());
+
+    }
+
+    @Test
+    public void deviceIsVerticalWhileWasTurnedOffShouldReturnTrue() throws Exception {
+        presenter.setTurnedOn(false);
+        presenter.setGroundDeviation(1.2f);
+        ARPresenter.PITCH_ACCURACY = 0.7;
+
+        assertTrue(presenter.deviceIsVerticalWhileTurnedOff());
+    }
+
+    @Test
+    public void deviceIsVerticalWhileWasTurnedOffShouldReturnFalse() throws Exception {
+        presenter.setTurnedOn(true);
+        presenter.setGroundDeviation(1.2f);
+        ARPresenter.PITCH_ACCURACY = 0.7;
+
+        assertFalse(presenter.deviceIsVerticalWhileTurnedOff());
+    }
+
 
     @Test
     public void closeCamera() throws Exception {
@@ -178,6 +244,18 @@ public class ARPresenterTest {
         presenter.openCamera(test, test, testActivity);
 
         verify(cameraManager).openCamera(test, test, testActivity);
+    }
+
+    @Test
+    public void onCameraOpened() throws Exception {
+        presenter.setCameraManager(cameraManager);
+        when(cameraManager.getImageDimension()).thenReturn(size);
+        when(cameraManager.getmBackgroundHandler()).thenReturn(handler);
+        when(cameraManager.getCameraDevice()).thenReturn(cameraDevice);
+
+        presenter.onCameraOpened();
+
+        verify(view).showCameraPreview(size, handler, cameraDevice);
     }
 
     @Test
@@ -280,11 +358,129 @@ public class ARPresenterTest {
         assertTrue(presenter.isBetween(350, 10, 358));
     }
 
+    @Test
+    public void checkPlacesAgainstNewAzimuthShouldReturnTrueAndCorrectIndex() throws Exception {
+        double[] azimuths = new double[]{10, 20, 30};
+        ARPresenter.AZIMUTH_ACCURACY = 5;
+        presenter.setDeviceAzimuth(10);
+        presenter.setPointsTo(false);
+        presenter.setAzimuths(azimuths);
+
+        presenter.checkPlacesAzimuthsAgainstNewAzimuth();
+
+        assertTrue(presenter.isPointsTo());
+        assertEquals(0, presenter.getBestMatchedPlaceIndex());
+
+
+    }
 
     @Test
-    public void checkPlacesAgainstNewAzimuth() throws Exception {
-        double[] azimuths = new double[]{10, 20, 30};
+    public void checkPlacesAgainstNewAzimuthShouldReturnTrueAndCorrectIndex2() throws Exception {
+        double[] azimuths = new double[]{0, 15, 30};
+        ARPresenter.AZIMUTH_ACCURACY = 5;
+        presenter.setDeviceAzimuth(10);
+        presenter.setPointsTo(false);
+        presenter.setAzimuths(azimuths);
 
+        presenter.checkPlacesAzimuthsAgainstNewAzimuth();
+
+        assertTrue(presenter.isPointsTo());
+        assertEquals(1, presenter.getBestMatchedPlaceIndex());
+
+
+    }
+
+    @Test
+    public void checkplacesagainstnewazimuthShouldReturnFalse() throws Exception {
+        double[] azimuths = new double[]{0, 35, 30};
+        ARPresenter.AZIMUTH_ACCURACY = 5;
+        presenter.setDeviceAzimuth(15);
+        presenter.setPointsTo(false);
+        presenter.setAzimuths(azimuths);
+
+        presenter.checkPlacesAzimuthsAgainstNewAzimuth();
+
+        assertFalse(presenter.isPointsTo());
+
+    }
+
+    @Test
+    public void lowPass() throws Exception {
+        ARPresenter.ALPHA_PARAM = 0.5f;
+        float[] values = presenter.lowPassFilter(new float[]{0, 0, 0}, new float[]{30, 30, 30});
+
+        for (float v : values) {
+            assertEquals(15f, v);
+        }
+    }
+
+    @Test
+    public void locationsAreTheSameShouldReturnTrue() throws Exception {
+        Location first = new Location("first");
+        first.setLatitude(50);
+        first.setLongitude(45);
+        Location second = new Location("second");
+        second.setLatitude(50);
+        second.setLongitude(45);
+
+        assertTrue(presenter.locationsAreTheSame(first, second));
+    }
+
+    @Test
+    public void locationsAreTheSameShouldReturnFalse() throws Exception {
+        Location first = new Location("first");
+        first.setLatitude(50);
+        first.setLongitude(45);
+        Location second = new Location("second");
+        second.setLatitude(50);
+        second.setLatitude(90);
+
+        assertFalse(presenter.locationsAreTheSame(first, second));
+    }
+
+    @Test
+    public void calculateTheoreticalAzimuthShouldReturn45() throws Exception {
+        Coordinates coordinates = new Coordinates();
+        coordinates.setLatitude(50);
+        coordinates.setLongitude(50);
+
+        Location location = new Location("test");
+        location.setLatitude(30);
+        location.setLongitude(30);
+        double azimuth = presenter.calculateTeoreticalAzimuth(coordinates, location);
+        assertEquals((double) 45, azimuth);
+
+    }
+
+    @Test
+    public void calculateTheoreticalAzimuthShouldReturn90() throws Exception {
+        Coordinates coordinates = new Coordinates();
+        coordinates.setLongitude(0);
+        coordinates.setLatitude(0);
+
+
+        Location location = new Location("test");
+        location.setLongitude(90);
+        location.setLatitude(0);
+
+        double azimuth = presenter.calculateTeoreticalAzimuth(coordinates, location);
+        assertEquals((double) 90, azimuth);
+
+    }
+
+    @Test
+    public void calculateTheoreticalAzimuthShouldReturn0() throws Exception {
+        Coordinates coordinates = new Coordinates();
+        coordinates.setLongitude(0);
+        coordinates.setLatitude(0);
+
+
+        Location location = new Location("test");
+        location.setLongitude(0);
+        location.setLatitude(90);
+
+        double azimuth = presenter.calculateTeoreticalAzimuth(coordinates, location);
+        assertEquals((double) 0, azimuth);
 
     }
 

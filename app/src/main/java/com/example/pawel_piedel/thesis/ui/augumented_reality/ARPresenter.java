@@ -48,13 +48,15 @@ import rx.android.schedulers.AndroidSchedulers;
 @ConfigPersistent
 public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> implements ARContract.Presenter<V> {
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
-    private static final float ALPHA_PARAM = 0.5f;
-    private static final double PITCH_ACCURACY = 0.7;
     private static final double PI_DIVIDED_BY_TWO = Math.PI / 2;
     private static final int Z_AXIS = 0;
-    public static int AZIMUTH_ACCURACY = 12;
+    static float ALPHA_PARAM = 0.5f;
+    static double PITCH_ACCURACY = 0.7;
+    static int AZIMUTH_ACCURACY = 12;
+
     @Inject
     CameraManager cameraManager;
+
     private int deviceAzimuth = 0;
     private float gravity = 0;
     private float[] gravityVector = new float[3];
@@ -138,7 +140,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
-    private void checkPlacesAzimuthsAgainstNewAzimuth() {
+    public void checkPlacesAzimuthsAgainstNewAzimuth() {
         for (int placeIndex = 0; placeIndex < azimuths.length; placeIndex++) {
             if (newAzimuthPointsTo(azimuths[placeIndex], deviceAzimuth)) {
                 azimuthDelta = Math.abs(azimuths[placeIndex] - deviceAzimuth);
@@ -217,9 +219,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         @Override
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             groundDeviation = calculateGravity(reactiveSensorEvent);
-                            if (deviceIsFlat()) {
+                            if (deviceIsFlatWhileTurnedOn()) {
                                 onDeviceIsFlat();
-                            } else if (deviceIsVertical()) {
+                            } else if (deviceIsVerticalWhileTurnedOff()) {
                                 onDeviceIsVertical();
                             }
                         }
@@ -233,7 +235,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
             updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
         }
         locationSubscription = getBusinessDataSource().getLocationUpdates()
-                .filter(location -> locationsAreDifferent(location, getBusinessDataSource().getLastLocation()))
+                .filter(location -> !locationsAreTheSame(location, getBusinessDataSource().getLastLocation()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override
@@ -255,11 +257,11 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                 });
     }
 
-    private boolean deviceIsVertical() {
+    public boolean deviceIsVerticalWhileTurnedOff() {
         return !turnedOn && groundDeviation > PI_DIVIDED_BY_TWO - PITCH_ACCURACY && groundDeviation < PI_DIVIDED_BY_TWO + PITCH_ACCURACY;
     }
 
-    private boolean deviceIsFlat() {
+    public boolean deviceIsFlatWhileTurnedOn() {
         return turnedOn && (groundDeviation < PI_DIVIDED_BY_TWO - PITCH_ACCURACY || groundDeviation > PI_DIVIDED_BY_TWO + PITCH_ACCURACY);
     }
 
@@ -271,7 +273,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         getView().showToast("Umieść swoje urządzenie pionowo, aby znów zacząć korzystać z trybu rozszerzonej rzeczywistości.");
     }
 
-    private void onDeviceIsVertical() {
+    public void onDeviceIsVertical() {
         startObservingSensors();
         turnedOn = true;
         getView().showToast("Znów korzystasz z trybu rozszerzonej rzeczywistości.");
@@ -333,14 +335,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     }
 
-    private float[] lowPassFilter(float[] input, float[] output) {
-        if (output == null) return input;
-        for (int i = 0; i < input.length; i++) {
-            output[i] = output[i] + ALPHA_PARAM * (input[i] - output[i]);
+    public float[] lowPassFilter(float[] newValues, float[] oldValues) {
+        if (oldValues == null) return newValues;
+        for (int i = 0; i < newValues.length; i++) {
+            oldValues[i] = oldValues[i] + ALPHA_PARAM * (newValues[i] - oldValues[i]);
         }
-        return output;
+        return oldValues;
     }
-
 
 
     @Override
@@ -348,8 +349,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         getView().startDetailActivity(getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
     }
 
-    private boolean locationsAreDifferent(Location first, Location second) {
-        return first.getLatitude() != second.getLatitude() && first.getLongitude() != second.getLongitude();
+    public boolean locationsAreTheSame(Location first, Location second) {
+        return first.getLatitude() == second.getLatitude() && first.getLongitude() == second.getLongitude();
     }
 
     private void updateBusinessAzimuths(Location currentLocation) {
@@ -361,8 +362,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     }
 
-    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
-    private double calculateTeoreticalAzimuth(Coordinates coordinates, Location currentLocation) {
+    /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java
+    * and Jagielski A, Geodezja 1, str. 201*/
+    public double calculateTeoreticalAzimuth(Coordinates coordinates, Location currentLocation) {
         double dX = coordinates.getLatitude() - currentLocation.getLatitude();
         double dY = coordinates.getLongitude() - currentLocation.getLongitude();
 
@@ -451,15 +453,47 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         cameraManager.setStateCallback(stateCallback);
     }
 
-    public void setReactiveSensorManager(ReactiveSensorManager reactiveSensorManager) {
-        this.reactiveSensorManager = reactiveSensorManager;
-    }
-
     public boolean isTurnedOn() {
         return turnedOn;
     }
 
+    public void setTurnedOn(boolean turnedOn) {
+        this.turnedOn = turnedOn;
+    }
+
     public void setCameraManager(CameraManager cameraManager) {
         this.cameraManager = cameraManager;
+    }
+
+    public void setAzimuths(double[] azimuths) {
+        this.azimuths = azimuths;
+    }
+
+    public void setDeviceAzimuth(int deviceAzimuth) {
+        this.deviceAzimuth = deviceAzimuth;
+    }
+
+    public boolean isPointsTo() {
+        return pointsTo;
+    }
+
+    public void setPointsTo(boolean pointsTo) {
+        this.pointsTo = pointsTo;
+    }
+
+    public int getBestMatchedPlaceIndex() {
+        return bestMatchedPlaceIndex;
+    }
+
+    public ReactiveSensorManager getReactiveSensorManager() {
+        return reactiveSensorManager;
+    }
+
+    public void setReactiveSensorManager(ReactiveSensorManager reactiveSensorManager) {
+        this.reactiveSensorManager = reactiveSensorManager;
+    }
+
+    public void setGroundDeviation(float groundDeviation) {
+        this.groundDeviation = groundDeviation;
     }
 }
