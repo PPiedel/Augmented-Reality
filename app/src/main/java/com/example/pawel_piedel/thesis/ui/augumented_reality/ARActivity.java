@@ -74,7 +74,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-            presenter.setCameraDevice(camera);
+            presenter.setCameraManagerDevice(camera);
             presenter.onCameraOpened();
         }
 
@@ -86,7 +86,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         @Override
         public void onError(CameraDevice camera, int error) {
             presenter.closeCamera();
-            presenter.setCameraDevice(null);
+            presenter.setCameraManagerDevice(null);
         }
     };
     private final TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {

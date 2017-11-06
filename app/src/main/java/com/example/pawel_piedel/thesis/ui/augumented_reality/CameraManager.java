@@ -48,8 +48,41 @@ public class CameraManager {
     private Context context;
 
     @Inject
-    CameraManager(@ApplicationContext Context context){
+    CameraManager(@ApplicationContext Context context) {
         this.context = context;
+    }
+
+    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
+                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
+
+        // Collect the supported resolutions that are at least as big as the preview Surface
+        List<Size> bigEnough = new ArrayList<>();
+        // Collect the supported resolutions that are smaller than the preview Surface
+        List<Size> notBigEnough = new ArrayList<>();
+        int w = aspectRatio.getWidth();
+        int h = aspectRatio.getHeight();
+        for (Size option : choices) {
+            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
+                    option.getHeight() == option.getWidth() * h / w) {
+                if (option.getWidth() >= textureViewWidth &&
+                        option.getHeight() >= textureViewHeight) {
+                    bigEnough.add(option);
+                } else {
+                    notBigEnough.add(option);
+                }
+            }
+        }
+
+        // Pick the smallest of those big enough. If there is no one big enough, pick the
+        // largest of those not big enough.
+        if (bigEnough.size() > 0) {
+            return Collections.min(bigEnough, new CompareSizesByArea());
+        } else if (notBigEnough.size() > 0) {
+            return Collections.max(notBigEnough, new CompareSizesByArea());
+        } else {
+            Log.e(LOG_TAG, "Couldn't find any suitable preview size");
+            return choices[0];
+        }
     }
 
     public Size getImageDimension() {
@@ -64,24 +97,24 @@ public class CameraManager {
         return cameraDevice;
     }
 
-    public void setStateCallback(CameraDevice.StateCallback stateCallback) {
-        this.stateCallback = stateCallback;
-    }
-
     public void setCameraDevice(CameraDevice cameraDevice) {
         this.cameraDevice = cameraDevice;
     }
 
+    public void setStateCallback(CameraDevice.StateCallback stateCallback) {
+        this.stateCallback = stateCallback;
+    }
+
     @SuppressLint("MissingPermission")
-    public void openCamera(int width, int height,ARActivity activity) {
+    public void openCamera(int width, int height, ARActivity activity) {
         android.hardware.camera2.CameraManager manager = (android.hardware.camera2.CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         Log.e(LOG_TAG, "is camera open");
         try {
             String cameraId = manager.getCameraIdList()[0];
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            setUpCameraOutputs(characteristics, width, height,activity);
-            configureTransform(width, height,activity);
+            setUpCameraOutputs(characteristics, width, height, activity);
+            configureTransform(width, height, activity);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
 
@@ -107,7 +140,6 @@ public class CameraManager {
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
-
 
     public void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
@@ -188,7 +220,6 @@ public class CameraManager {
 
     }
 
-
     public void configureTransform(int viewWidth, int viewHeight, ARActivity activity) {
 
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -210,40 +241,6 @@ public class CameraManager {
         }
 
         activity.setTransform(matrix);
-    }
-
-
-    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
-                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
-
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        // Collect the supported resolutions that are smaller than the preview Surface
-        List<Size> notBigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
-                    option.getHeight() == option.getWidth() * h / w) {
-                if (option.getWidth() >= textureViewWidth &&
-                        option.getHeight() >= textureViewHeight) {
-                    bigEnough.add(option);
-                } else {
-                    notBigEnough.add(option);
-                }
-            }
-        }
-
-        // Pick the smallest of those big enough. If there is no one big enough, pick the
-        // largest of those not big enough.
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else if (notBigEnough.size() > 0) {
-            return Collections.max(notBigEnough, new CompareSizesByArea());
-        } else {
-            Log.e(LOG_TAG, "Couldn't find any suitable preview size");
-            return choices[0];
-        }
     }
 
     static class CompareSizesByArea implements Comparator<Size> {

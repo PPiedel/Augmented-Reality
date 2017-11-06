@@ -4,12 +4,10 @@ import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.data.BusinessDataSource;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -25,9 +23,6 @@ import static org.mockito.Mockito.verify;
 @Config(constants = BuildConfig.class)
 public class ARActivityTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     @Mock
     ARPresenter<ARContract.View> presenter;
 
@@ -40,7 +35,7 @@ public class ARActivityTest {
 
     @Before
     public void setUp() {
-
+        MockitoAnnotations.initMocks(this);
         controller = Robolectric.buildActivity(ARActivity.class);
         activity = controller.get();
         activity.setPresenter(presenter);

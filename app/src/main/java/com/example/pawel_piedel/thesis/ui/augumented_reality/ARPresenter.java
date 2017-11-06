@@ -48,11 +48,11 @@ import rx.android.schedulers.AndroidSchedulers;
 @ConfigPersistent
 public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> implements ARContract.Presenter<V> {
     private final static String LOG_TAG = ARPresenter.class.getSimpleName();
-    private static final float ALPHA_PARAM = 0.3f;
-    private static final int AZIMUTH_ACCURACY = 12;
+    private static final float ALPHA_PARAM = 0.5f;
     private static final double PITCH_ACCURACY = 0.7;
     private static final double PI_DIVIDED_BY_TWO = Math.PI / 2;
     private static final int Z_AXIS = 0;
+    public static int AZIMUTH_ACCURACY = 12;
     @Inject
     CameraManager cameraManager;
     private int deviceAzimuth = 0;
@@ -140,7 +140,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     private void checkPlacesAzimuthsAgainstNewAzimuth() {
         for (int placeIndex = 0; placeIndex < azimuths.length; placeIndex++) {
-            if (newAzimuthPointsTo(azimuths[placeIndex])) {
+            if (newAzimuthPointsTo(azimuths[placeIndex], deviceAzimuth)) {
                 azimuthDelta = Math.abs(azimuths[placeIndex] - deviceAzimuth);
                 if (!pointsTo) {
                     pointsTo = true;
@@ -228,6 +228,33 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         }
     }
 
+    public void observeDeviceLocation() {
+        if (getBusinessDataSource().getLastLocation() != null) {
+            updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
+        }
+        locationSubscription = getBusinessDataSource().getLocationUpdates()
+                .filter(location -> locationsAreDifferent(location, getBusinessDataSource().getLastLocation()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Location>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(LOG_TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(Location location) {
+                        getBusinessDataSource().setLastLocation(location);
+                        updateBusinessAzimuths(location);
+                    }
+                });
+    }
+
     private boolean deviceIsVertical() {
         return !turnedOn && groundDeviation > PI_DIVIDED_BY_TWO - PITCH_ACCURACY && groundDeviation < PI_DIVIDED_BY_TWO + PITCH_ACCURACY;
     }
@@ -236,7 +263,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return turnedOn && (groundDeviation < PI_DIVIDED_BY_TWO - PITCH_ACCURACY || groundDeviation > PI_DIVIDED_BY_TWO + PITCH_ACCURACY);
     }
 
-    private void onDeviceIsFlat() {
+    @Override
+    public void onDeviceIsFlat() {
         unsubscribeThreeSensors(true, true, true, false);
         getView().hideBusiness();
         turnedOn = false;
@@ -250,7 +278,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
-    private boolean newAzimuthPointsTo(double businessAzimuth) {
+    public boolean newAzimuthPointsTo(double businessAzimuth, double deviceAzimuth) {
         double minAngle = businessAzimuth - AZIMUTH_ACCURACY;
         double maxAngle = businessAzimuth + AZIMUTH_ACCURACY;
 
@@ -265,12 +293,12 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
-    private Boolean isBetween(double minAngle, double maxAngle, double deviceAzimuth) {
+    public Boolean isBetween(double minAngle, double maxAngle, double deviceAzimuth) {
         if (minAngle > maxAngle) {
-            if (isBetween(0, maxAngle, deviceAzimuth) && isBetween(minAngle, 360, deviceAzimuth))
+            if (isBetween(0, maxAngle, deviceAzimuth) || isBetween(minAngle, 360, deviceAzimuth))
                 return true;
         } else {
-            if (deviceAzimuth > minAngle && deviceAzimuth < maxAngle)
+            if (deviceAzimuth >= minAngle && deviceAzimuth <= maxAngle)
                 return true;
         }
         return false;
@@ -313,32 +341,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
         return output;
     }
 
-    public void observeDeviceLocation() {
-        if (getBusinessDataSource().getLastLocation() != null) {
-            updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
-        }
-        locationSubscription = getBusinessDataSource().getLocationUpdates()
-                .filter(location -> locationsAreDifferent(location, getBusinessDataSource().getLastLocation()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Location>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(LOG_TAG, e.getMessage());
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(Location location) {
-                        getBusinessDataSource().setLastLocation(location);
-                        updateBusinessAzimuths(location);
-                    }
-                });
-    }
 
     @Override
     public void openDetailActivity() {
@@ -414,7 +417,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
 
-    public void setCameraDevice(CameraDevice cameraDevice) {
+    public void setCameraManagerDevice(CameraDevice cameraDevice) {
         cameraManager.setCameraDevice(cameraDevice);
     }
 
@@ -450,5 +453,13 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     public void setReactiveSensorManager(ReactiveSensorManager reactiveSensorManager) {
         this.reactiveSensorManager = reactiveSensorManager;
+    }
+
+    public boolean isTurnedOn() {
+        return turnedOn;
+    }
+
+    public void setCameraManager(CameraManager cameraManager) {
+        this.cameraManager = cameraManager;
     }
 }

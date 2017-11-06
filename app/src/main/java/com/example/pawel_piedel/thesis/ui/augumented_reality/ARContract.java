@@ -61,5 +61,7 @@ public interface ARContract {
 
         void onViewCreated(V view);
 
+        void onDeviceIsFlat();
+
     }
 }
