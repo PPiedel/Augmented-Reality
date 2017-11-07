@@ -36,6 +36,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     public BusinessAdapter() {
     }
 
+    public List<Business> getBusinessList() {
+        return businessList;
+    }
 
     public void setBusinessList(List<Business> businessList) {
         this.businessList.clear();

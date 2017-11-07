@@ -31,6 +31,10 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
         super(businessDataSource);
     }
 
+    public Observable<Boolean> requestPermissions() {
+        return getView().getRxPermissions()
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE);
+    }
 
     @Override
     public void managePermissions() {
@@ -44,8 +48,7 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     public void loadDeliveries() {
-        getView().getRxPermissions()
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
+        requestPermissions()
                 .subscribe(granted -> {
                     getView().showProgressDialog();
                     Observable
@@ -105,10 +108,9 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
                             getView().showDeliveries(searchResponse.getBusinesses());
                         }
                     });
-        }
-        else {
+        } else {
             getView().hideProgressDialog();
-            getView().showAlert("Lokalizacja","Twoja lokalizacja nie mogłą zostać ustalona.");
+            getView().showAlert("Lokalizacja", "Twoja lokalizacja nie mogłą zostać ustalona.");
 
         }
 

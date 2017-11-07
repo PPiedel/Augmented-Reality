@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.ui.base.BaseView;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
@@ -21,6 +22,12 @@ public interface DeliveriesContract {
         Activity getParentActivity();
 
         RxPermissions getRxPermissions();
+
+        void setRxPermissions(RxPermissions rxPermissions);
+
+        void setDeliveriesPresenter(DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter);
+
+        BusinessAdapter getBusinessAdapter();
     }
 
 

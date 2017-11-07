@@ -1,9 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
-import android.Manifest;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,7 +43,7 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         // Required empty public constructor
     }
 
-    public static RestaurantsFragment newInstance(){
+    public static RestaurantsFragment newInstance() {
         return new RestaurantsFragment();
     }
 
@@ -53,51 +51,39 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_restaurants, container, false);
+        View view = inflater.inflate(R.layout.fragment_restaurants, container, false);
         ActivityComponent component = getActivityComponent();
         if (component != null) {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             restaurantsPresenter.attachView(this);
-            //mBlogAdapter.setCallback(this);
         }
         setUpRecyclerView();
 
-        RxPermissions rxPermissions = new RxPermissions(getActivity());
-        rxPermissions
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(granted -> {
-                    if (granted) { // Always true pre-M
-                        restaurantsPresenter.onViewPrepared();
-                    }
-                });
+        restaurantsPresenter.managePermissions();
 
 
         return view;
     }
 
     private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
-        mRecyclerView.setAdapter(businessAdapter);
+        if (mRecyclerView != null) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
+            mRecyclerView.setAdapter(businessAdapter);
+        }
     }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-    }
-
 
     @Override
     public void showRestaurants(List<Business> list) {
-        businessAdapter.setBusinessList(list);
+        if (list != null) {
+            businessAdapter.setBusinessList(list);
+        }
     }
 
-
     @Override
-    public Activity getParentActivity(){
+    public Activity getParentActivity() {
         return getActivity();
     }
 
@@ -106,5 +92,17 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         return rxPermissions;
     }
 
+    @Override
+    public void setRxPermissions(RxPermissions rxPermissions) {
+        this.rxPermissions = rxPermissions;
+    }
 
+    @Override
+    public BusinessAdapter getBusinessAdapter() {
+        return businessAdapter;
+    }
+
+    public void setRestaurantsPresenter(RestaurantsContract.Presenter<RestaurantsContract.View> restaurantsPresenter) {
+        this.restaurantsPresenter = restaurantsPresenter;
+    }
 }

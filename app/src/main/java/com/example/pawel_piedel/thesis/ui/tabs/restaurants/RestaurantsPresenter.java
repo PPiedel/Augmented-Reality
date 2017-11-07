@@ -13,6 +13,7 @@ import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -36,9 +37,13 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
         loadRestaurannts();
     }
 
+    public Observable<Boolean> requestPermissions() {
+        return getView().getRxPermissions()
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE);
+    }
+
     public void loadRestaurannts() {
-        getView().getRxPermissions()
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
+        requestPermissions()
                 .subscribe(granted -> {
                     if (granted) {
                         getView().showProgressDialog();
@@ -66,6 +71,16 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
                                         getBusinessDataSource().setLastLocation(accessTokenLocationPair.second);
                                     }
                                 });
+                    }
+                });
+    }
+
+    @Override
+    public void managePermissions() {
+        requestPermissions()
+                .subscribe(granted -> {
+                    if (granted) { // Always true pre-M
+                        loadRestaurannts();
                     }
                 });
     }

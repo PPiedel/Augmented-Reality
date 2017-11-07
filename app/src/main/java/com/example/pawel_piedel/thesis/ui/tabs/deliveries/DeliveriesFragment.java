@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -70,18 +69,13 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
     }
 
     private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
-        mRecyclerView.setAdapter(businessAdapter);
+        if (mRecyclerView != null) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
+            mRecyclerView.setAdapter(businessAdapter);
+        }
 
-
-    }
-
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -93,7 +87,9 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
     @Override
     public void showDeliveries(List<Business> deliveries) {
-        businessAdapter.setBusinessList(deliveries);
+        if (deliveries != null) {
+            businessAdapter.setBusinessList(deliveries);
+        }
     }
 
     @Override
@@ -106,4 +102,16 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
         return rxPermissions;
     }
 
+    @Override
+    public void setRxPermissions(RxPermissions rxPermissions) {
+        this.rxPermissions = rxPermissions;
+    }
+
+    public void setDeliveriesPresenter(DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter) {
+        this.deliveriesPresenter = deliveriesPresenter;
+    }
+
+    public BusinessAdapter getBusinessAdapter() {
+        return businessAdapter;
+    }
 }

@@ -60,6 +60,7 @@ dependencies {
 
     //robolectric
     testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile "org.robolectric:shadows-support-v4:3.3.2"
 
     //espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'

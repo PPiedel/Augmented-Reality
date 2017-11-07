@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,14 +25,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CafesFragment extends BaseFragment implements CafesContract.View {
-    private final BusinessAdapter businessAdapter =new  BusinessAdapter();
+    private static String LOG_TAG = CafesFragment.class.getName();
+    private final BusinessAdapter businessAdapter = new BusinessAdapter();
+
     @Inject
     CafesContract.Presenter<CafesContract.View> cafesPresenter;
     @Inject
     RxPermissions rxPermissions;
     @BindView(R.id.cafes_recycler_view)
     RecyclerView mRecyclerView;
-    private String LOG_TAG = CafesFragment.class.getName();
 
     public CafesFragment() {
         // Required empty public constructor
@@ -41,6 +41,10 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
 
     public static CafesFragment newInstance() {
         return new CafesFragment();
+    }
+
+    public void setmRecyclerView(RecyclerView mRecyclerView) {
+        this.mRecyclerView = mRecyclerView;
     }
 
     @Override
@@ -62,18 +66,12 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     }
 
     private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
-        mRecyclerView.setAdapter(businessAdapter);
-
-
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+        if (mRecyclerView != null) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
+            mRecyclerView.setAdapter(businessAdapter);
+        }
     }
 
     @Override
@@ -85,7 +83,10 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
 
     @Override
     public void showCafes(List<Business> cafes) {
-        businessAdapter.setBusinessList(cafes);
+        if (cafes != null) {
+            businessAdapter.setBusinessList(cafes);
+        }
+
     }
 
     @Override
@@ -97,7 +98,17 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         return rxPermissions;
     }
 
+    @Override
+    public void setRxPermissions(RxPermissions rxPermissions) {
+        this.rxPermissions = rxPermissions;
+    }
 
+    public void setCafesPresenter(CafesContract.Presenter<CafesContract.View> cafesPresenter) {
+        this.cafesPresenter = cafesPresenter;
+    }
 
-
+    @Override
+    public BusinessAdapter getBusinessAdapter() {
+        return businessAdapter;
+    }
 }

@@ -1,19 +1,15 @@
-package com.example.pawel_piedel.thesis.ui.tabs.cafes;
+package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.location.Location;
 
-import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.data.BusinessRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.Collections;
 
@@ -24,16 +20,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Pawel_Piedel on 02.09.2017.
+ * Created by Pawel_Piedel on 07.11.2017.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
-public class CafesPresenterTest {
+public class RestaurantsPresenterTest {
 
-    CafesPresenter<CafesContract.View> presenter;
+    RestaurantsPresenter<RestaurantsContract.View> presenter;
 
     @Mock
-    CafesContract.View view;
+    RestaurantsContract.View view;
     @Mock
     RxPermissions rxPermissions;
     @Mock
@@ -47,7 +41,7 @@ public class CafesPresenterTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        presenter = new CafesPresenter<>(businessRepository);
+        presenter = new RestaurantsPresenter<>(businessRepository);
         presenter.attachView(view);
     }
 
