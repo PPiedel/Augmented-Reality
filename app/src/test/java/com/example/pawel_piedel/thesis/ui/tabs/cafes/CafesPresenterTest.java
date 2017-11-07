@@ -7,8 +7,8 @@ import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.data.BusinessRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +20,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.Collections;
 
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -41,19 +37,13 @@ public class CafesPresenterTest {
     @Mock
     CafesContract.View view;
 
+    @Mock
+    RxPermissions rxPermissions;
+
 
     @Mock
     BusinessRepository businessRepository;
 
-    @Before
-    public void setUpSchedulers() throws Exception {
-        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
-            @Override
-            public Scheduler getMainThreadScheduler() {
-                return Schedulers.immediate();
-            }
-        });
-    }
 
     @Before
     public void initMocks(){
@@ -62,19 +52,13 @@ public class CafesPresenterTest {
         presenter.attachView(view);
     }
 
-
-    @After
-    public void tearDown() {
-        RxAndroidPlugins.getInstance().reset();
-    }
-
-
     @Test
     public void load() throws Exception {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
         Location location = Mockito.mock(Location.class);
         Pair<AccessToken,Location> pair = new Pair<>(accessToken,location);
         when(businessRepository.loadAccessTokenLocationPair()).thenReturn(rx.Observable.just(pair));
+        when(rxPermissions.isGranted(anyString())).thenReturn(true);
 
         presenter.load();
 

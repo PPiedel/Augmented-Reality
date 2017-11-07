@@ -1,7 +1,7 @@
 package com.example.pawel_piedel.thesis.ui.augumented_reality;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.model.Business;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -27,25 +28,59 @@ public class ARActivityTest {
     ARPresenter<ARContract.View> presenter;
 
     @Mock
-    BusinessDataSource businessDataSource;
-
-
-    private ActivityController<ARActivity> controller;
-    private ARActivity activity;
+    Business business;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        controller = Robolectric.buildActivity(ARActivity.class);
-        activity = controller.get();
-        activity.setPresenter(presenter);
-
     }
 
     @Test
-    public void onCreate() throws Exception {
-        controller.create();
+    public void onResume() throws Exception {
+        ActivityController<ARActivity> controller = Robolectric.buildActivity(ARActivity.class).create().start();
+        ARActivity activity = controller.get();
+        activity.setPresenter(presenter);
+        controller.resume();
 
-        verify(presenter).onViewCreated(activity);
+
+        verify(presenter).managePermissions();
     }
+
+    @Test
+    public void onPause() throws Exception {
+        ActivityController<ARActivity> controller = Robolectric.buildActivity(ARActivity.class).create().start();
+        ARActivity activity = controller.get();
+        activity.setPresenter(presenter);
+        controller.pause();
+
+
+        verify(presenter).closeCamera();
+        verify(presenter).stopBackgroundThread();
+        verify(presenter).unsubscribeThreeSensors(anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onDestroy() throws Exception {
+        ActivityController<ARActivity> controller = Robolectric.buildActivity(ARActivity.class).create().start();
+        ARActivity activity = controller.get();
+        activity.setPresenter(presenter);
+        controller.destroy();
+
+
+        verify(presenter).detachView();
+    }
+
+    @Test
+    public void startObserving() throws Exception {
+        ActivityController<ARActivity> controller = Robolectric.buildActivity(ARActivity.class).create().start();
+        ARActivity activity = controller.get();
+        activity.setPresenter(presenter);
+        activity.startObserving();
+
+
+        verify(presenter).startCameraBackgroundThread();
+        verify(presenter).observeGravitySensor();
+        verify(presenter).startObservingSensors();
+    }
+
 }

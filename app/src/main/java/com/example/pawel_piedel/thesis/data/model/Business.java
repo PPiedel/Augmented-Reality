@@ -3,11 +3,11 @@ package com.example.pawel_piedel.thesis.data.model;
 
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.Generated;
 
@@ -64,6 +64,7 @@ public class Business implements Comparable<Business>, Serializable {
     private List<String> transactions = null;
     @SerializedName("distance")
     private double distance;
+
 
     public String getId() {
         return id;

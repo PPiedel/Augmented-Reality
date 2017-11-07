@@ -16,6 +16,7 @@ import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
 import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -25,15 +26,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CafesFragment extends BaseFragment implements CafesContract.View {
-    private String LOG_TAG = CafesFragment.class.getName();
-
     private final BusinessAdapter businessAdapter =new  BusinessAdapter();
-
     @Inject
     CafesContract.Presenter<CafesContract.View> cafesPresenter;
-
+    @Inject
+    RxPermissions rxPermissions;
     @BindView(R.id.cafes_recycler_view)
     RecyclerView mRecyclerView;
+    private String LOG_TAG = CafesFragment.class.getName();
 
     public CafesFragment() {
         // Required empty public constructor
@@ -91,6 +91,10 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     @Override
     public Activity getParentActivity() {
         return getActivity();
+    }
+
+    public RxPermissions getRxPermissions() {
+        return rxPermissions;
     }
 
 

@@ -17,6 +17,7 @@ import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesContract;
 import com.example.pawel_piedel.thesis.ui.tabs.deliveries.DeliveriesPresenter;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsContract;
 import com.example.pawel_piedel.thesis.ui.tabs.restaurants.RestaurantsPresenter;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import dagger.Module;
 import dagger.Provides;
@@ -80,6 +81,12 @@ public class ActivityModule {
     @PerActivity
     DetailContract.Presenter<DetailContract.View> provideDetailsPresenter(DetailPresenter<DetailContract.View> presenter) {
         return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    RxPermissions provideRxPermissions() {
+        return new RxPermissions(mActivity);
     }
 
 }

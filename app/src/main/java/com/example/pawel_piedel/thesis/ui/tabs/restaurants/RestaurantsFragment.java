@@ -2,7 +2,6 @@ package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,10 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
@@ -33,8 +32,10 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
     private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-
     RestaurantsContract.Presenter<RestaurantsContract.View> restaurantsPresenter;
+
+    @Inject
+    RxPermissions rxPermissions;
 
     @BindView(R.id.restaurants_recycler_view)
 
@@ -100,7 +101,10 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         return getActivity();
     }
 
-
+    @Override
+    public RxPermissions getRxPermissions() {
+        return rxPermissions;
+    }
 
 
 }

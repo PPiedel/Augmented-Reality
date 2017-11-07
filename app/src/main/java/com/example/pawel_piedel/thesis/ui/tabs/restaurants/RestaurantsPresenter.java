@@ -10,7 +10,6 @@ import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
@@ -26,12 +25,10 @@ import rx.schedulers.Schedulers;
 public class RestaurantsPresenter<V extends RestaurantsContract.View> extends BasePresenter<V> implements RestaurantsContract.Presenter<V> {
     public final static String RESTAURANTS = "restaurants";
     private final static String LOG_TAG = RestaurantsPresenter.class.getSimpleName();
-    private RxPermissions rxPermissions;
 
     @Inject
     RestaurantsPresenter(BusinessDataSource businessDataSource) {
         super(businessDataSource);
-
     }
 
     @Override
@@ -40,8 +37,7 @@ public class RestaurantsPresenter<V extends RestaurantsContract.View> extends Ba
     }
 
     public void loadRestaurannts() {
-        rxPermissions = new RxPermissions(getView().getParentActivity());
-        rxPermissions
+        getView().getRxPermissions()
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
                 .subscribe(granted -> {
                     if (granted) {

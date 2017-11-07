@@ -27,7 +27,6 @@ import rx.schedulers.Schedulers;
 public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<V> implements CafesContract.Presenter<V> {
     public final static String CAFES = "cafes";
     private final static String LOG_TAG = CafesPresenter.class.getName();
-    private RxPermissions rxPermissions;
 
     @Inject
     CafesPresenter(BusinessDataSource businessDataSource) {
@@ -40,8 +39,7 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
     }
 
     public void load() {
-        rxPermissions = new RxPermissions(getView().getParentActivity());
-        rxPermissions
+        getView().getRxPermissions()
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE)
                 .subscribe(granted -> {
                     getView().showProgressDialog();

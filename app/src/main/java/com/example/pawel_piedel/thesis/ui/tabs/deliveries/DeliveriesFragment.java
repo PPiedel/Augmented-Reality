@@ -1,8 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pawel_piedel.thesis.R;
-import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.injection.components.ActivityComponent;
 import com.example.pawel_piedel.thesis.ui.base.BaseFragment;
+import com.example.pawel_piedel.thesis.ui.main.BusinessAdapter;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
@@ -33,8 +31,10 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
     private final BusinessAdapter businessAdapter = new BusinessAdapter();
 
     @Inject
-
     DeliveriesContract.Presenter<DeliveriesContract.View> deliveriesPresenter;
+
+    @Inject
+    RxPermissions rxPermissions;
 
     @BindView(R.id.deliveries_recycler_view)
 
@@ -99,6 +99,11 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
     @Override
     public Activity getParentActivity(){
         return getActivity();
+    }
+
+    @Override
+    public RxPermissions getRxPermissions() {
+        return rxPermissions;
     }
 
 }

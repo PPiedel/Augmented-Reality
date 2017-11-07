@@ -71,6 +71,8 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     ImageView touchIcon;
     @Inject
     ARPresenter<ARContract.View> presenter;
+
+
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
@@ -177,7 +179,7 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         TransitionManager.beginDelayedTransition(businessView);
         businessView.setVisibility(View.VISIBLE);
         businessTitle.setText(String.format("%s", business.getName()));
-        Log.d(LOG_TAG, "Distance " + business.getDistance());
+        // Log.d(LOG_TAG, "Distance " + business.getDistance());
         if (business.getDistance() < 1000) {
             businessAddress1.setVisibility(View.VISIBLE);
             businessAddress2.setVisibility(View.VISIBLE);
@@ -219,7 +221,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void hideBusiness() {
         TransitionManager.beginDelayedTransition(businessView);
-        // Log.i(LOG_TAG, "Hiding busines...");
         businessView.setVisibility(View.GONE);
     }
 
@@ -228,6 +229,14 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         return this;
     }
 
+    public ARPresenter<ARContract.View> getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(ARPresenter<ARContract.View> presenter) {
+        this.presenter = presenter;
+        // presenter.attachView(this);
+    }
 
     public void showCameraPreview(Size imageDimension, Handler mBackgroundHandler, CameraDevice cameraDevice) {
         try {
@@ -259,7 +268,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
         }
     }
 
-
     private void updatePreview(Handler mBackgroundHandler, CameraDevice cameraDevice) {
         if (null == cameraDevice) {
             Log.e(LOG_TAG, "updatePreview error, return");
@@ -279,11 +287,6 @@ public class ARActivity extends BaseActivity implements ARContract.View {
     @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void setPresenter(ARPresenter<ARContract.View> presenter) {
-        this.presenter = presenter;
-        //presenter.attachView(this);
     }
 
     @Override

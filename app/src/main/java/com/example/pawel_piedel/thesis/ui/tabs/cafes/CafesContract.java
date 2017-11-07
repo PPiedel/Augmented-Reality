@@ -1,10 +1,10 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
 import android.app.Activity;
-import android.content.Context;
 
-import com.example.pawel_piedel.thesis.ui.base.BaseView;
 import com.example.pawel_piedel.thesis.data.model.Business;
+import com.example.pawel_piedel.thesis.ui.base.BaseView;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -18,6 +18,8 @@ public interface CafesContract {
         void showCafes(List<Business> cafes);
 
         Activity getParentActivity();
+
+        RxPermissions getRxPermissions();
 
     }
 

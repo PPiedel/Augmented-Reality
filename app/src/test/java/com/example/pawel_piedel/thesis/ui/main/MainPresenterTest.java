@@ -31,28 +31,4 @@ public class MainPresenterTest {
     }
 
 
-    /*@Test
-    public void checkLocationPermissionsShouldReturnTrue() throws Exception {
-        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(true);
-
-        assertTrue(mainPresenter.checkLocationPermissions());
-    }
-
-    @Test
-    public void checkLocationPermissionShouldReturnFalse() throws  Exception {
-        Mockito.when(mainView.hasPermission(ArgumentMatchers.anyString())).thenReturn(false);
-
-        assertFalse(mainPresenter.checkLocationPermissions());
-    }
-
-    @Test
-    public void requestLocationPermissions() throws Exception {
-        mainPresenter.requestLocationPermissions();
-
-        Mockito.verify(mainView).showLocationPermissionsRequest();
-    }*/
-
-
-
-
 }
