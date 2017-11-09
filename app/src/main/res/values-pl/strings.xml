@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Thesis</string>
+    <string name="slide_1_desc">Znajdź najlepsze restauracje wokół Ciebie !</string>
+    <string name="slide_2_title">Rozszerzona rzeczywistość</string>
+    <string name="slide_2_desc">Odkrywaj miejsca za pomocą rozszerzonej rzeczywistości !</string>
+    <string name="slide_3_title">Informacje</string>
+    <string name="slide_3_desc">Poznaj szczegóły każdego miejsca !</string>
+    <string name="next">Następny</string>
+    <string name="skip">Pomiń</string>
+    <string name="start">Zacznijmy</string>
+    <string name="click_to_see_more">Kliknij aby zobaczyć więcej informacji</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_search">Szukaj</string>
+    <string name="error">Błąd</string>
+    <string name="star">Gwiazda</string>
+    <string name="thubnail">Miniaturka</string>
+    <string name="open">Otwarte</string>
+    <string name="isClosed">Zamknięte</string>
+    <string name="permission_rationale">Ustalenie lokalizacji jest niezbędne do poprawnego działania aplikacji.</string>
+    <string name="permission_denied_explanation">Ustalenie lokalizacji urządzenia jest niezbędne do poprawnego działania aplikacji.</string>
+    <string name="settings">Ustawienia</string>
+    <string name="restaurants">Restauracje</string>
+    <string name="cafes">Kawiarnie</string>
+    <string name="delivery">Dostawa</string>
+    <string name="request_permission">Pozwolenia</string>
+    <string name="cancel">Odrzuć</string>
+    <string name="place_icon">Miejsce</string>
+    <string name="call_string">Zadzwoń</string>
+    <string name="website_string">Strona internetowa</string>
+    <string name="favourite_string">Zapisz</string>
+    <string name="profile_image">Zdjęcie profilowe</string>
+    <string name="open_now">Otwarte teraz</string>
+    <string name="closed_now">Zamknięte</string>
+    <string name="call_action">Zadzwoń</string>
+    <string name="website_action">Odwiedź stronę internetową</string>
+    <string name="favourite_action">Dodaj do ulubionych</string>
+    <string name="slideshow_image">Pokaz slajdów</string>
+    <string name="augumented_reality">Rozszerzona rzeczywistość</string>
+    <string name="slide_1_title">Restauracje</string>
+    <string name="bussiness_thubnail">Miniaturka zdjęcia</string>
+</resources>

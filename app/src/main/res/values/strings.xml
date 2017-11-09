@@ -1,47 +1,46 @@
 <resources>
     <string name="app_name">Thesis</string>
-    <string name="action_settings">Ustawienia</string>
-    <string name="action_search">Szukaj</string>
-    <string name="error">Jakiś błąd</string>
-    <string name="star">star</string>
-    <string name="thubnail">Miniaturka</string>
-    <string name="isClosed">Zamknięte</string>
-    <string name="open">Otwarte teraz</string>
-    <string name="permission_rationale">Ustalenie lokalizacji jest niezbędne do poprawnego działania aplikacji.</string>
-    <string name="permission_denied_explanation">Ustalenie lokalizacji urządzenia jest niezbędne do poprawnego działania aplikacji.</string>
-    <string name="settings">Ustawienia</string>
-    <string name="restaurants">Restauracje</string>
-    <string name="cafes">Kawiarnie</string>
-    <string name="delivery">Dostawa</string>
-    <string name="title_activity_ar">ArActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="request_permission">Uprawnienia</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Odrzuć</string>
-    <string name="business_image">Logo lokalu</string>
-    <string name="place_icon">Miejsce</string>
-    <string name="call_string">Zadzwoń</string>
-    <string name="website_string">Strona internetowa</string>
-    <string name="favourite_string">Zapisz</string>
-    <string name="profile_image">Zdjęcie profilowe</string>
-    <string name="open_now">Otwarte teraz</string>
-    <string name="closed_now">Zamknięte</string>
-    <string name="call_action">Zadzwoń</string>
-    <string name="website_action">Odwiedź stronę</string>
-    <string name="favourite_action">Dodaj do ulubionych</string>
-    <string name="bussiness_thubnail">Miniaturka loga</string>
-    <string name="slideshow_image">Pokaz slajdów</string>
-    <string name="augumented_reality">Rozszerzona rzeczywistość</string>
-    <string name="slide_1_title">Restauracje</string>
-    <string name="slide_1_desc">Znajdź najlepsze restauracje wokół Ciebie !</string>
-    <string name="slide_2_title">Rozszerzona rzeczywistość</string>
-    <string name="slide_2_desc">Odkrywaj miejsca za pomocą rozszerzonej rzeczywistości !</string>
-    <string name="slide_3_title">Informacje</string>
-    <string name="slide_3_desc">Poznaj szczegóły każdego miejsca !</string>
-    <string name="next">Następny</string>
-    <string name="skip">Pomiń</string>
-    <string name="start">Zacznijmy</string>
-    <string name="click_to_see_more">Kliknij aby zobaczyć więcej informacji</string>
-    <string name="favourite_icon">favourite Icon</string>
+    <string name="error">Error</string>
+    <string name="star">Star</string>
+    <string name="thubnail">Thubmnail</string>
+    <string name="isClosed">Closed</string>
+    <string name="open">Open</string>
+    <string name="settings">Settings</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="cafes">Cafes</string>
+    <string name="delivery">Delivery</string>
+    <string name="title_activity_ar" translatable="false">ArActivity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
+    <string name="request_permission">Permissions</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="business_image" translatable="false">Logo icon</string>
+    <string name="place_icon">Place</string>
+    <string name="call_string">Call</string>
+    <string name="website_string">Website</string>
+    <string name="favourite_string">Save</string>
+    <string name="profile_image">Profile image</string>
+    <string name="open_now">Open now</string>
+    <string name="closed_now">Closed</string>
+    <string name="call_action">Call</string>
+    <string name="website_action">Visit website</string>
+    <string name="favourite_action">Add to favourites</string>
+    <string name="bussiness_thubnail">Logos thubmnail</string>
+    <string name="slideshow_image">Slideshow</string>
+    <string name="augumented_reality">Augumented reality</string>
+    <string name="slide_1_title">Restaurants</string>
+    <string name="favourite_icon" translatable="false">favourite Icon</string>
+    <string name="slide_1_desc">Find best restaurants near you !</string>
+    <string name="slide_2_title">Augumented reality</string>
+    <string name="slide_2_desc">Discover places through augumented reality !</string>
+    <string name="slide_3_desc">Get rich place details</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="start">Let\'s begin</string>
+    <string name="click_to_see_more">Click to get more details</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="permission_rationale">Location is essential for application !</string>
+    <string name="permission_denied_explanation">Location is essential for application !</string>
 </resources>
