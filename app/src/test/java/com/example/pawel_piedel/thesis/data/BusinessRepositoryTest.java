@@ -1,14 +1,14 @@
 package com.example.pawel_piedel.thesis.data;
 
 import android.annotation.SuppressLint;
-import android.location.Location;
-import android.test.mock.MockContext;
 
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
+import com.example.pawel_piedel.thesis.data.business.local.BusinessRepositoryImpl;
+import com.example.pawel_piedel.thesis.data.business.local.local.LocalSource;
+import com.example.pawel_piedel.thesis.data.business.local.remote.BusinessApiService;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.ReviewsResponse;
-import com.example.pawel_piedel.thesis.data.remote.ApiService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,20 +31,23 @@ import static org.mockito.Mockito.when;
  * Created by Pawel_Piedel on 01.09.2017.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BusinessDataSourceTest {
+public class BusinessRepositoryTest {
 
     @Mock
-    SharedPreferencesManager preferenceHelper;
+    LocalSource preferenceHelper;
 
     @Mock
-    ApiService apiService;
+    LocationRepository locationRepository;
 
-    BusinessRepository businessRepository;
+    @Mock
+    BusinessApiService businessApiService;
+
+    BusinessRepositoryImpl businessRepositoryImpl;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-        businessRepository = new BusinessRepository(new MockContext(), apiService, preferenceHelper);
+        businessRepositoryImpl = new BusinessRepositoryImpl(businessApiService, preferenceHelper, locationRepository);
     }
 
 
@@ -54,32 +57,16 @@ public class BusinessDataSourceTest {
         when(preferenceHelper.getAccessToken()).thenReturn(null);
 
         AccessToken accessToken = Mockito.mock(AccessToken.class);
-        when(apiService.getAccessToken(anyString(),anyString(),anyString())).thenReturn(Observable.just(accessToken));
+        when(businessApiService.loadAccessToken(anyString(), anyString(), anyString())).thenReturn(Observable.just(accessToken));
 
         //then load access token from Internet
         TestSubscriber<AccessToken> testSubscriber = TestSubscriber.create();
-        businessRepository.loadAccessToken().subscribe(testSubscriber);
+        businessRepositoryImpl.loadAccessToken().subscribe(testSubscriber);
 
         //assert everything is ok
         testSubscriber.assertReceivedOnNext(Collections.singletonList(accessToken));
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
-
-    }
-
-    @Test
-    public void getLastKnownLocationFromDatamanagerField() throws Exception {
-        Location lastlocation = Mockito.mock(Location.class);
-        businessRepository.setLastLocation(lastlocation);
-
-        TestSubscriber<Location> locationTestSubscriber = TestSubscriber.create();
-
-        businessRepository.getLastKnownLocation().subscribe(locationTestSubscriber);
-
-        locationTestSubscriber.assertNoErrors();
-        locationTestSubscriber.assertCompleted();
-        locationTestSubscriber.assertReceivedOnNext(Collections.singletonList(lastlocation));
-
 
     }
 
@@ -93,10 +80,10 @@ public class BusinessDataSourceTest {
     public void loadBusinessDetails() throws Exception {
         //mock business object and api service behaviour
         Business business = Mockito.mock(Business.class);
-        when(apiService.getBusinessDetails(anyString())).thenReturn(Observable.just(business));
+        when(businessApiService.getBusinessDetails(anyString())).thenReturn(Observable.just(business));
 
         TestSubscriber<Business> testSubscriber = TestSubscriber.create();
-        businessRepository.loadBusinessDetails("example_id").subscribe(testSubscriber);
+        businessRepositoryImpl.loadBusinessDetails("example_id").subscribe(testSubscriber);
 
         testSubscriber.assertReceivedOnNext(Collections.singletonList(business));
         testSubscriber.assertNoErrors();
@@ -107,10 +94,10 @@ public class BusinessDataSourceTest {
     public void loadReviews() throws Exception {
         //mock review response and api service behaviour
         ReviewsResponse reviewsResponse = Mockito.mock(ReviewsResponse.class);
-        when(apiService.getBusinessReviews(anyString(),anyString())).thenReturn(Observable.just(reviewsResponse));
+        when(businessApiService.getBusinessReviews(anyString(), anyString())).thenReturn(Observable.just(reviewsResponse));
 
         TestSubscriber<ReviewsResponse> testSubscriber = TestSubscriber.create();
-        businessRepository.loadReviews("example_id").subscribe(testSubscriber);
+        businessRepositoryImpl.loadReviews("example_id").subscribe(testSubscriber);
 
         testSubscriber.assertReceivedOnNext(Collections.singletonList(reviewsResponse));
         testSubscriber.assertNoErrors();
@@ -120,9 +107,9 @@ public class BusinessDataSourceTest {
     @Test
     public void saveAccessToken() throws Exception {
         AccessToken accessToken = Mockito.mock(AccessToken.class);
-        businessRepository.saveAccessToken(accessToken);
+        businessRepositoryImpl.saveAccessToken(accessToken);
 
-        verify(preferenceHelper).saveObject(accessToken);
+        verify(preferenceHelper).saveAccessToken(accessToken);
 
     }
 

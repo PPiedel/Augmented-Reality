@@ -1,4 +1,4 @@
-package com.example.pawel_piedel.thesis.data.remote;
+package com.example.pawel_piedel.thesis.data.auth.remote;
 
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 
@@ -13,12 +13,8 @@ import okhttp3.Response;
  * Created by Pawel_Piedel on 17.07.2017.
  */
 
-class AuthenticationInterceptor implements Interceptor {
-    private final AccessToken accessToken;
-
-    public AuthenticationInterceptor(AccessToken token) {
-        this.accessToken = token;
-    }
+public class AuthenticationInterceptor implements Interceptor {
+    private AccessToken accessToken;
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -27,12 +23,20 @@ class AuthenticationInterceptor implements Interceptor {
         Request.Builder requestBuilder = original.newBuilder()
                 .header("Accept", "application/json")
                 .header("Content-type", "application/json")
-                .header("Authorization",
-                        accessToken.getTokenType() + " " + accessToken.getAccessToken())
                 .method(original.method(), original.body());
+
+        if (accessToken != null) {
+            requestBuilder.header("Authorization",
+                    accessToken.getTokenType() + " " + accessToken.getAccessToken());
+        }
+
 
         Request request = requestBuilder.build();
         return chain.proceed(request);
+    }
+
+    public void setAccessToken(AccessToken accessToken) {
+        this.accessToken = accessToken;
     }
 }
 

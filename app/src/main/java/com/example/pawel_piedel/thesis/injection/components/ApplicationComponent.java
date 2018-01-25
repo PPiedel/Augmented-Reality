@@ -4,9 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.pawel_piedel.thesis.ThesisApplication;
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
-import com.example.pawel_piedel.thesis.data.local.LocalDataSource;
-import com.example.pawel_piedel.thesis.data.remote.ApiService;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.injection.ApplicationContext;
 import com.example.pawel_piedel.thesis.injection.modules.ApplicationModule;
 
@@ -27,10 +27,12 @@ public interface ApplicationComponent {
 
     Application application();
 
-    BusinessDataSource businessDataSource();
+    BusinessRepository businessDataSource();
 
-    LocalDataSource localDataSource();
+    LocationRepository locationRepository();
 
-    ApiService apiService();
+    AccessTokenRepository accessTokenRepository();
+
+
 
 }

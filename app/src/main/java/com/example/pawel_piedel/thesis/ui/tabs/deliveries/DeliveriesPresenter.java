@@ -2,10 +2,10 @@ package com.example.pawel_piedel.thesis.ui.tabs.deliveries;
 
 import android.Manifest;
 import android.location.Location;
-import android.util.Pair;
-import android.widget.Toast;
 
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.SearchResponse;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
@@ -17,6 +17,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Pawel_Piedel on 19.07.2017.
@@ -25,21 +26,21 @@ import rx.schedulers.Schedulers;
 public class DeliveriesPresenter<V extends DeliveriesContract.View> extends BasePresenter<V> implements DeliveriesContract.Presenter<V> {
     public final static String DELIVERIES = "deliveries";
     private final static String LOG_TAG = DeliveriesPresenter.class.getName();
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Inject
-    DeliveriesPresenter(BusinessDataSource businessDataSource) {
-        super(businessDataSource);
+    DeliveriesPresenter(BusinessRepository businessRepository, LocationRepository locationRepository, AccessTokenRepository accessTokenRepository) {
+        super(businessRepository, locationRepository, accessTokenRepository);
     }
 
     public Observable<Boolean> requestPermissions() {
-        return getView().getRxPermissions()
+        return view.getRxPermissions()
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE);
     }
 
     @Override
     public void managePermissions() {
-        getView().getRxPermissions()
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+        requestPermissions()
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
                         loadDeliveries();
@@ -48,72 +49,79 @@ public class DeliveriesPresenter<V extends DeliveriesContract.View> extends Base
     }
 
     public void loadDeliveries() {
-        requestPermissions()
-                .subscribe(granted -> {
-                    getView().showProgressDialog();
-                    Observable
-                            .zip(
-                                    getBusinessDataSource().loadAccessToken(),
-                                    getBusinessDataSource().getLastKnownLocation(),
-                                    Pair::create)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<Pair<AccessToken, Location>>() {
-                                @Override
-                                public void onCompleted() {
-                                    loadFromApi();
-                                }
+        view.showProgressDialog();
+        subscriptions.add(accessTokenRepository.loadAccessToken()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AccessToken>() {
+                    @Override
+                    public void onCompleted() {
+                        loadLocation();
+                    }
 
-                                @Override
-                                public void onError(Throwable e) {
-                                    getView().hideProgressDialog();
-                                    Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
+                    @Override
+                    public void onError(Throwable e) {
+                        view.hideProgressDialog();
+                    }
 
-                                @Override
-                                public void onNext(Pair<AccessToken, Location> accessTokenLocationPair) {
-                                    if (accessTokenLocationPair.second == null) {
-                                        getView().showAlert("Lokalizacja", "Twoja lokalizacja nie mogła zostać ustalona.");
-                                    }
-                                    getBusinessDataSource().saveAccessToken(accessTokenLocationPair.first);
-                                    getBusinessDataSource().setLastLocation(accessTokenLocationPair.second);
-                                }
-                            });
-                });
+                    @Override
+                    public void onNext(AccessToken accessToken) {
+                        accessTokenRepository.saveAccessToken(accessToken);
+
+
+                    }
+                }));
     }
 
-    private void loadFromApi() {
-        if (getBusinessDataSource().getLastLocation() != null) {
-            getBusinessDataSource().loadBusinesses("delivery", DELIVERIES)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<SearchResponse>() {
-                        @Override
-                        public void onCompleted() {
+    @Override
+    public void clearSubscriptions() {
+        subscriptions.clear();
+    }
 
-                        }
+    public void loadLocation() {
+        subscriptions.add(locationRepository.getLastKnownLocation()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Location>() {
+                    @Override
+                    public void onCompleted() {
 
-                        @Override
-                        public void onError(Throwable e) {
-                            getView().hideProgressDialog();
-                            Toast.makeText(getView().getParentActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                    }
 
-                        @Override
-                        public void onNext(SearchResponse searchResponse) {
-                            if (!searchResponse.getBusinesses().isEmpty()) {
-                                getBusinessDataSource().saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
-                            }
-                            getView().hideProgressDialog();
-                            getView().showDeliveries(searchResponse.getBusinesses());
-                        }
-                    });
-        } else {
-            getView().hideProgressDialog();
-            getView().showAlert("Lokalizacja", "Twoja lokalizacja nie mogłą zostać ustalona.");
+                    @Override
+                    public void onError(Throwable e) {
+                        view.hideProgressDialog();
+                    }
 
-        }
+                    @Override
+                    public void onNext(Location location) {
+                        loadFromApi(location);
+                    }
+                }));
+    }
 
+    private void loadFromApi(Location location) {
+        subscriptions.add(businessRepository.loadBusinesses("delivery", DELIVERIES, location)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<SearchResponse>() {
+                    @Override
+                    public void onCompleted() {
+                        view.hideProgressDialog();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        view.hideProgressDialog();
+                    }
+
+                    @Override
+                    public void onNext(SearchResponse searchResponse) {
+                        view.hideProgressDialog();
+                        view.showDeliveries(searchResponse.getBusinesses());
+                        businessRepository.saveBusinesses(searchResponse.getBusinesses(), DELIVERIES);
+                    }
+                }));
     }
 
 }

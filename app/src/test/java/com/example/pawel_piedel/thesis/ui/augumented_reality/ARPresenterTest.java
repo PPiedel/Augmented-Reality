@@ -8,7 +8,7 @@ import android.util.Size;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.ThesisApplication;
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.business.local.BusinessRepository;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
@@ -57,7 +57,7 @@ public class ARPresenterTest {
     @Mock
     ARContract.View view;
     @Mock
-    BusinessDataSource businessDataSource;
+    BusinessRepository businessRepository;
     @Mock
     ReactiveSensorManager reactiveSensorManager;
     @Mock
@@ -88,7 +88,7 @@ public class ARPresenterTest {
             }
         });
 
-        presenter = new ARPresenter<>(businessDataSource);
+        presenter = new ARPresenter<>(businessRepository);
         presenter.attachView(view);
         presenter.setReactiveSensorManager(reactiveSensorManager);
         Assert.assertNotNull(presenter.getView());
@@ -159,17 +159,17 @@ public class ARPresenterTest {
 
     @Test
     public void observeDeviceLocation() throws Exception {
-        when(businessDataSource.getLastLocation()).thenReturn(location);
-        when(businessDataSource.getLocationUpdates()).thenReturn(Observable.just(location));
+        when(businessRepository.getLastLocation()).thenReturn(location);
+        when(businessRepository.getLocationUpdates()).thenReturn(Observable.just(location));
 
         presenter.observeDeviceLocation();
 
-        verify(businessDataSource).getLocationUpdates();
+        verify(businessRepository).getLocationUpdates();
     }
 
     @Test
     public void openDetailActivity() throws Exception {
-        when(businessDataSource.getAugumentedRealityPlaces()).thenReturn(Collections.singletonList(business));
+        when(businessRepository.getAugumentedRealityPlaces()).thenReturn(Collections.singletonList(business));
 
         presenter.openDetailActivity();
 

@@ -1,6 +1,5 @@
 package com.example.pawel_piedel.thesis.ui.tabs.cafes;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -43,10 +42,6 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
         return new CafesFragment();
     }
 
-    public void setmRecyclerView(RecyclerView mRecyclerView) {
-        this.mRecyclerView = mRecyclerView;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,9 +55,19 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
 
         setUpRecyclerView();
 
-        cafesPresenter.managePermissions();
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cafesPresenter.managePermissions();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cafesPresenter.clearSubscriptions();
     }
 
     private void setUpRecyclerView() {
@@ -87,11 +92,6 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
             businessAdapter.setBusinessList(cafes);
         }
 
-    }
-
-    @Override
-    public Activity getParentActivity() {
-        return getActivity();
     }
 
     public RxPermissions getRxPermissions() {

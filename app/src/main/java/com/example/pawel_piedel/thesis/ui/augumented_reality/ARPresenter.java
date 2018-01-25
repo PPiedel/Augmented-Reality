@@ -9,7 +9,9 @@ import android.hardware.camera2.CameraDevice;
 import android.location.Location;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
@@ -79,8 +81,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     @Inject
-    public ARPresenter(BusinessDataSource businessDataSource) {
-        super(businessDataSource);
+    public ARPresenter(BusinessRepository businessRepository, LocationRepository locationRepository, AccessTokenRepository accessTokenRepository) {
+        super(businessRepository, locationRepository, accessTokenRepository);
     }
 
     @Override
@@ -93,8 +95,8 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void attachView(V view) {
         super.attachView(view);
-        if (getBusinessDataSource().getAugumentedRealityPlaces() != null) {
-            azimuths = new double[getBusinessDataSource().getAugumentedRealityPlaces().size()];
+        if (businessRepository.getAugumentedRealityPlaces() != null) {
+            azimuths = new double[businessRepository.getAugumentedRealityPlaces().size()];
         }
 
     }
@@ -119,7 +121,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         @Override
                         public void onError(Throwable throwable) {
                             throwable.printStackTrace();
-                            getView().showToast(throwable.getMessage());
+                            view.showToast(throwable.getMessage());
 
                         }
 
@@ -129,14 +131,14 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                             pointsTo = false;
                             checkPlacesAzimuthsAgainstNewAzimuth();
                             if (pointsTo) {
-                                getView().showBusinessOnScreen(getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
+                                view.showBusinessOnScreen(businessRepository.getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
                             } else {
-                                getView().hideBusiness();
+                                view.hideBusiness();
                             }
                         }
                     });
         } else {
-            getView().showToast("Device does not has required sensor !");
+            view.showToast("Device does not has required sensor !");
         }
     }
 
@@ -148,7 +150,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
                 } else if (pointsTo
-                        && getBusinessDataSource().getAugumentedRealityPlaces().get(placeIndex).getDistance() <= getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
+                        && businessRepository.getAugumentedRealityPlaces().get(placeIndex).getDistance() <= businessRepository.getAugumentedRealityPlaces().get(bestMatchedPlaceIndex).getDistance()
                         && azimuthDelta < Math.abs(azimuths[bestMatchedPlaceIndex] - deviceAzimuth)) {
                     pointsTo = true;
                     bestMatchedPlaceIndex = placeIndex;
@@ -178,16 +180,16 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         public void onNext(ReactiveSensorEvent reactiveSensorEvent) {
                             switch (reactiveSensorEvent.getAccuracy()) {
                                 case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
-                                    getView().showAlert("Niski stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest niska. Wskazania nie będą dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    view.showAlert("Niski stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest niska. Wskazania nie będą dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
                                     showHighAzimuthAccuracyAlert = true;
                                     break;
                                 case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
-                                    getView().showAlert("Sredni stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest średnia. Wskazania mogą nie być dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
+                                    view.showAlert("Sredni stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest średnia. Wskazania mogą nie być dokładne. Aby poprawić jakość wskazań wykonaj kilka ósemek urządzeniem w powietrzu.");
                                     showHighAzimuthAccuracyAlert = true;
                                     break;
                                 case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
                                     if (showHighAzimuthAccuracyAlert) {
-                                        getView().showAlert("Wysoki stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest wysoka. Zamknij komunikat bestMatchedPlaceIndex ciesz się rozszerzoną rzeczywistością :) !");
+                                        view.showAlert("Wysoki stopień dokładności wskazań kierunku urządzenia", "Dokładność wskazań kierunku Twojego urządzenia jest wysoka. Zamknij komunikat bestMatchedPlaceIndex ciesz się rozszerzoną rzeczywistością :) !");
                                     }
                                     showHighAzimuthAccuracyAlert = false;
                                     break;
@@ -196,7 +198,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
                         }
                     });
         } else {
-            getView().showToast("Device does not has required sensor !");
+            view.showToast("Device does not has required sensor !");
             Log.e(LOG_TAG, "Device does not has required sensor !");
         }
     }
@@ -213,7 +215,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                         @Override
                         public void onError(Throwable e) {
-                            getView().showToast(e.getMessage());
+                            view.showToast(e.getMessage());
                         }
 
                         @Override
@@ -231,11 +233,11 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void observeDeviceLocation() {
-        if (getBusinessDataSource().getLastLocation() != null) {
-            updateBusinessAzimuths(getBusinessDataSource().getLastLocation());
-        }
-        locationSubscription = getBusinessDataSource().getLocationUpdates()
-                .filter(location -> !locationsAreTheSame(location, getBusinessDataSource().getLastLocation()))
+       /* if (locationRepository.getLastKnownLocation() != null) {
+            updateBusinessAzimuths(locationRepository.getLastKnownLocation());
+        }*/
+        locationSubscription = locationRepository.getLocationUpdates()
+                // .filter(location -> locationsAreTheSame(location,locationRepository.g))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override
@@ -251,7 +253,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                     @Override
                     public void onNext(Location location) {
-                        getBusinessDataSource().setLastLocation(location);
+                        locationRepository.saveLastLocation(location);
                         updateBusinessAzimuths(location);
                     }
                 });
@@ -268,15 +270,15 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     @Override
     public void onDeviceIsFlat() {
         unsubscribeThreeSensors(true, true, true, false);
-        getView().hideBusiness();
+        view.hideBusiness();
         turnedOn = false;
-        getView().showToast("Umieść swoje urządzenie pionowo, aby znów zacząć korzystać z trybu rozszerzonej rzeczywistości.");
+        view.showToast("Umieść swoje urządzenie pionowo, aby znów zacząć korzystać z trybu rozszerzonej rzeczywistości.");
     }
 
     public void onDeviceIsVertical() {
         startObservingSensors();
         turnedOn = true;
-        getView().showToast("Znów korzystasz z trybu rozszerzonej rzeczywistości.");
+        view.showToast("Znów korzystasz z trybu rozszerzonej rzeczywistości.");
     }
 
     /*Based on https://github.com/lycha/augmented-reality-example/blob/master/app/src/main/java/com/lycha/example/augmentedreality/CameraViewActivity.java*/
@@ -346,7 +348,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void openDetailActivity() {
-        getView().startDetailActivity(getBusinessDataSource().getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
+        view.startDetailActivity(businessRepository.getAugumentedRealityPlaces().get(bestMatchedPlaceIndex));
     }
 
     public boolean locationsAreTheSame(Location first, Location second) {
@@ -354,9 +356,9 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     private void updateBusinessAzimuths(Location currentLocation) {
-        if (!getBusinessDataSource().getAugumentedRealityPlaces().isEmpty()) {
+        if (!businessRepository.getAugumentedRealityPlaces().isEmpty()) {
             for (int i = 0; i < azimuths.length; i++) {
-                azimuths[i] = calculateTeoreticalAzimuth(getBusinessDataSource().getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
+                azimuths[i] = calculateTeoreticalAzimuth(businessRepository.getAugumentedRealityPlaces().get(i).getCoordinates(), currentLocation);
             }
         }
 
@@ -392,7 +394,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     public void unsubscribeThreeSensors(boolean azimuth, boolean accuracy, boolean location, boolean gravity) {
         reactiveSensorManager.unsubscribe(azimuthSubscription);
         reactiveSensorManager.unsubscribe(accuracySubscription);
-        getBusinessDataSource().safelyUnsubscribe(locationSubscription);
+        businessRepository.safelyUnsubscribe(locationSubscription);
 
         if (gravity) {
             reactiveSensorManager.unsubscribe(gravitySubscription);
@@ -408,12 +410,12 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
 
     public void managePermissions() {
-        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        RxPermissions rxPermissions = new RxPermissions(view.getViewActivity());
         rxPermissions
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA)
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
-                        getView().startObserving();
+                        view.startObserving();
                     }
                 });
     }
@@ -425,7 +427,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
     @Override
     public void onCameraOpened() {
-        getView().showCameraPreview(cameraManager.getImageDimension(), cameraManager.getmBackgroundHandler(), cameraManager.getCameraDevice());
+        view.showCameraPreview(cameraManager.getImageDimension(), cameraManager.getmBackgroundHandler(), cameraManager.getCameraDevice());
     }
 
     public void openCamera(int width, int height, ARActivity activity) {
@@ -437,7 +439,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
     }
 
     public void configureTransform(int width, int height) {
-        cameraManager.configureTransform(width, height, (ARActivity) getView());
+        cameraManager.configureTransform(width, height, (ARActivity) view);
     }
 
     public void startCameraBackgroundThread() {

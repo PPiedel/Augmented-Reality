@@ -63,9 +63,22 @@ public class DeliveriesFragment extends BaseFragment implements DeliveriesContra
 
         setUpRecyclerView();
 
-        deliveriesPresenter.managePermissions();
+
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        deliveriesPresenter.managePermissions();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        deliveriesPresenter.clearSubscriptions();
     }
 
     private void setUpRecyclerView() {

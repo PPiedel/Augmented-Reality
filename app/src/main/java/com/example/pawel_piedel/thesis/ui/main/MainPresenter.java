@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.IntentSender;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 import com.google.android.gms.common.api.Status;
@@ -28,27 +30,27 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
     private RxPermissions rxPermissions;
 
     @Inject
-    public MainPresenter(BusinessDataSource businessDataSource) {
-        super(businessDataSource);
+    public MainPresenter(BusinessRepository businessRepository, LocationRepository locationRepository, AccessTokenRepository accessTokenRepository) {
+        super(businessRepository, locationRepository, accessTokenRepository);
     }
 
     @Override
     public void onFabClick() {
-        rxPermissions = new RxPermissions(getView().getViewActivity());
+        rxPermissions = new RxPermissions(view.getViewActivity());
         rxPermissions
                 .request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
-                        getBusinessDataSource().addClosestPlacesToAugumentedRealityPlaces();
-                        // Log.d(LOG_TAG,getBusinessDataSource().getAugumentedRealityPlaces().toString());
-                        getView().startArActivity();
+                        businessRepository.addClosestPlacesToAugumentedRealityPlaces();
+                        // Log.d(LOG_TAG,getBusinessRepository().getAugumentedRealityPlaces().toString());
+                        view.startArActivity();
                     }
                 });
     }
 
     @Override
     public void manageLocationSettings() {
-        getBusinessDataSource().getLocationSettingsResult()
+        locationRepository.getLocationSettingsResult()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<LocationSettingsResult>() {
                     @Override
@@ -67,7 +69,7 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
                         switch (status.getStatusCode()) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
-                                    status.startResolutionForResult(getView().getViewActivity(), REQUEST_CHECK_SETTINGS);
+                                    status.startResolutionForResult(view.getViewActivity(), REQUEST_CHECK_SETTINGS);
                                 } catch (IntentSender.SendIntentException th) {
                                     Log.e("MainActivity", "Error opening settings activity.", th);
                                 }
@@ -82,12 +84,12 @@ public class MainPresenter<V extends MainContract.View> extends BasePresenter<V>
 
     @Override
     public void onLocationPermissionsGranted() {
-        getView().init();
+        view.init();
     }
 
     @Override
     public boolean isPlaceSaved(String id) {
-        return getBusinessDataSource().getFromSharedPreferences(id, true);
+        return businessRepository.getFromSharedPreferences(id, true);
     }
 
 }

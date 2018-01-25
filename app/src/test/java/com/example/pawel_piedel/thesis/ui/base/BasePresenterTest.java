@@ -1,6 +1,6 @@
 package com.example.pawel_piedel.thesis.ui.base;
 
-import com.example.pawel_piedel.thesis.data.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.business.local.BusinessRepositoryImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNull;
 public class BasePresenterTest {
 
     @Mock
-    BusinessRepository businessRepository;
+    BusinessRepositoryImpl businessRepositoryImpl;
 
     @Mock
     BaseView baseView;
@@ -26,7 +26,7 @@ public class BasePresenterTest {
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        basePresenter = new BasePresenter<>(businessRepository);
+        basePresenter = new BasePresenter<>(businessRepositoryImpl);
     }
 
     @Test

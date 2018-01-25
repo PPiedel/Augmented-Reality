@@ -3,7 +3,10 @@ package com.example.pawel_piedel.thesis.ui.welcome;
 import android.util.Log;
 import android.view.View;
 
-import com.example.pawel_piedel.thesis.data.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepositoryImpl;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.injection.ConfigPersistent;
 import com.example.pawel_piedel.thesis.ui.base.BasePresenter;
 
@@ -17,46 +20,46 @@ public class WelcomePresenter <V extends WelcomeContract.View> extends BasePrese
     private static final String lOG_TAG = WelcomePresenter.class.getSimpleName();
 
     @Inject
-    public WelcomePresenter(BusinessRepository businessRepository) {
-        super(businessRepository);
+    public WelcomePresenter(BusinessRepository businessRepositoryImpl, LocationRepository locationRepository, AccessTokenRepository accessTokenRepository) {
+        super(businessRepositoryImpl, locationRepository, accessTokenRepository);
     }
 
     @Override
     public void onViewDuringCreation() {
-        if (getBusinessDataSource().isFirstTimeLunched()) {
-            getView().initLayout();
-            getBusinessDataSource().saveInSharedPreferences(BusinessRepository.FIRST_TIME_LUNCHED, false);
+        if (businessRepository.isFirstTimeLunched()) {
+            view.initLayout();
+            businessRepository.saveInSharedPreferences(BusinessRepositoryImpl.FIRST_TIME_LUNCHED, false);
         }
         else {
-            getView().startMainActivity();
+            view.startMainActivity();
         }
     }
 
     @Override
     public void onSkipButtonClicked() {
-        getView().startMainActivity();
+        view.startMainActivity();
     }
 
     @Override
     public void onNextButtonClicked(int currentPage) {
         Log.d(lOG_TAG,"On next button clicked, current page : "+currentPage);
-        if (currentPage+1 < getView().getLayoutsLength()) {
-            getView().moveToNextScreen();
+        if (currentPage + 1 < view.getLayoutsLength()) {
+            view.moveToNextScreen();
         } else {
-            getView().startMainActivity();
+            view.startMainActivity();
         }
     }
 
     @Override
     public void onPageSelected(int position) {
-        getView().addBottomDots(position);
+        view.addBottomDots(position);
 
-        if (position == getView().getLayoutsLength() - 1) {
-            getView().setNextButtonText("Zaczynajmy");
-            getView().setSkipButtonVisibility(View.GONE);
+        if (position == view.getLayoutsLength() - 1) {
+            view.setNextButtonText("Zaczynajmy");
+            view.setSkipButtonVisibility(View.GONE);
         } else {
-            getView().setNextButtonText("Następny");
-            getView().setSkipButtonVisibility(View.VISIBLE);
+            view.setNextButtonText("Następny");
+            view.setSkipButtonVisibility(View.VISIBLE);
         }
     }
 }

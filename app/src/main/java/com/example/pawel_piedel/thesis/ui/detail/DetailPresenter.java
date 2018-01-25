@@ -3,8 +3,10 @@ package com.example.pawel_piedel.thesis.ui.detail;
 import android.Manifest;
 import android.util.Log;
 
-import com.example.pawel_piedel.thesis.data.BusinessDataSource;
-import com.example.pawel_piedel.thesis.data.local.SharedPreferencesManager;
+import com.example.pawel_piedel.thesis.data.auth.AccessTokenRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.business.local.LocalSource;
+import com.example.pawel_piedel.thesis.data.location.LocationRepository;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Review;
@@ -30,14 +32,14 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     private final static String LOG_TAG = DetailPresenter.class.getSimpleName();
 
     @Inject
-    DetailPresenter(BusinessDataSource businessDataSource) {
-        super(businessDataSource);
+    DetailPresenter(BusinessRepository businessRepository, LocationRepository locationRepository, AccessTokenRepository accessTokenRepository) {
+        super(businessRepository, locationRepository, accessTokenRepository);
     }
 
     @Override
     public void loadBusinessDetails(String id) {
-        getView().showProgressDialog();
-        getBusinessDataSource().loadAccessToken()
+        view.showProgressDialog();
+        accessTokenRepository.loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -60,7 +62,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void manageToLoadReviews(String id) {
-        getBusinessDataSource().loadAccessToken()
+        accessTokenRepository.loadAccessToken()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AccessToken>() {
@@ -83,7 +85,7 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     private void loadReviews(String id) {
-        getBusinessDataSource().loadReviews(id)
+        businessRepository.loadReviews(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ReviewsResponse>() {
@@ -102,14 +104,14 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
                         for (Review review : reviewsResponse.getReviews()) {
                             Log.d(LOG_TAG, review.toString());
                         }
-                        getView().showReviews(reviewsResponse.getReviews());
+                        view.showReviews(reviewsResponse.getReviews());
                     }
                 });
     }
 
 
     private void loadBusiness(String id) {
-        getBusinessDataSource().loadBusinessDetails(id)
+        businessRepository.loadBusinessDetails(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Business>() {
@@ -120,17 +122,17 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
                     @Override
                     public void onError(Throwable e) {
-                        getView().hideProgressDialog();
+                        view.hideProgressDialog();
                         Log.d(LOG_TAG, e.getMessage());
-                        getView().showOldBusiness();
+                        view.showOldBusiness();
                     }
 
                     @Override
                     public void onNext(Business business) {
                         Log.d(LOG_TAG, business.toString());
-                        getView().hideProgressDialog();
-                        getView().setUpBusiness(business);
-                        getView().showBusinessDetails(business);
+                        view.hideProgressDialog();
+                        view.setUpBusiness(business);
+                        view.showBusinessDetails(business);
                     }
 
                 });
@@ -144,12 +146,12 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void onCallButtonClicked(Business business) {
-        RxPermissions rxPermissions = new RxPermissions(getView().getViewActivity());
+        RxPermissions rxPermissions = new RxPermissions(view.getViewActivity());
         rxPermissions
                 .request(Manifest.permission.CALL_PHONE)
                 .subscribe(granted -> {
                     if (granted) { // Always true pre-M
-                        getView().makeCall(business);
+                        view.makeCall(business);
                     }
                 });
 
@@ -157,22 +159,22 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
 
     @Override
     public void onWebsiteButtonClicked(Business business) {
-        getView().goToWebsite(business);
+        view.goToWebsite(business);
 
     }
 
 
     public void showFavouriteIcon(Business business) {
         if (isSaved(business)) {
-            getView().fillFavouriteIcon();
+            view.fillFavouriteIcon();
         } else {
-            getView().showBorderIcon();
+            view.showBorderIcon();
         }
     }
 
     private boolean isSaved(Business business) {
         boolean isSaved = false;
-        if (!Objects.equals(getBusinessDataSource().getFromSharedPreferences(business.getId()), SharedPreferencesManager.DEFAULT_STRING_IF_NOT_FOUND)) {
+        if (!Objects.equals(businessRepository.getFromSharedPreferences(business.getId()), LocalSource.DEFAULT_STRING_IF_NOT_FOUND)) {
             isSaved = true;
         }
         return isSaved;
@@ -189,11 +191,11 @@ public class DetailPresenter<V extends DetailContract.View> extends BasePresente
     }
 
     public void addToFavourites(Business business) {
-        getBusinessDataSource().saveInSharedPreferences(business.getId(), business.getId());
+        businessRepository.saveInSharedPreferences(business.getId(), business.getId());
     }
 
     private void removeFromFavourite(Business business) {
-        getBusinessDataSource().removeFromSharedPreferences(business.getId());
+        businessRepository.removeFromSharedPreferences(business.getId());
     }
 
 

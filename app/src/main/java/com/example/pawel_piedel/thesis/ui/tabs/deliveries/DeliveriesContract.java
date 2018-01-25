@@ -36,5 +36,7 @@ public interface DeliveriesContract {
         void managePermissions();
 
         void loadDeliveries();
+
+        void clearSubscriptions();
     }
 }

@@ -1,41 +1,21 @@
-package com.example.pawel_piedel.thesis.data.local;
+package com.example.pawel_piedel.thesis.data.business.local;
 
 import android.content.SharedPreferences;
 
-import com.example.pawel_piedel.thesis.data.model.AccessToken;
-
 import javax.inject.Inject;
-
-import static com.example.pawel_piedel.thesis.util.Util.gson;
 
 /**
  * Created by Pawel_Piedel on 20.07.2017.
  */
 
-public class SharedPreferencesManager implements LocalDataSource {
+public class LocalSource implements LocalDataSource {
     public static final String DEFAULT_STRING_IF_NOT_FOUND = "Not found";
-    private static final String ACCESS_TOKEN = "access_token";
+
     private final SharedPreferences sharedPreferences;
 
     @Inject
-    public SharedPreferencesManager(SharedPreferences sharedPreferences) {
+    public LocalSource(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
-    }
-
-    @Override
-    public AccessToken getAccessToken() {
-        String json = sharedPreferences
-                .getString(ACCESS_TOKEN, "");
-        return gson.fromJson(json, AccessToken.class);
-    }
-
-    @Override
-    public void saveObject(Object object) {
-        sharedPreferences
-                .edit()
-                .putString("access_token", gson.toJson(object))
-                .apply();
-
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.example.pawel_piedel.thesis.ui.tabs.restaurants;
 
 import android.location.Location;
 
-import com.example.pawel_piedel.thesis.data.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.business.local.BusinessRepositoryImpl;
 import com.example.pawel_piedel.thesis.data.model.AccessToken;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -31,7 +31,7 @@ public class RestaurantsPresenterTest {
     @Mock
     RxPermissions rxPermissions;
     @Mock
-    BusinessRepository businessRepository;
+    BusinessRepositoryImpl businessRepositoryImpl;
     @Mock
     AccessToken accessToken;
     @Mock
@@ -41,7 +41,7 @@ public class RestaurantsPresenterTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        presenter = new RestaurantsPresenter<>(businessRepository);
+        presenter = new RestaurantsPresenter<>(businessRepositoryImpl);
         presenter.attachView(view);
     }
 

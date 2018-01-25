@@ -60,10 +60,20 @@ public class RestaurantsFragment extends BaseFragment implements RestaurantsCont
         }
         setUpRecyclerView();
 
-        restaurantsPresenter.managePermissions();
-
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        restaurantsPresenter.managePermissions();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        restaurantsPresenter.clearSubscriptions();
     }
 
     private void setUpRecyclerView() {
