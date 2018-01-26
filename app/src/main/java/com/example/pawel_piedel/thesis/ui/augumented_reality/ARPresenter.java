@@ -237,7 +237,6 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
             updateBusinessAzimuths(locationRepository.getLastKnownLocation());
         }*/
         locationSubscription = locationRepository.getLocationUpdates()
-                // .filter(location -> locationsAreTheSame(location,locationRepository.g))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Location>() {
                     @Override
@@ -253,7 +252,7 @@ public class ARPresenter<V extends ARContract.View> extends BasePresenter<V> imp
 
                     @Override
                     public void onNext(Location location) {
-                        locationRepository.saveLastLocation(location);
+                        locationRepository.cacheLocation(location);
                         updateBusinessAzimuths(location);
                     }
                 });

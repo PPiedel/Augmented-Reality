@@ -13,7 +13,7 @@ import rx.Observable;
 public interface LocationRepository {
     Observable<Location> getLastKnownLocation();
 
-    void saveLastLocation(Location location);
+    void cacheLocation(Location location);
 
     Observable<LocationSettingsResult> getLocationSettingsResult();
 

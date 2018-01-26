@@ -97,7 +97,6 @@ public class CafesPresenter<V extends CafesContract.View> extends BasePresenter<
 
                     @Override
                     public void onNext(Location location) {
-                        // view.hideProgressDialog();
                         loadFromApi(location);
                     }
                 }));

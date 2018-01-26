@@ -61,6 +61,7 @@ public class CafesFragment extends BaseFragment implements CafesContract.View {
     @Override
     public void onResume() {
         super.onResume();
+
         cafesPresenter.managePermissions();
     }
 

@@ -40,16 +40,13 @@ public class LocationRepositoryImpl implements LocationRepository {
     @SuppressLint("MissingPermission")
     @Override
     public Observable<Location> getLastKnownLocation() {
-        //TODO Bug with last location
-        if (lastLocation != null) {
-            return Observable.just(lastLocation);
-        } else {
-            return reactiveLocationProvider.getUpdatedLocation(lastKnownLocationRequest);
-        }
+        return reactiveLocationProvider.getUpdatedLocation(lastKnownLocationRequest)
+                .filter(location -> !location.equals(lastLocation));
     }
 
+
     @Override
-    public void saveLastLocation(Location location) {
+    public void cacheLocation(Location location) {
         lastLocation = location;
     }
 
