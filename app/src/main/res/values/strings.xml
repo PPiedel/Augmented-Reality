@@ -43,4 +43,5 @@
     <string name="action_search">Search</string>
     <string name="permission_rationale">Location is essential for application !</string>
     <string name="permission_denied_explanation">Location is essential for application !</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

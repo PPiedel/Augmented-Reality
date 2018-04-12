@@ -8,7 +8,7 @@ import android.util.Size;
 
 import com.example.pawel_piedel.thesis.BuildConfig;
 import com.example.pawel_piedel.thesis.ThesisApplication;
-import com.example.pawel_piedel.thesis.data.business.local.BusinessRepository;
+import com.example.pawel_piedel.thesis.data.business.BusinessRepository;
 import com.example.pawel_piedel.thesis.data.model.Business;
 import com.example.pawel_piedel.thesis.data.model.Coordinates;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
